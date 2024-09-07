@@ -1,0 +1,62 @@
+:root {
+	font-family: 'electrolize';
+	/* font-family: var(--font-name); */
+}
+
+h1, h2, h4, h5 {
+	font-family: 'dorsa';
+	letter-spacing: 10px;
+	color: white;
+}
+
+h3 {
+	font-family: 'electrolize';
+	font-size: 20px;
+	color: white;
+}
+
+.h-rule {
+	width: 90%;
+	height: 4px;
+	background-color: #000000;
+}
+
+.btn {
+	height: 80px;
+	width: 420px;
+	background-color: #150E32;
+	color: #CDC4F8;
+	border: solid 2px;
+	font-size: 32px;
+	font-family: 'electrolize';
+}
+
+.btn:hover {
+	background-color: #CDC4F8;
+	color: #150E32;
+	border-color: #150E32;
+}
+
+nav {
+	gap: 20px;
+}
+
+nav img {
+	max-width: 140px;
+	max-height: 140px;
+}
+
+body {
+	background-color: #0b071d;
+}
+
+.box {
+	border: solid 2px #cdc4f8;
+	border-radius: 20px;
+}
+
+#app {
+	height: 100vh;
+	max-width: 1920px;
+	max-height: 1080px;
+}
