@@ -1,5 +1,7 @@
 let lup;
 let ldown;
+let rup;
+let rdown;
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -15,15 +17,6 @@ let ballY = canvas.height / 2;
 let ballSpeed = initialBallSpeed;
 let ballVelocityX = initialBallSpeed;
 let ballVelocityY = initialBallSpeed;
-
-var leftrelativeIntersectY;
-var rightrelativeIntersectY;
-
-var normalizedRelativeIntersectionY;
-var bounceAngle;
-
-var ballVx;
-var ballVy;
 
 
 function draw() {
@@ -41,15 +34,11 @@ function draw() {
 
 }
 
-function qwe() {
-	const elemental = document.getElementById("as");
-	console.error(math.unit(180, 'deg'));
-}
 
 function IncreseBallSpeed() {
     ballSpeed += 0.6;
-    // ballVelocityX = ballVelocityX > 0 ? ballSpeed : -ballSpeed;
-    // ballVelocityY = ballVelocityY > 0 ? ballSpeed : -ballSpeed;
+    ballVelocityX = ballVelocityX > 0 ? ballSpeed : -ballSpeed;
+    ballVelocityY = ballVelocityY > 0 ? ballSpeed : -ballSpeed;
 }
 
 
@@ -57,33 +46,18 @@ function update() {
     ballX += ballVelocityX;
     ballY += ballVelocityY;
 
-
     if (ballY - ballSize < 0 || ballY + ballSize > canvas.height) 
         ballVelocityY = -ballVelocityY;
-	
-	if (ballX - ballSize < paddleWidth && ballY > leftPaddleY && ballY < leftPaddleY + paddleHeight) {
-		
-		leftrelativeIntersectY = ((paddleHeight / 10) / 2) - ((ballY - leftPaddleY) / 10);
-		
-		normalizedRelativeIntersectionY = (leftrelativeIntersectY/((paddleHeight / 10)/2));
-		bounceAngle = normalizedRelativeIntersectionY * 1.1;
-		IncreseBallSpeed();
-		ballVelocityX = ballSpeed * Math.cos(bounceAngle);
-		ballVelocityY = ballSpeed * -Math.sin(bounceAngle);
-		if (ballVelocityX < 0)
-			ballVelocityX *= -1;
-    }
-    else if (ballX + ballSize > canvas.width - paddleWidth && ballY > rightPaddleY && ballY < rightPaddleY + paddleHeight) {
-		
-		rightrelativeIntersectY = ((paddleHeight / 10) / 2) - ((ballY - rightPaddleY) / 10);
 
-		normalizedRelativeIntersectionY = (rightrelativeIntersectY/((paddleHeight / 10)/2));
-		bounceAngle = normalizedRelativeIntersectionY * 1.1;
-		IncreseBallSpeed();
-		ballVelocityX = ballSpeed * Math.cos(bounceAngle);
-		ballVelocityY = ballSpeed * -Math.sin(bounceAngle);
-		if (ballVelocityX > 0)
-			ballVelocityX *= -1;
+    if (ballX - ballSize < paddleWidth && ballY > leftPaddleY && ballY < leftPaddleY + paddleHeight) 
+    {
+        ballVelocityX = -ballVelocityX;
+        IncreseBallSpeed();
+    }
+    else if (ballX + ballSize > canvas.width - paddleWidth && ballY > rightPaddleY && ballY < rightPaddleY + paddleHeight) 
+    {
+        ballVelocityX = -ballVelocityX;
+        IncreseBallSpeed();
     }
 
     if (ballX - ballSize < 0 || ballX + ballSize > canvas.width) {
@@ -93,14 +67,6 @@ function update() {
         ballVelocityX = ballVelocityX > 0 ? -initialBallSpeed : initialBallSpeed;
         ballVelocityY = ballVelocityY > 0 ? initialBallSpeed : -initialBallSpeed;
     }
-	MoveAI()
-}
-
-function MoveAI() {
-	if (rightPaddleY + 50 < ballY)
-		rightPaddleY += paddleSpeed;
-	else if(rightPaddleY + 50 > ballY && rightPaddleY > 0)
-		rightPaddleY -= paddleSpeed;
 }
 
 function handleInput() {
@@ -114,14 +80,14 @@ function handleInput() {
                 ldown = true;
 				calculate();
                 break;
-			case 'ArrowUp':
-				lup = true;
+            case 'ArrowUp':
+                rup = true;
 				calculate();
 				break;
-			case 'ArrowDown':
-				ldown = true;
+            case 'ArrowDown':
+                rdown = true;
 				calculate();
-				break;
+                break;
         }
     });
 	document.addEventListener('keyup', (e) => {
@@ -135,11 +101,11 @@ function handleInput() {
 				calculate();
 				break;
 			case 'ArrowUp':
-				lup = false;
+				rup = false;
 				calculate();
 				break;
 			case 'ArrowDown':
-				ldown = false;
+				rdown = false;
 				calculate();
 				break;
 		}
@@ -151,10 +117,10 @@ function calculate() {
 		leftPaddleY -= paddleSpeed;
 	if (ldown == true && leftPaddleY < canvas.height - paddleHeight)
 		leftPaddleY += paddleSpeed;
-	// if (rup == true && rightPaddleY > 0)
-	// 	rightPaddleY -= paddleSpeed;
-	// if (rdown == true && rightPaddleY < canvas.height - paddleHeight)
-	// 	rightPaddleY += paddleSpeed;
+	if (rup == true && rightPaddleY > 0)
+		rightPaddleY -= paddleSpeed;
+	if (rdown == true && rightPaddleY < canvas.height - paddleHeight)
+		rightPaddleY += paddleSpeed;
 }
 
 function gameLoop() {
@@ -163,13 +129,5 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
-// function gameStart() {
-// 	if (start = 0) {
-// 		wait(3);
-// 		start = 1;
-// 	}
-// }
-
 handleInput();
-// gameStart();
 gameLoop();
