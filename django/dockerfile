@@ -1,13 +1,18 @@
 FROM python:3
 
+COPY ./django_script.sh /
+
+RUN chmod +x ./django_script.sh
+
 WORKDIR /usr/src/app
 
 RUN pip install --no-cache-dir Django
 
-RUN django-admin startproject backend .
-
-COPY . .
-
+# RUN django-admin startproject backend .
 EXPOSE 8000
+
+
+RUN /django_script.sh
+
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
