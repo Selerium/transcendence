@@ -1,7 +1,5 @@
 let lup;
 let ldown;
-let rup;
-let rdown;
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -52,9 +50,10 @@ function draw() {
 
 }
 
-
 function IncreseBallSpeed() {
 	ballSpeed += 0.6;
+	// ballVelocityX = ballVelocityX > 0 ? ballSpeed : -ballSpeed;
+	// ballVelocityY = ballVelocityY > 0 ? ballSpeed : -ballSpeed;
 }
 
 
@@ -63,6 +62,7 @@ function update() {
 	ballY += ballVelocityY;
 	timenow = (Date.now() - timepast) / 1000;
 	timepast = Date.now();
+
 
 	if (ballY - ballSize < 0 || ballY + ballSize > canvas.height) 
 		ballVelocityY = -ballVelocityY;
@@ -104,6 +104,14 @@ function update() {
 		ballVelocityY = ballVelocityY > 0 ? initialBallSpeed : -initialBallSpeed;
 	}
 	calculate();
+	MoveAI();
+}
+
+function MoveAI() {
+	if (rightPaddleY + 40 < ballY && rightPaddleY < 300)
+		rightPaddleY += (rightPaddleY + paddleSpeed) * timenow;
+	else if(rightPaddleY + 30 > ballY && rightPaddleY > 0)
+		rightPaddleY -= (rightPaddleY + paddleSpeed) * timenow;
 }
 
 function handleInput() {
@@ -116,10 +124,10 @@ function handleInput() {
 				ldown = true;
 				break;
 			case 'ArrowUp':
-				rup = true;
+				lup = true;
 				break;
 			case 'ArrowDown':
-				rdown = true;
+				ldown = true;
 				break;
 		}
 	});
@@ -132,10 +140,10 @@ function handleInput() {
 				ldown = false;
 				break;
 			case 'ArrowUp':
-				rup = false;
+				lup = false;
 				break;
 			case 'ArrowDown':
-				rdown = false;
+				ldown = false;
 				break;
 		}
 	});
@@ -146,11 +154,7 @@ function calculate() {
 		leftPaddleY -= (leftPaddleY + paddleSpeed) * timenow;
 	if (ldown == true && leftPaddleY < canvas.height - paddleHeight)
 		leftPaddleY += (leftPaddleY + paddleSpeed) * timenow;
-	if (rup == true && rightPaddleY > 0)
-		rightPaddleY -= (rightPaddleY + paddleSpeed) * timenow;
-	if (rdown == true && rightPaddleY < canvas.height - paddleHeight)
-		rightPaddleY += (rightPaddleY + paddleSpeed) * timenow;
-}
+
 	// if (lup == true && leftPaddleY > 0)
 	// 	leftPaddleY -= paddleSpeed;
 	// 	leftPaddleY -= paddleSpeed;
@@ -163,11 +167,12 @@ function calculate() {
 	// 	rightPaddleY -= paddleSpeed;
 	// if (rdown == true && rightPaddleY < canvas.height - paddleHeight)
 	// 	rightPaddleY += paddleSpeed;
-// }
+}
 
 // function sleep(ms) {
 // 	return new Promise(resolve => setTimeout(resolve, ms));
 // }
+
 
 function gameLoop() {
 	update();
