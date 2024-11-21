@@ -1,10 +1,17 @@
-version: "3.9"
+version: '3'
 
 services:
-    django:
-        container_name: django
-        build: ./django
-        ports:
-            - '8000:8000'
-        volumes:
-            - .:/app
+  web:
+    build: ./django
+    # command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - my-postgres
+
+  my-postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: mypassword
