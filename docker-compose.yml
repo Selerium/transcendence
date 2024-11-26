@@ -1,36 +1,17 @@
-version: "3.9"
+version: '3'
 
 services:
-  db:
-    image: postgres
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    networks:
-        - app
-
   web:
-    build:
-        context: ./django
-
-    command: python manage.py runserver 0.0.0.0:8000
+    build: ./django
+    # command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     volumes:
-      - .:/code
+      - .:/usr/src/app
     ports:
       - "8000:8000"
-    environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-
-    networks:
-        - app
     depends_on:
-      - db
+      - my-postgres
 
-networks:
-    app:
-        driver: bridge
+  my-postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: mypassword
