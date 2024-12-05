@@ -17,4 +17,10 @@ RUN pip install -r requirements.txt
 COPY . .
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+COPY testing.sh /
+RUN chmod a+x /testing.sh
+ENTRYPOINT [ "/testing.sh"]
+
+# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+# RUN testing.sh
