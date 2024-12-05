@@ -5,6 +5,14 @@ services:
         container_name: django
         build: ./django
         ports:
-            - '8000:8000'
+            - "8000:8000"
         volumes:
-            - .:/app
+            - .:/usr/src/app
+        depends_on:
+            - my-postgres
+    my-postgres:
+        image: postgres
+        environment:
+          - POSTGRES_USER=hello_django
+          - POSTGRES_PASSWORD=hello_django
+          - POSTGRES_DB=hello_django_dev
