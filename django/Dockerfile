@@ -2,7 +2,7 @@
 FROM python:3.11.4-slim-buster
 
 # set work directory
-WORKDIR /usr/src/app
+WORKDIR /code
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -14,12 +14,12 @@ COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
 # copy project
-COPY . .
+COPY . /code/
 EXPOSE 8000
 
-COPY testing.sh /
+# COPY testing.sh /
 RUN chmod a+x /testing.sh
-ENTRYPOINT [ "/testing.sh"]
+CMD [ "./testing.sh"]
 
 # CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 

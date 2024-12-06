@@ -1,8 +1,11 @@
 from django.urls import path
-from .views import main_view
+from . import views
 
-# app_name='pongpong'
+app_name='main_app'
+
 urlpatterns = [
-	path('home/', main_view.home, name="main"),
+	path('', views.home, name='home'),
+	path('home/', views.home, name='main'),
+	path('login/',views.login, name='login'),
 	# path("main", views.main, name="main")
 ]
