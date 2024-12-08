@@ -7,7 +7,7 @@ services:
         ports:
             - "8000:8000"
         volumes:
-            - .:/usr/src/app
+            - ./django:/code
         depends_on:
             - my-postgres
     my-postgres:
