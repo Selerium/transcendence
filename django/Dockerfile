@@ -9,8 +9,10 @@ WORKDIR /code
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+RUN apt-get update && apt-get install -y libpq-dev
 # install dependencies
 RUN pip install --upgrade pip
+
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
@@ -18,8 +20,8 @@ RUN pip install -r requirements.txt
 COPY . /code/
 EXPOSE 8000
 
-# COPY testing.sh /
-RUN chmod a+x /testing.sh
+COPY testing.sh /code/
+RUN chmod a+x ./testing.sh
 CMD [ "./testing.sh"]
 
 # CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': os.environ.get("SDB_NAME"),
         'USER' : os.environ.get("SDB_USER"),
         'PASSWORD': os.environ.get("SDB_PASS"),
-        'HOST': os.environ.get("SDB_HOS"),
+        'HOST': os.environ.get("SDB_HOST"),
         'PORT': os.environ.get("SDB_PORT"),
         'OPTIONS': {
         },
