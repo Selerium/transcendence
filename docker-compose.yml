@@ -8,11 +8,17 @@ services:
             - "8000:8000"
         volumes:
             - ./django:/code
+        env_file:
+            - ./.env
         depends_on:
             - my-postgres
     my-postgres:
         image: postgres
+        ports:
+            - "5432:5432"
+        env_file:
+            - ./.env
         environment:
-          - POSTGRES_USER=hello_django
-          - POSTGRES_PASSWORD=hello_django
-          - POSTGRES_DB=hello_django_dev
+            - POSTGRES_USER=${SDB_USER}
+            - POSTGRES_PASSWORD=${SDB_PASS}
+            - POSTGRES_DB=${SDB_NAME}
