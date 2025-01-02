@@ -1,62 +1,157 @@
 :root {
-	font-family: 'electrolize';
-	/* font-family: var(--font-name); */
+  font-family: "electrolize";
+  /* font-family: var(--font-name); */
 }
 
-h1, h2, h4, h5 {
-	font-family: 'dorsa';
-	letter-spacing: 10px;
-	color: white;
+.text-white {
+  color: white;
+}
+
+textarea {
+  resize: none;
+}
+
+h1,
+h2,
+h4,
+h5 {
+  font-family: "dorsa";
+  letter-spacing: 1rem;
+  color: white;
+  margin: 0;
 }
 
 h3 {
-	font-family: 'electrolize';
-	font-size: 20px;
-	color: white;
+  font-family: "electrolize";
+  font-size: 20px;
+  color: white;
+}
+
+p {
+  font-family: "electrolize";
+  color: white;
+  margin: 0;
 }
 
 .h-rule {
-	width: 90%;
-	height: 4px;
-	background-color: #000000;
+  width: 90%;
+  height: 4px;
+  background-color: #000000;
 }
 
 .btn {
-	height: 80px;
-	width: 420px;
-	background-color: #150E32;
-	color: #CDC4F8;
-	border: solid 2px;
-	font-size: 32px;
-	font-family: 'electrolize';
+  height: 80px;
+  width: 420px;
+  background-color: #150e32;
+  color: #cdc4f8;
+  border: solid 2px;
+  font-size: 32px;
+  font-family: "electrolize";
 }
 
 .btn:hover {
-	background-color: #CDC4F8;
-	color: #150E32;
-	border-color: #150E32;
+  background-color: #cdc4f8;
+  color: #150e32;
+  border-color: #150e32;
 }
 
 nav {
-	gap: 20px;
-}
-
-nav img {
-	max-width: 140px;
-	max-height: 140px;
+  gap: 20px;
+  img {
+    max-width: 140px;
+    max-height: 140px;
+  }
 }
 
 body {
-	background-color: #0b071d;
+  background-color: var(--secondary);
 }
 
 .box {
-	border: solid 2px #cdc4f8;
-	border-radius: 20px;
+  background-color: #150e32;
+  border: solid 2px #cdc4f875;
+  border-radius: 20px;
+}
+
+.inner-box {
+  background-color: var(--secondary);
 }
 
 #app {
-	height: 100vh;
-	max-width: 1920px;
-	max-height: 1080px;
+  height: 100vh;
+  max-width: 1920px;
+  max-height: 1080px;
+}
+
+ion-icon {
+  width: 28px;
+  height: 28px;
+  color: white;
+}
+
+.h-fit {
+  height: fit-content;
+}
+
+.w-fit {
+  width: fit-content;
+}
+
+.user-metric-value {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.dorsa {
+	font-family: 'dorsa';
+}
+
+.electrolize {
+	font-family: 'electrolize';
+}
+
+.spacing-normal {
+	letter-spacing: normal;
+}
+
+.tag {
+	border-radius: 8px;
+	background-color: #2B5E42;
+	padding: 4px;
+
+	p {
+		margin: 0;
+	}
+}
+
+.win-box, .loss-box {
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.win-box {
+  background-color: var(--win-color);
+}
+
+.loss-box {
+  background-color: var(--loss-color);
+}
+
+.fixed-width {
+  width: 250px;
+}
+
+.friend-message {
+  padding-right: 50%;
+}
+
+.my-message {
+  padding-left: 50%;
+  img {
+    order: 2;
+  }
+
+  p {
+    order: 1;
+  }
 }
