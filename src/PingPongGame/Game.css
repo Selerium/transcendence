@@ -26,4 +26,8 @@
 #threeCanvas {
     position: absolute;
     border: none
+    }
+canvas {
+    border: 7px solid #ffffff;
+    /* border-radius: 20px; */
 }
