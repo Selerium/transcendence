@@ -50,7 +50,6 @@ var pointleft = 0;
 var pointright = 0;
 
 function draw() {
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBackground();
 
@@ -194,6 +193,7 @@ function update() {
         checkWinner();
         ResetBall();
     }
+    calculate();
 }
 
 function ResetBall() {
@@ -325,7 +325,7 @@ function gameLoop()
 
 export function startGame() {
     handleInput();
-    aiControlInterval=setInterval(ai_control_paddle, aiUpdateInterval);
+    // aiControlInterval=setInterval(ai_control_paddle, aiUpdateInterval);
     gameLoop();
 
 }
