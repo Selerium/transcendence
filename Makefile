@@ -1,16 +1,16 @@
 
 # NAME = transcendence
 
-DOCKER_COMPOSE = docker-compose -f docker-compose.yml 
+DOCKER_COMPOSE = docker-compose 
 
 
-$(NAME) : build up
+$(NAME) : up
 
 all: 
 	$(NAME)
 
-build: 
-	$(DOCKER_COMPOSE) build
+# build: 
+# 	$(DOCKER_COMPOSE) build
 
 up: 
 	$(DOCKER_COMPOSE) up -d --build
