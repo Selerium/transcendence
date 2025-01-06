@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,8 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
+env = environ.Env()
+environ.Env.read_env()
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-yihfhbv+j#9j$u+xht(0h-@b!+wt!3r917m_uiu0ok@g*zm_b%'
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -77,11 +81,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get("SDB_NAME"),
-        'USER' : os.environ.get("SDB_USER"),
-        'PASSWORD': os.environ.get("SDB_PASS"),
-        'HOST': os.environ.get("SDB_HOST"),
-        'PORT': os.environ.get("SDB_PORT"),
+        'NAME': env("SDB_NAME"),
+        'USER' : env("SDB_USER"),
+        'PASSWORD': env("SDB_PASS"),
+        'HOST': env("SDB_HOST"),
+        'PORT': env("SDB_PORT"),
         'OPTIONS': {
         },
 
