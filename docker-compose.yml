@@ -6,6 +6,8 @@ services:
         build: ./django
         ports:
             - "8000:8000"
+        networks:
+            - backend
         volumes:
             - ./django:/code
         env_file:
@@ -13,12 +15,21 @@ services:
         depends_on:
             - my-postgres
     my-postgres:
+        container_name: postgres
         image: postgres
         ports:
             - "5432:5432"
+        networks:
+            - backend
         env_file:
             - ./.env
         environment:
             - POSTGRES_USER=${SDB_USER}
             - POSTGRES_PASSWORD=${SDB_PASS}
             - POSTGRES_DB=${SDB_NAME}
+        volumes:
+            - postgres_db:/var/lib/postgresql/data/
+volumes:
+        postgres_db:
+networks:
+        backend:
