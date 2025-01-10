@@ -1,20 +1,36 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
-class User(models.Model):
+# class User(AbstractUser):
+#     STATUS_CHOICE = [
+#         (0, 'Offline'),
+#         (1, 'Online'),
+#         (2, 'In Game'),
+#     ]
+#     user_id = models.AutoField(primary_key=True, )  # Primary Key
+#     username = models.CharField(max_length=255, unique=True)  # Unique Username
+#     first_name = models.CharField(max_length=255)
+#     last_name = models.CharField(max_length=255)
+#     email = models.CharField(max_length=255, unique=True, null=False, default="")
+#     profile_pic = models.URLField(blank=True, null=True, default="")  # Default profile picture URL
+#     matches_won = models.PositiveIntegerField(default=0)  # Match wins, default to 0
+#     tournaments_won = models.PositiveIntegerField(default=0)  # Tournament wins, default to 0
+#     status = models.SmallIntegerField(choices=STATUS_CHOICE,default=0)
+
+#     def __str__(self):
+#         return self.username
+
+class User(AbstractUser):
     STATUS_CHOICE = [
         (0, 'Offline'),
         (1, 'Online'),
         (2, 'In Game'),
     ]
-    user_id = models.AutoField(primary_key=True, )  # Primary Key
-    username = models.CharField(max_length=255, unique=True)  # Unique Username
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    email = models.CharField(max_length=255, unique=True, null=False, default="")
-    profile_pic = models.URLField(blank=True, null=True, default="")  # Default profile picture URL
-    matches_won = models.PositiveIntegerField(default=0)  # Match wins, default to 0
-    tournaments_won = models.PositiveIntegerField(default=0)  # Tournament wins, default to 0
-    status = models.SmallIntegerField(choices=STATUS_CHOICE,default=0)
+    profile_pic = models.URLField(blank=True, null=True, default="")
+    matches_won = models.PositiveIntegerField(default=0)
+    tournaments_won = models.PositiveIntegerField(default=0)
+    status = models.SmallIntegerField(choices=STATUS_CHOICE, default=0)
+
 
     def __str__(self):
         return self.username
