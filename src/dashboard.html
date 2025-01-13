@@ -1,0 +1,71 @@
+<!-- title component -->
+<div class="d-flex w-100 align-items-center justify-content-between">
+  <h1 id="heading">DASHBOARD</h1>
+  <div class="streak-counter box p-2">
+    <h3 class="m-0">play streak: 0🔥</h3>
+  </div>
+</div>
+<!-- quick select component -->
+<div
+  class="quick-select h-25 d-flex w-100 align-items-center justify-content-between gap-3"
+>
+  <div
+    class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center"
+  >
+    <img src="styles/images/1v1.png" />
+    <h3>1V1 PONG</h3>
+  </div>
+  <div
+    class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center"
+  >
+    <img src="styles/images/tournament.png" />
+    <h3>TOURNAMENT</h3>
+  </div>
+  <div
+    class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center"
+  >
+    <img src="styles/images/2v2.png" />
+    <h3>2V2 PONG</h3>
+  </div>
+</div>
+<!-- recent achievements and match history components -->
+<div
+  class="flex-grow-1 metrics w-100 d-flex align-items-center justify-content-between gap-3"
+>
+  <div
+    class="h-100 box flex-fill d-flex flex-column align-items-start justify-content-center"
+  >
+    <div class="d-flex w-100 p-4 justify-content-between align-items-start">
+      <h3 class="m-0">RECENT ACHIEVEMENTS</h3>
+      <ion-icon name="chevron-forward"></ion-icon>
+    </div>
+    <div
+      class="d-flex flex-column justify-content-center align-items-center flex-grow-1 w-100 p-4"
+    >
+      <ion-icon
+        style="height: 64px; width: 64px; color: var(--accent)"
+        name="warning"
+      ></ion-icon>
+      <h3>no data to show!</h3>
+      <p>if you're seeing this - play some more games :)</p>
+    </div>
+  </div>
+  <div
+    class="h-100 box flex-fill d-flex flex-column align-items-start justify-content-center"
+  >
+    <div class="d-flex w-100 p-4 justify-content-between align-items-start">
+      <h3 class="m-0">MATCH HISTORY</h3>
+      <ion-icon name="chevron-forward"></ion-icon>
+    </div>
+    <div
+      class="d-flex flex-column justify-content-center align-items-center flex-grow-1 w-100 p-4"
+    >
+      <ion-icon
+        style="height: 64px; width: 64px; color: var(--accent)"
+        name="warning"
+      ></ion-icon>
+      <h3>no data to show!</h3>
+      <p>if you're seeing this - play some more games :)</p>
+    </div>
+  </div>
+</div>

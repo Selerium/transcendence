@@ -9,3 +9,7 @@
 	src:
 		url("/styles/fonts/electrolize/electrolize.ttf");
 }
+
+h1 {
+	font-size: 96px;
+}
