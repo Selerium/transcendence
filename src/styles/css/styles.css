@@ -1,6 +1,26 @@
 :root {
   font-family: "electrolize";
-  /* font-family: var(--font-name); */
+  -webkit-transition: all 300ms ease;
+  -moz-transition: all 300ms ease;
+  -ms-transition: all 300ms ease;
+  -o-transition: all 300ms ease;
+  transition: all 300ms ease;
+}
+
+#main {
+  transform-origin: center center;
+
+  /* -webkit-transition: opacity 150ms ease;
+  -moz-transition: opacity 150ms ease;
+  -ms-transition: opacity 150ms ease;
+  -o-transition: opacity 150ms ease;
+  transition: opacity 150ms ease; */
+
+  -webkit-transition: all 300ms ease;
+  -moz-transition: all 300ms ease;
+  -ms-transition: all 300ms ease;
+  -o-transition: all 300ms ease;
+  transition: all 300ms ease;
 }
 
 .text-white {
@@ -9,6 +29,10 @@
 
 textarea {
   resize: none;
+}
+
+h1 {
+  text-transform: uppercase;
 }
 
 h1,
@@ -21,10 +45,16 @@ h5 {
   margin: 0;
 }
 
-h3 {
+h3,
+a {
   font-family: "electrolize";
   font-size: 20px;
   color: white;
+  text-decoration: none;
+}
+
+a {
+  cursor: pointer;
 }
 
 p {
@@ -42,17 +72,17 @@ p {
 .btn {
   height: 80px;
   width: 420px;
-  background-color: #150e32;
-  color: #cdc4f8;
+  background-color: var(--primary);
+  color: var(--accent);
   border: solid 2px;
   font-size: 32px;
   font-family: "electrolize";
 }
 
 .btn:hover {
-  background-color: #cdc4f8;
-  color: #150e32;
-  border-color: #150e32;
+  background-color: var(--accent);
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 nav {
@@ -68,8 +98,8 @@ body {
 }
 
 .box {
-  background-color: #150e32;
-  border: solid 2px #cdc4f875;
+  background-color: var(--primary);
+  border: solid 2px var(--border);
   border-radius: 20px;
 }
 
@@ -81,6 +111,7 @@ body {
   height: 100vh;
   max-width: 1920px;
   max-height: 1080px;
+  overflow: hidden;
 }
 
 ion-icon {
@@ -103,28 +134,29 @@ ion-icon {
 }
 
 .dorsa {
-	font-family: 'dorsa';
+  font-family: "dorsa";
 }
 
 .electrolize {
-	font-family: 'electrolize';
+  font-family: "electrolize";
 }
 
 .spacing-normal {
-	letter-spacing: normal;
+  letter-spacing: normal;
 }
 
 .tag {
-	border-radius: 8px;
-	background-color: #2B5E42;
-	padding: 4px;
+  border-radius: 8px;
+  background-color: var(--win-color);
+  padding: 4px;
 
-	p {
-		margin: 0;
-	}
+  p {
+    margin: 0;
+  }
 }
 
-.win-box, .loss-box {
+.win-box,
+.loss-box {
   border-radius: 8px;
   padding: 8px;
 }

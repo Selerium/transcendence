@@ -1,8 +1,21 @@
 @property --primary {
 	syntax: "<color>";
 	inherits: false;
+	initial-value: #150E32;
+}
+
+@property --accent {
+	syntax: "<color>";
+	inherits: false;
 	initial-value: #CDC4F8;
 }
+
+@property --border {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: #CDC4F875;
+}
+
 
 @property --secondary {
 	syntax: "<color>";
