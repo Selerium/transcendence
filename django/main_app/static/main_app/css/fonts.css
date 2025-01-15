@@ -1,0 +1,15 @@
+@font-face {
+	font-family: "dorsa";
+	src:
+		url("/styles/fonts/dorsa/dorsa.ttf");
+}
+
+@font-face {
+	font-family: "electrolize";
+	src:
+		url("/styles/fonts/electrolize/electrolize.ttf");
+}
+
+h1 {
+	font-size: 96px;
+}
