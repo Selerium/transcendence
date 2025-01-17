@@ -34,9 +34,9 @@ def login(request):
                 if user.check_password(password):
                     return JsonResponse({"message":"Success","chaimae":"https://www.google.ae"}, status=200)
                 else:
-                    return HttpResponse("Error: Invalid password.", status=401)
+                    return JsonResponse({"message":"Wrong User or Password","chaimae":"https://www.google.ae"}, status=200)
             else:
-                return HttpResponse("Error: Invalid username or password.", status=401)
+                return JsonResponse({"message":"Wrong User or Password","chaimae":"https://www.google.ae"}, status=200)
         except json.JSONDecodeError:
             return HttpResponse("Error: Invalid JSON data.", status=400)
         except Exception as e:
