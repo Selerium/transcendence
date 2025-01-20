@@ -2,11 +2,138 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>LOGIN INTRA TEST</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            background-color: #f4f4f9;
+        }
+
+        .form-container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #4cae4c;
+        }
+
+        .extra-buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .extra-buttons a {
+            text-decoration: none;
+            margin: 5px;
+        }
+
+        .extra-buttons a button {
+            width: auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .extra-buttons a button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-<a href="http://127.0.0.1:8000/redirect_intra/">
-  <button>CLICK ME TO TEST</button>
-</a>
+<div class="form-container">
+    <h2>Login</h2>
+    <form id="login-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" placeholder="Enter your username" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+        <button type="button" id="login-button">Login</button>
+    </form>
+    <div class="extra-buttons">
+        <a href="http://127.0.0.1:8000/redirect_intra/">
+            <button type="button">Login with Intra</button>
+        </a>
+        <a href="http://127.0.0.1:8000/register/">
+            <button type="button">Register</button>
+        </a>
+    </div>
+</div>
+
+<script>
+    document.getElementById('login-button').addEventListener('click', function () {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Basic validation
+        if (!username || !password) {
+            alert('Please fill in both username and password.');
+            return;
+        }
+
+        fetch('http://127.0.0.1:8000/login_user/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Handle non-OK responses
+                    throw new Error('Error: Invalid credentials or server error.');
+                }
+                // Parse the JSON response
+                return response.json();
+            })
+            .then(data => {
+                // Access the parsed JSON data
+                console.log(data); // Logs "Success"
+                alert('Success! ' + data.message);
+                // window.location.href = data.chaimae;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error: Unable to process the request.');
+            });
+    });
+</script>
 </body>
 </html>
