@@ -6,6 +6,7 @@ Transcendence is the final project in the 42 Common Core program. The project is
 
 You can run the project using `make` in the root directory of the project (Docker Engine must be running).
 Running `make down` will stop the containers.
+Access the website on `localhost:8080`
 
 ## Architecture
 
