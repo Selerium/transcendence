@@ -1,0 +1,5 @@
+# *.sh
+django/app/*/__pycache__/
+django/app/*/*/__pycache__/
+
+postgres/data
