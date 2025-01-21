@@ -23,6 +23,12 @@
 	initial-value: #0b071d;
 }
 
+@property --selected {
+	syntax: "<color>";
+	inherits: false;
+	initial-value: #4e427f;
+}
+
 @property --win-color {
 	syntax: "<color>";
 	inherits: false;

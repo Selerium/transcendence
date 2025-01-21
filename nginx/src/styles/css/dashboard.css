@@ -1,3 +1,28 @@
 .select-box {
 	/* min-height: 250px; */
 }
+
+.clickable, .link {
+	transition: 150ms ease;
+	cursor: pointer;
+}
+
+.clickable:hover {
+	transform: scale(1.01);
+	background-color: var(--selected);
+}
+
+.clickable:active {
+	transform: scale(1.01);
+	background-color: rgba(0, 0, 0, 0);
+}
+
+.link:hover {
+	transform: scale(1.01);
+	color: var(--accent);
+}
+
+.link:active {
+	transform: scale(1.01);
+	color: black;
+}

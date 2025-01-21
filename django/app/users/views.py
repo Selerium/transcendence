@@ -10,7 +10,6 @@ from .models import User
 ERROR400 = Response(data={'success': False, 'message': 'Invalid fields'}, status=status.HTTP_400_BAD_REQUEST)
 ERROR404 = Response(data={'success': False, 'message': 'Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
-
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def users(request, id=None):
     if (request.method == 'GET'):
