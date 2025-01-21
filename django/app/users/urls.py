@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+# paths that are appended on to the url that matched earlier
+	# example: "/api/users/" is appended with "" and "{id}" below
 urlpatterns = [
 	path("", views.users, name="all-users-info"),
 	path("<int:id>", views.users, name="user-id-info"),

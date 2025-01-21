@@ -19,6 +19,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+# give path to find specific API view
+    # example: path('api/app-name/', include("app-name.urls")),
 urlpatterns = [
     path('api/users/', include("users.urls")),
     path('admin/', admin.site.urls),
