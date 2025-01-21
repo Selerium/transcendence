@@ -12,6 +12,6 @@ RUN python manage.py startapp api
 
 # COPY settings.py backend/settings.py
 
-# CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi"]
+CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
+# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi"]
 # CMD ["tail", "-f"]

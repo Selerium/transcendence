@@ -8,9 +8,19 @@ routes = {
   "/": "/dashboard.html",
 };
 
+navbarIds = {
+  "/achievements": "nav-achievements",
+  "/dashboard": "nav-dashboard",
+  "/friends": "nav-friends",
+  "/leaderboards": "nav-leaderboards",
+  "/profile": "nav-profile",
+};
+
 // to write the 404 condition here
 async function changeRoute() {
   let path = window.location.pathname;
+
+
   if (routes[path] == undefined)
     path = '/404' ;
 
@@ -27,6 +37,18 @@ async function changeRoute() {
     main.style.opacity = 1;
     main.style.filter = "";
   }, 200);
+
+  // resetting the navbar link colors and font weight
+  let list = document.getElementsByClassName("link");
+  for (let i = 0; i < list.length; i++) {
+    list[i].style.fontWeight = "normal";
+    list[i].style.color = "var(--border)";
+  };
+
+  // setting the active link color and font weight
+  const navElement = document.getElementById(navbarIds[path]);
+  navElement.style.fontWeight = "bold";
+  navElement.style.color = "white";
 }
 
 window.addEventListener("click", (e) => {

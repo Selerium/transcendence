@@ -12,6 +12,7 @@ class User(models.Model):
     username = models.CharField(max_length=20, unique=True)
     profile_pic = models.URLField(blank=True, null=True)
     status = models.SmallIntegerField(choices=STATUS_CHOICE, default=0)
+    deleted = models.BooleanField(null=False, default=False)
 
     def __str__(self):
         return self.username
