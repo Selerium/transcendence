@@ -11,6 +11,7 @@ routes = {
 navbarIds = {
   "/achievements": "nav-achievements",
   "/dashboard": "nav-dashboard",
+  "/": "nav-dashboard",
   "/friends": "nav-friends",
   "/leaderboards": "nav-leaderboards",
   "/profile": "nav-profile",

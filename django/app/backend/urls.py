@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 
 # give path to find specific API view
     # example: path('api/app-name/', include("app-name.urls")),
+	# remember we are ONLY USING FUNCTION-BASED VIEWS, NOT CLASS-BASED
 urlpatterns = [
     path('api/users/', include("users.urls")),
     path('admin/', admin.site.urls),
