@@ -11,12 +11,11 @@
   class="box quick-select p-4 h-fit d-flex w-100 align-items-center justify-content-between gap-3"
 >
   <div class="d-flex w-50 h-fit gap-4">
-    <img src="styles/images/profile-pic-sample.png" width="128" height="128" />
+    <img src="styles/images/profile-pic-sample.png" width="128" height="128" id="profile-image" style="object-fit: cover;" />
     <div class="profile-info-user d-flex flex-column justify-content-center">
-      <h2 class="electrolize spacing-normal">JADITHYA</h2>
+      <h2 class="electrolize spacing-normal uppercase" id="profile-username">loading...</h2>
       <div class="d-flex gap-2">
-        <div class="tag w-fit win-box"><p>STUDENT</p></div>
-        <div class="tag w-fit loss-box"><p>STAFF</p></div>
+        <div class="tag w-fit win-box uppercase text-white" id="profile-role"><p>loading...</p></div>
       </div>
     </div>
   </div>
@@ -43,7 +42,7 @@
 </div>
 
 <!-- profile achievements banner -->
-<div class="d-flex flex-wrap w-100 gap-4 h-fit">
+<div class="d-flex flex-wrap w-100 gap-4 h-fit" style="row-gap: 0.5rem !important;">
   <h3 class="w-100">RECENT ACHIEVEMENTS</h3>
   <div class="d-flex box flex-grow-1 justify-content-center align-items-center">
     <img

@@ -1,8 +1,10 @@
 .login-title {
 	display: grid;
 	align-items: center;
+	padding: 0;
 
 	h1, h2 {
+		width: 100%;
 		font-weight: 200;
 		text-align: center;
 		vertical-align: middle;
@@ -11,12 +13,37 @@
 	}
 
 	h1 {
-		font-size: 420px;
+		font-size: clamp(16px, 20vw, 420px);
 		color: #CDC4F8;
 		z-index: 2;
 	}
 	
 	h2 {
-		font-size: 410px;
+		font-size: clamp(14px, 19.5vw, 410px);
+	}
+}
+
+.login-button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+button .tooltip {
+	opacity: 0;
+	transform: translateY(-60px);
+	position: absolute;
+	z-index: 1000;
+	color: white;
+	border-radius: 4px;
+	background-color: var(--primary);
+	border: solid var(--border) 2px;
+	padding: 4px 8px;
+}
+
+button:hover {
+	.tooltip {
+		opacity: 1;
+		color: white;
 	}
 }

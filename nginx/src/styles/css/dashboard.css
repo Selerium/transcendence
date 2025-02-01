@@ -2,13 +2,20 @@
 	/* min-height: 250px; */
 }
 
+.hyper-button {
+	color: black;
+	border: solid 1px var(--border);
+	border-radius: 8px;
+	background-color: var(--accent);
+}
+
 .clickable, .link {
 	transition: 150ms ease;
 	cursor: pointer;
 }
 
 .clickable:hover {
-	transform: scale(1.01);
+	/* transform: scale(1.01); */
 	background-color: var(--selected);
 }
 
@@ -19,7 +26,7 @@
 
 .link:hover {
 	transform: scale(1.01);
-	color: var(--accent);
+	color: var(--accent) !important;
 }
 
 .link:active {
