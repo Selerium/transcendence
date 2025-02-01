@@ -1,4 +1,3 @@
-version: "3.8"
 name: transcendence
 
 networks:
@@ -18,6 +17,11 @@ services:
       networks:
           - trans_network
       restart: on-failure
+      healthcheck:
+        test: ["CMD", "pg_isready", "-U", "postgres"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
 
     backend:
       container_name: trans_backend
@@ -29,7 +33,10 @@ services:
       networks:
         - trans_network
       depends_on:
-        - database
+        database:
+          condition: service_healthy
+      command: ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+      # command: ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && python gunicorn --bind 0.0.0.0:8000 backend.wsgi"]
       restart: on-failure
 
     frontend:

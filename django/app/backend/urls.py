@@ -18,17 +18,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+import oauth
 
 # give path to find specific API view
     # example: path('api/app-name/', include("app-name.urls")),
 	# remember we are ONLY USING FUNCTION-BASED VIEWS, NOT CLASS-BASED
 urlpatterns = [
     path('api/users/', include("users.urls")),
+    path('api/friends/', include("friends.urls")),
+    path('api/oauth/', include("oauth.urls")),
+    path('api/me/', include("me.urls")),
+    path('intra_callback/', oauth.views.intra_callback),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-# {
-#     "username": "test1",
-#     "profile_pic": "",
-#     "status": 1
-# }

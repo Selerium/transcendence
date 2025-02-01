@@ -16,6 +16,7 @@ import mimetypes
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+JWT_SECRET = 'you-shouldnt-be-looking-at-this-if-youre-not-django-himself-so-move-along-now-also-keep-swimming-also-free-palestine'
 
 mimetypes.add_type("text/css",".css",True)
 mimetypes.add_type("text/javascript",".js",True)
@@ -48,7 +49,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'users',
+    'friends',
+    'oauth',
+    'me',
     'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [

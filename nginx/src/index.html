@@ -31,13 +31,14 @@
       <div class="row h-100 p-3 gap-3">
         <!-- side nav bar component -->
         <nav class="box navbar flex-column col-2 h-100 justify-content-start">
-          <img class="my-4" src="styles/images/profile-pic-sample.png" />
-          <a id="nav-profile" class="link" href="/profile">username</a>
+          <img id="nav-image" width="128" height="128" class="my-4" src="styles/images/profile-pic-sample.png" style="object-fit: cover; border-radius: 64px;" />
+          <a id="nav-profile" class="link" href="/profile">loading...</a>
           <div class="h-rule"></div>
           <a id="nav-dashboard" class="link" href="/dashboard">dashboard</a>
           <a id="nav-leaderboards" class="link" href="/leaderboards">leaderboards</a>
           <a id="nav-achievements" class="link" href="/achievements">achievements</a>
           <a id="nav-friends" class="link" href="/friends">friends & chat</a>
+          <button class="link electrolize">logout</button>
         </nav>
 
         <!-- component for everything else -->
@@ -63,15 +64,7 @@
 
     <!-- router script -->
     <script src="scripts/router.js"></script>
-
-    <!-- ionicons (needs to be swapped w just plain svgs due to project requirements) -->
-    <script
-      type="module"
-      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
-    ></script>
-    <script
-      nomodule
-      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
-    ></script>
+    <!-- script to add info to template files -->
+    <script src="scripts/app.js"></script>
   </body>
 </html>

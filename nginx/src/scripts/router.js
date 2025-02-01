@@ -5,7 +5,9 @@ routes = {
   "/leaderboards": "/leaderboards.html",
   "/profile": "/profile.html",
   "/404": "/404.html",
+  "/login": "/login.html",
   "/": "/dashboard.html",
+  "/not-allowed": "/not-allowed.html",
 };
 
 navbarIds = {
@@ -20,14 +22,31 @@ navbarIds = {
 // to write the 404 condition here
 async function changeRoute() {
   let path = window.location.pathname;
+  const app = document.getElementById("app");
 
+  console.log("checking");
+  if (!(await checkLogin())) {
+    console.log("failed auth");
+    const html = await fetch(routes["/login"]).then((response) =>
+      response.text()
+    );
+    app.style.opacity = 0;
+    app.style.filter = "blur(16px)";
+    app.innerHTML = html;
 
-  if (routes[path] == undefined)
-    path = '/404' ;
+    setTimeout(() => {
+      app.style.opacity = 1;
+      app.style.filter = "";
+    }, 200);
+    return;
+  }
+  console.log("passed auth");
 
-  const main = document.getElementById("main");
+  if (routes[path] == undefined) path = "/404";
+
   const html = await fetch(routes[path]).then((response) => response.text());
 
+  const main = document.getElementById("main");
   main.style.transform = "translateX(25%)";
   main.style.opacity = 0;
   main.style.filter = "blur(16px)";
@@ -44,33 +63,48 @@ async function changeRoute() {
   for (let i = 0; i < list.length; i++) {
     list[i].style.fontWeight = "normal";
     list[i].style.color = "var(--border)";
-  };
+  }
 
   // setting the active link color and font weight
   const navElement = document.getElementById(navbarIds[path]);
   navElement.style.fontWeight = "bold";
-  navElement.style.color = "white";
+  navElement.style.color = "var(--accent)";
+
+  fillData(path);
 }
 
 window.addEventListener("click", (e) => {
-  e.preventDefault();
-  if (e.target.tagName != "A") return;
+  if (e.target.getAttribute("href") != "/api/oauth") {
+    e.preventDefault();
+    if (e.target.tagName != "A") return;
 
-  window.history.pushState({}, "", e.target.getAttribute("href"));
-  changeRoute(e.target.getAttribute("href"));
+    window.history.pushState({}, "", e.target.getAttribute("href"));
+    changeRoute(e.target.getAttribute("href"));
+  }
 });
 
-function checkLogin() {
+async function checkLogin() {
+  let response = await testApi();
   // if authenticated, go to "/dashboard"
   // else, go to "/login"
+  console.log(response);
+  console.log(response['success']);
+  return (response['success']);
+}
+
+async function testApi(params) {
+  let info = await fetch("http://localhost:8080/api/users", {
+    method: "GET",
+    credentials: "include",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+  return info;
 }
 
 window.onpopstate = changeRoute();
 changeRoute();
-
-async function testApi(params) {
-  const info = await fetch('http://localhost:8080/api/users', {}).then(response => response.json()).catch(err => err);
-  console.log(info);
-}
-
-testApi();

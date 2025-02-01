@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class User(models.Model):
@@ -9,10 +8,17 @@ class User(models.Model):
         (2, 'In Game'),
     )
 
+    ROLE_CHOICES = {
+        (0, 'Student'),
+        (1, 'Admin'),
+        (2, 'Outcast'),
+    }
+
     username = models.CharField(max_length=20, unique=True)
     profile_pic = models.URLField(blank=True, null=True)
     status = models.SmallIntegerField(choices=STATUS_CHOICE, default=0)
     deleted = models.BooleanField(null=False, default=False)
+    role = models.SmallIntegerField(choices=ROLE_CHOICES, default=0)
 
     def __str__(self):
         return self.username
@@ -53,45 +59,3 @@ class User(models.Model):
 
 #     def __str__(self):
 #         return f"{self.tour_id} Tournament Name {self.tour_name}"
-
-# class Friend(models.Model):
-#     STATUS_CHOICES = [
-#         (0, 'Inactive'),  # Friendship is declined or removed
-#         (1, 'Active'),  # Friendship is active
-#         (2, 'Pending'),  # Friendship request is pending
-#     ]
-
-#     # friend_id 
-#     user = models.ForeignKey(GameUser, related_name='user_friends', on_delete=models.CASCADE)  # Ref to users.user_id
-#     friend = models.ForeignKey(GameUser, related_name='friends_of', on_delete=models.CASCADE)  # Ref to users.user_id
-#     friend_status = models.CharField(
-#         max_length=10,
-#         choices=STATUS_CHOICES,
-#         default=0
-#     )  # Friendship status with choices
-
-#     class Meta:
-#         unique_together = ('user', 'friend')  # Composite Primary Key equivalent
-#         indexes = [
-#             models.Index(fields=['user', 'friend']),  # Index for user and friend
-#         ]
-
-#     def __str__(self):
-#         return f"{self.user.username} - {self.friend.username} ({self.get_friend_status_display()})"
-
-# class Achievement(models.Model):
-#     achievement_id = models.AutoField(primary_key=True)
-#     achievement_name = models.CharField(max_length=255, unique=True)
-
-#     def __str__(self):
-#         return f"Achievement #{self.achievement_id} : {self.achievement_name}"
-
-# class AchievementUnlocked(models.Model):
-#     achievements_ul_id = models.AutoField(primary_key=True)
-#     user_id = models.ForeignKey('GameUser', on_delete=models.CASCADE)
-#     achievement_unlocked = models.ForeignKey('Achievement', on_delete=models.CASCADE);
-
-#     def __str__(self):
-#         return f"Achievement unlocked: {self.achievement_unlocked} by {self.user_id}"
-    
-    
