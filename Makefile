@@ -1,7 +1,7 @@
 # creates the app as well any required extra folders
 start:
 	mkdir -p ${PWD}/postgres/data/
-	docker compose -f ./docker-compose.yml up -d
+	docker compose -f ./docker-compose.yml up --build -d
 
 # stop the app
 stop:
