@@ -35,8 +35,8 @@ services:
       depends_on:
         database:
           condition: service_healthy
-      # command: ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"]
-      # command: ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && python3 gunicorn --bind 0.0.0.0:8000 backend.wsgi"]
+      command: ["sh", "-c", "pip install pyjwt && python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"]
+      # command: ["sh", "-c", "pip install pyjwt && python3 manage.py makemigrations && python3 manage.py migrate && python3 gunicorn --bind 0.0.0.0:8000 backend.wsgi"]
       # command: ["tail", "-f"]
       restart: on-failure
 
