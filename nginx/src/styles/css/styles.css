@@ -7,6 +7,24 @@
   transition: all 300ms ease;
 }
 
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #00000000;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  width: 4px;
+  background: var(--accent);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--border);
+}
+
 #main {
   transform-origin: center center;
 
@@ -23,8 +41,40 @@
   transition: all 300ms ease;
 }
 
+.max-w-half {
+  max-width: 50%;
+}
+
+.scrollable {
+  overflow-y: scroll;
+}
+
 #profile-image {
   border-radius: 64px;
+}
+
+.modal-holder {
+  position: absolute;
+  top: 0;
+  z-index: -100;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal {
+  position: relative;
+  min-width: 290px;
+  max-width: 1000px;
+  min-height: 350px;
+  max-height: 750px;
+  border-radius: 20px;
+  padding: 2rem;
+  background-color: var(--primary);
 }
 
 .uppercase {
@@ -67,10 +117,29 @@ a {
   cursor: pointer;
 }
 
+.grid-2 {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 1rem;
+  overflow-y: scroll;
+  max-height: 75%;
+}
+
 .h-rule {
   width: 100%;
   height: 2px;
   background-color: var(--border);
+}
+
+.custom-border {
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--accent);
+  border-radius: 16px;
+}
+
+.min-w-half {
+  min-width: 290px;
 }
 
 .btn {
