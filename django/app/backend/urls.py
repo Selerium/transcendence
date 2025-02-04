@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/friends/', include("friends.urls")),
     path('api/oauth/', include("oauth.urls")),
     path('api/me/', include("me.urls")),
+    path('api/msgs/', include("msgs.urls")),
     path('intra_callback/', oauth.views.intra_callback),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

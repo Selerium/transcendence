@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'friends',
     'oauth',
     'me',
+    'msgs',
     'rest_framework',
     'rest_framework_simplejwt',
 ]
