@@ -5,8 +5,12 @@ WORKDIR /usr/src/app
 RUN apt-get update -y
 RUN apt-get install -y --no-install-recommends nano
 
-RUN pip install django gunicorn psycopg2-binary djangorestframework pyjwt djangorestframework-simplejwt requests
+RUN pip install django gunicorn psycopg2-binary djangorestframework requests
+
+RUN manage.py makemigrations
+RUN manage.py migrate
 
 # CMD ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"]
 # CMD ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && gunicorn --bind 0.0.0.0:8000 backend.wsgi"]
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi"]
+# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi"]
+CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
