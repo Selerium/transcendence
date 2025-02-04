@@ -54,12 +54,15 @@ def friends(request, id=None):
 			friend2=User.objects.get(id=data.get('friend')),
 			sentBy=this_user
 		)
-		checkFriend = Friend.objects.get(friend1=newFriend.friend1, friend2=newFriend.friend2)
-		if (checkFriend):
-			checkFriend.friend_status = '0'
-			checkFriend.save()
-			serializer = FriendSerializer(checkFriend)
-			return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+		try:
+			checkFriend = Friend.objects.get(friend1=newFriend.friend1, friend2=newFriend.friend2)
+			if (checkFriend):
+				checkFriend.friend_status = '0'
+				checkFriend.save()
+				serializer = FriendSerializer(checkFriend)
+				return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+		except:
+			print('no friend okay new friend')
 		print('help--------')
 		print(User.objects.get(id=this_user))
 		print(User.objects.get(id=data.get('friend')))
