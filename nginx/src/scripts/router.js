@@ -85,10 +85,6 @@ window.addEventListener("click", (e) => {
 
 async function checkLogin() {
   let response = await testApi();
-  // if authenticated, go to "/dashboard"
-  // else, go to "/login"
-  console.log(response);
-  console.log(response['success']);
   return (response['success']);
 }
 
@@ -106,5 +102,5 @@ async function testApi(params) {
   return info;
 }
 
-window.onpopstate = changeRoute();
+window.onpopstate = changeRoute;
 changeRoute();
