@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from urllib.parse import urlencode
 from users.models import User
+from users.serializers import UserSerializer
 from users.views import users
 from django.test import RequestFactory
 from django.conf import settings

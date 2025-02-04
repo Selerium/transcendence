@@ -22,7 +22,7 @@ def friends(request):
 			return ERROR403
 	except:
 		return ERROR400
-	# return all friendships
+	# return all friendshps
 	if (request.method == 'GET'):
 		serializer = FriendSerializer(Friend.objects.all(), many=True)
 		return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
