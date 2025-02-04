@@ -75,12 +75,12 @@ async function fillData(str) {
           "clickable"
         );
 
-		friendDiv.innerHTML = `
+        friendDiv.innerHTML = `
 			<img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" />
 			<p>${friend.username}</p>
 		`;
 
-		friendsHolder.appendChild(friendDiv);
+        friendsHolder.appendChild(friendDiv);
       });
     }
     console.log(friendsListInfo);
@@ -225,6 +225,62 @@ async function openModal(str) {
     return;
   }
   if (str == "send-request") {
+  }
+  if (str == "1v1") {
+    modalHeading.innerHTML = "1V1";
+
+    modalHolder.style.zIndex = 100;
+    modalHolder.style.opacity = 1;
+
+    const userContainer = document.createElement("div");
+    userContainer.classList.add(
+      "w-100",
+      "h-75",
+      "d-flex",
+      "justify-content-center",
+      "align-items-center",
+      "gap-4"
+    );
+    userContainer.innerHTML = `
+      <div onclick="openModal('1v1-player')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+        <img src="styles/images/1v1.png" />
+        <h3>1V1 PLAYER</h3>
+      </div>
+      <div onclick="openModal('1v1-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+        <img src="styles/images/1v1.png" />
+        <h3>1V1 AI</h3>
+      </div>
+    `;
+    modalInfo.appendChild(userContainer);
+    return;
+  }
+  if (str == "2v2") {
+    modalHeading.innerHTML = "2v2";
+
+    modalHolder.style.zIndex = 100;
+    modalHolder.style.opacity = 1;
+
+    const userContainer = document.createElement("div");
+    userContainer.classList.add(
+      "w-100",
+      "h-75",
+      "d-flex",
+      "justify-content-center",
+      "align-items-center",
+      "gap-4"
+    );
+    userContainer.innerHTML = `
+      <div onclick="openModal('2v2-player')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+        <img src="styles/images/2v2.png" />
+        <h3>2V2 PLAYER</h3>
+      </div>
+      <div onclick="openModal('2v2-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+        <img src="styles/images/2v2.png" />
+        <h3>2V2 AI</h3>
+      </div>
+    `;
+    modalInfo.appendChild(userContainer);
+    return;
   }
   modalHolder.style.zIndex = -100;
   modalHolder.style.opacity = 0;
