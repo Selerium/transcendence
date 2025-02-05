@@ -23,10 +23,6 @@ def match(request):
         player_one_id = request.data.get("player_one")
         player_two_id = request.data.get("player_two")
 
-
-        if not player_one_id or not player_two_id:
-            return ERROR400  
-
         player_one = get_object_or_404(User, id=player_one_id)
         player_two = get_object_or_404(User, id=player_two_id)
 
@@ -38,7 +34,7 @@ def match(request):
         )
 
         serializer = MatchSerializer(match)
-        return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
    # to update match end
     elif (request.method == 'PUT'):
             data = request.data
@@ -47,6 +43,6 @@ def match(request):
             if serializer.is_valid():
                 serializer.save()
                 return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
-            return ERROR400  # Invalid fields error
+            return ERROR400  
     else:
             return ERROR404 
