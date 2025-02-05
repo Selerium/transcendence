@@ -33,6 +33,7 @@ def users(request, id=None):
             return ERROR403
     except:
         return ERROR400
+    get_object_or_404(User, id=decoded_jwt['data']['id'])
     print('in the users api request:----')
     if (request.method == 'GET'):
         # GET all users' info

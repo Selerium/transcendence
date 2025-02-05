@@ -9,7 +9,7 @@ from users.serializers import UserSerializer
 from users.views import users
 from django.test import RequestFactory
 from django.conf import settings
-
+from users.serializers import UserSerializer
 import requests
 import jwt
 
@@ -69,9 +69,11 @@ def get_user_info(access_token, refresh_token):
                 profile_pic=profile_image,
             )
             newUser.save()
-            serializer = UserSerializer(newUser)
             print('registered')
-        return {'username': username,'profile_pic': profile_image}
+        this_user = User.objects.get(username=username)
+        serializer = UserSerializer(this_user)
+        print(serializer.data)
+        return serializer.data
     print('Error 01 Occurred in getting user info')
     return None
 

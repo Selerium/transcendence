@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'oauth',
     'me',
     'rest_framework',
-    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [

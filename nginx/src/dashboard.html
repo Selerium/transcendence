@@ -10,6 +10,7 @@
   class="quick-select h-25 d-flex w-100 align-items-center justify-content-between gap-3"
 >
   <div
+    onclick="openModal('1v1')"
     class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable"
   >
     <img src="styles/images/1v1.png" />
@@ -22,50 +23,47 @@
     <h3>TOURNAMENT</h3>
   </div>
   <div
+    onclick="openModal('2v2')"
     class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable"
   >
     <img src="styles/images/2v2.png" />
     <h3>2V2 PONG</h3>
   </div>
 </div>
-<!-- recent achievements and match history components -->
+<!-- friend requests and match history components -->
 <div
   class="flex-grow-1 metrics w-100 d-flex align-items-center justify-content-between gap-3"
 >
   <div
-    class="h-100 box flex-fill d-flex flex-column align-items-start justify-content-center clickable"
+    class="h-100 max-w-half box flex-grow-1 flex-fill d-flex flex-column gap-4 align-items-start justify-content-center p-4"
   >
-    <div class="d-flex w-100 p-4 justify-content-between align-items-center">
+    <div class="d-flex w-100 justify-content-between align-items-center">
       <h3 class="m-0">FRIEND REQUESTS</h3>
-      <a class="hyper-button p-2" href="/add-friends">add friends +</a>
+      <button
+        onclick="openModal('open-friend')"
+        class="hyper-button p-2 clickable electrolize"
+        href="/add-friends"
+      >
+        add friends +
+      </button>
     </div>
     <div
-      class="d-flex flex-column justify-content-center align-items-center flex-grow-1 w-100 p-4"
+      id="dashboard-friend-requests"
+      class="d-flex flex-column gap-2 justify-content-start align-items-center flex-grow-1 w-100"
     >
-      <ion-icon
-        style="height: 64px; width: 64px; color: var(--accent)"
-        name="warning"
-      ></ion-icon>
-      <h3>no data to show!</h3>
-      <p>if you're seeing this - play some more games :)</p>
     </div>
   </div>
   <div
-    class="h-100 box flex-fill d-flex flex-column align-items-start justify-content-center clickable"
+    class="h-100 max-w-half box flex-grow-1 flex-fill d-flex flex-column gap-4 align-items-start justify-content-center p-4"
   >
-    <div class="d-flex w-100 p-4 justify-content-between align-items-center">
+    <div class="d-flex w-100 justify-content-between align-items-center">
       <h3 class="m-0">MATCH HISTORY</h3>
-      <a class="hyper-button p-2">view more</a>
+      <a class="hyper-button p-2 clickable electrolize">view more</a>
     </div>
     <div
-      class="d-flex flex-column justify-content-center align-items-center flex-grow-1 w-100 p-4"
+      id="dashboard-match-history"
+      class="d-flex flex-column gap-2 justify-content-start align-items-center flex-grow-1 w-100"
     >
-      <ion-icon
-        style="height: 64px; width: 64px; color: var(--accent)"
-        name="warning"
-      ></ion-icon>
-      <h3>no data to show!</h3>
-      <p>if you're seeing this - play some more games :)</p>
     </div>
   </div>
 </div>

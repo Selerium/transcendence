@@ -7,6 +7,8 @@
 	border: solid 1px var(--border);
 	border-radius: 8px;
 	background-color: var(--accent);
+	width: 125px;
+	text-align: center;
 }
 
 .clickable, .link {

@@ -5,5 +5,6 @@ from . import views
 	# example: "/api/users/" is appended with "" and "{id}" below
 urlpatterns = [
 	path('', views.match, name='matches'),
+	path('\tournament', views.tournament, name=)
 
 ]

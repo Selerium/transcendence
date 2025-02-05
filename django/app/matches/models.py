@@ -5,7 +5,7 @@ from users.models import User
 # Create your models here.
 class Match(models.Model):
     match_id = models.AutoField(primary_key=True)  # Primary Key
-    player_one = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='matches_player_one')
+    player_one = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='matches_player_one')
     player_two = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='matches_player_two')
     is_ai_opponent = models.BooleanField(default=False) 
     player_one_score = models.BigIntegerField(default=0)
