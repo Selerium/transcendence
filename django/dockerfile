@@ -2,6 +2,12 @@ FROM python:3
 
 WORKDIR /usr/src/app
 
-RUN pip install --no-cache-dir Django
+RUN apt-get update -y
+RUN apt-get install -y --no-install-recommends nano
 
-RUN django-admin startproject backend .
+RUN pip install django gunicorn psycopg2-binary djangorestframework requests pyjwt
+
+CMD ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"]
+# CMD ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && gunicorn --bind 0.0.0.0:8000 backend.wsgi"]
+# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi"]
+# CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]

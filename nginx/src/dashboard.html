@@ -1,0 +1,69 @@
+<!-- title component -->
+<div class="d-flex w-100 align-items-center justify-content-between">
+  <h1 id="heading">DASHBOARD</h1>
+  <div class="streak-counter box p-2">
+    <h3 class="m-0">play streak: 0🔥</h3>
+  </div>
+</div>
+<!-- quick select component -->
+<div
+  class="quick-select h-25 d-flex w-100 align-items-center justify-content-between gap-3"
+>
+  <div
+    onclick="openModal('1v1')"
+    class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable"
+  >
+    <img src="styles/images/1v1.png" />
+    <h3>1V1 PONG</h3>
+  </div>
+  <div
+    class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable"
+  >
+    <img src="styles/images/tournament.png" />
+    <h3>TOURNAMENT</h3>
+  </div>
+  <div
+    onclick="openModal('2v2')"
+    class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable"
+  >
+    <img src="styles/images/2v2.png" />
+    <h3>2V2 PONG</h3>
+  </div>
+</div>
+<!-- friend requests and match history components -->
+<div
+  class="flex-grow-1 metrics w-100 d-flex align-items-center justify-content-between gap-3"
+>
+  <div
+    class="h-100 max-w-half box flex-grow-1 flex-fill d-flex flex-column gap-4 align-items-start justify-content-center p-4"
+  >
+    <div class="d-flex w-100 justify-content-between align-items-center">
+      <h3 class="m-0">FRIEND REQUESTS</h3>
+      <button
+        onclick="openModal('open-friend')"
+        class="hyper-button p-2 clickable electrolize"
+        href="/add-friends"
+      >
+        add friends +
+      </button>
+    </div>
+    <div
+      id="dashboard-friend-requests"
+      class="d-flex flex-column gap-2 justify-content-start align-items-center flex-grow-1 w-100"
+    >
+    </div>
+  </div>
+  <div
+    class="h-100 max-w-half box flex-grow-1 flex-fill d-flex flex-column gap-4 align-items-start justify-content-center p-4"
+  >
+    <div class="d-flex w-100 justify-content-between align-items-center">
+      <h3 class="m-0">MATCH HISTORY</h3>
+      <a class="hyper-button p-2 clickable electrolize">view more</a>
+    </div>
+    <div
+      id="dashboard-match-history"
+      class="d-flex flex-column gap-2 justify-content-start align-items-center flex-grow-1 w-100"
+    >
+    </div>
+  </div>
+</div>

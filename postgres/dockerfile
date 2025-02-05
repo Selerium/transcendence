@@ -1,1 +1,5 @@
-FROM postgres
+FROM postgres:17
+
+# installing sudo 
+RUN apt update -y --no-install-recommends
+RUN apt install -y --no-install-recommends sudo

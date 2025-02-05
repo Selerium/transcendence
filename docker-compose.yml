@@ -1,0 +1,78 @@
+name: transcendence
+
+networks:
+  trans_network:
+    name: trans_network
+
+services:
+    database:
+      container_name: trans_database
+      build: ./postgres/
+      ports:
+          - 5432:5432
+      volumes:
+          - db_data:/var/lib/postgresql/data'
+      env_file:
+          - ./postgres/.env
+      networks:
+          - trans_network
+      restart: on-failure
+      healthcheck:
+        test: ["CMD", "pg_isready", "-U", "postgres"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
+    backend:
+      container_name: trans_backend
+      build: ./django/
+      ports:
+        - 8000:8000
+      volumes:
+        - backend_data:/usr/src/app
+      networks:
+        - trans_network
+      depends_on:
+        database:
+          condition: service_healthy
+      # command: ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"]
+      # command: ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && python3 gunicorn --bind 0.0.0.0:8000 backend.wsgi"]
+      # command: ["tail", "-f"]
+      restart: on-failure
+
+    frontend:
+      container_name: trans_frontend
+      build: ./nginx/
+      ports:
+        - 8080:80
+      volumes:
+        - frontend_data:/usr/share/nginx/html
+      networks:
+        - trans_network
+      depends_on:
+        - backend
+      env_file:
+        - ./nginx/.env
+      restart: on-failure
+
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: $PWD/postgres/data
+      o: bind
+
+  backend_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: $PWD/django/app
+      o: bind
+
+  frontend_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: $PWD/nginx/src
+      o: bind

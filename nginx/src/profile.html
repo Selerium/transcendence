@@ -1,0 +1,155 @@
+<!-- title component -->
+<div class="d-flex w-100 align-items-center justify-content-between">
+  <h1 id="heading">PROFILE</h1>
+  <div class="streak-counter box p-2">
+    <h3 class="m-0">play streak: 0🔥</h3>
+  </div>
+</div>
+
+<!-- profile header -->
+<div
+  class="box quick-select p-4 h-fit d-flex w-100 align-items-center justify-content-between gap-3"
+>
+  <div class="d-flex w-50 h-fit gap-4">
+    <img src="styles/images/profile-pic-sample.png" width="128" height="128" id="profile-image" style="object-fit: cover;" />
+    <div class="profile-info-user d-flex flex-column justify-content-center">
+      <h2 class="electrolize spacing-normal uppercase" id="profile-username">loading...</h2>
+      <div class="d-flex gap-2">
+        <div class="tag w-fit win-box uppercase text-white" id="profile-role"><p>loading...</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-evenly w-50 gap-5">
+    <div
+      class="user-metric d-flex flex-column justify-content-center align-items-center"
+    >
+      <p class="user-metric-value">3</p>
+      <p>WINS</p>
+    </div>
+    <div
+      class="user-metric d-flex flex-column justify-content-center align-items-center"
+    >
+      <p class="user-metric-value">1</p>
+      <p>LOSSES</p>
+    </div>
+    <div
+      class="user-metric d-flex flex-column justify-content-center align-items-center"
+    >
+      <p class="user-metric-value">#1</p>
+      <p>RANK</p>
+    </div>
+  </div>
+</div>
+
+<!-- profile achievements banner -->
+<div class="d-flex flex-wrap w-100 gap-4 h-fit" style="row-gap: 0.5rem !important;">
+  <h3 class="w-100">RECENT ACHIEVEMENTS</h3>
+  <div class="d-flex box flex-grow-1 justify-content-center align-items-center">
+    <img
+      class="mt-2"
+      width="64"
+      height="64"
+      src="styles/images/achievement.png"
+    />
+    <h3 class="">ACHIEVEMENT TITLE</h3>
+  </div>
+  <div class="d-flex box flex-grow-1 justify-content-center align-items-center">
+    <img
+      class="mt-2"
+      width="64"
+      height="64"
+      src="styles/images/achievement.png"
+    />
+    <h3 class="">ACHIEVEMENT TITLE</h3>
+  </div>
+  <div class="d-flex box flex-grow-1 justify-content-center align-items-center">
+    <img
+      class="mt-2"
+      width="64"
+      height="64"
+      src="styles/images/achievement.png"
+    />
+    <h3 class="">ACHIEVEMENT TITLE</h3>
+  </div>
+  <div class="d-flex box flex-grow-1 justify-content-center align-items-center">
+    <img
+      class="mt-2"
+      width="64"
+      height="64"
+      src="styles/images/achievement.png"
+    />
+    <h3 class="">ACHIEVEMENT TITLE</h3>
+  </div>
+</div>
+
+<!-- stats and match history -->
+<div class="d-flex w-100 h-50">
+  <div
+    class="d-flex flex-column justify-content-center align-items-center col-6 h-100 gap-4"
+  >
+    <div class="d-flex gap-4 w-100 h-50">
+      <div
+        class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1"
+      >
+        <p class="user-metric-value fixed-width text-center">0.0</p>
+        <p class="text-center fixed-width">WIN/LOSS RATIO</p>
+      </div>
+      <div
+        class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1 me-3"
+      >
+        <p class="user-metric-value fixed-width text-center">0.0</p>
+        <p class="text-center fixed-width">ACHIEVEMENTS GAINED</p>
+      </div>
+    </div>
+    <div class="d-flex gap-4 w-100 h-50">
+      <div
+        class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1"
+      >
+        <p class="user-metric-value fixed-width text-center">0.0</p>
+        <p class="text-center fixed-width">AVERAGE GAME TIME</p>
+      </div>
+      <div
+        class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1 me-3"
+      >
+        <p class="user-metric-value fixed-width text-center">0.0</p>
+        <p class="text-center fixed-width">WIN RATE CHART</p>
+      </div>
+    </div>
+  </div>
+  <div
+    class="d-flex flex-column justify-content-start col-6 h-100 gap-2 ms-1 p-4 box"
+  >
+    <div class="d-flex justify-content-between w-100">
+      <h3>MATCH HISTORY</h3>
+      <ion-icon name="chevron-forward-sharp"></ion-icon>
+    </div>
+    <div
+      class="box inner-box d-flex justify-content-between align-items-center w-100 h-fit py-2 px-4"
+    >
+      <h3 class="">player1</h3>
+      <h3 class=" win-box">WIN/LOSS</h3>
+      <h3 class="">player2</h3>
+    </div>
+    <div
+      class="box inner-box d-flex justify-content-between align-items-center w-100 h-fit py-2 px-4"
+    >
+      <h3 class="">player1</h3>
+      <h3 class=" loss-box">WIN/LOSS</h3>
+      <h3 class="">player2</h3>
+    </div>
+    <div
+      class="box inner-box d-flex justify-content-between align-items-center w-100 h-fit py-2 px-4"
+    >
+      <h3 class="">player1</h3>
+      <h3 class=" win-box">WIN/LOSS</h3>
+      <h3 class="">player2</h3>
+    </div>
+    <div
+      class="box inner-box d-flex justify-content-between align-items-center w-100 h-fit py-2 px-4"
+    >
+      <h3 class="">player1</h3>
+      <h3 class=" loss-box">WIN/LOSS</h3>
+      <h3 class="">player2</h3>
+    </div>
+  </div>
+</div>

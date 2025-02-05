@@ -1,0 +1,37 @@
+.select-box {
+	/* min-height: 250px; */
+}
+
+.hyper-button {
+	color: black;
+	border: solid 1px var(--border);
+	border-radius: 8px;
+	background-color: var(--accent);
+	width: 125px;
+	text-align: center;
+}
+
+.clickable, .link {
+	transition: 150ms ease;
+	cursor: pointer;
+}
+
+.clickable:hover {
+	/* transform: scale(1.01); */
+	background-color: var(--selected);
+}
+
+.clickable:active {
+	transform: scale(1.01);
+	background-color: rgba(0, 0, 0, 0);
+}
+
+.link:hover {
+	transform: scale(1.01);
+	color: var(--accent) !important;
+}
+
+.link:active {
+	transform: scale(1.01);
+	color: black;
+}
