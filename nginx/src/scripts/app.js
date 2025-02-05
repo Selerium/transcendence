@@ -24,7 +24,7 @@ async function fillData(str) {
     doc_nav_image.src = image_url;
   }
   if (str == "/profile") {
-    let info = await fetch("http://localhost:8080/api/me", {
+    let meInfo = await fetch("http://localhost:8080/api/me", {
       method: "GET",
       credentials: "include",
     })
@@ -35,8 +35,8 @@ async function fillData(str) {
         return err;
       });
 
-    let username = info["data"]["username"];
-    let image_url = info["data"]["profile_pic"];
+    let username = meInfo["data"]["username"];
+    let image_url = meInfo["data"]["profile_pic"];
 
     const doc_username = document.getElementById("profile-username");
     const doc_role = document.getElementById("profile-role");
@@ -44,6 +44,54 @@ async function fillData(str) {
     doc_username.innerHTML = username;
     doc_role.innerHTML = "student";
     doc_image.src = image_url;
+
+    let achievementsInfo = await fetch(
+      "http://localhost:8080/api/achievements",
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    console.log(achievementsInfo);
+    const achievementsHolder = document.getElementById(
+      "profile-achievements-holder"
+    );
+    console.log(achievementsHolder);
+    if (achievementsInfo["data"].length > 0) {
+      achievementsInfo["data"].forEach((item, key) => {
+        if (key > 3) return;
+        const achievementDiv = document.createElement("div");
+
+        achievementDiv.classList.add(
+          "flex-grow-1",
+          "box",
+          "d-flex",
+          "justify-content-center",
+          "align-items-center",
+        );
+
+        achievementDiv.innerHTML = `
+          <img
+            width="64"
+            height="64"
+            class="mt-2"
+            src="${item["icon"]}"
+          />
+          <div class="d-flex flex-column justify-content-center align-items-start">
+            <p>${item["name"]}</p>
+          </div>
+      `;
+        achievementsHolder.appendChild(achievementDiv);
+      });
+    }
+    // what about no achievements ????
   }
   if (str == "/friends") {
     let friendsListInfo = await fetch("http://localhost:8080/api/friends", {
@@ -145,9 +193,11 @@ async function fillData(str) {
       requestsHolder.classList.remove("justify-content-start");
     }
 
+    // juju fetch request /api/matches
+
     let historyHolder = document.getElementById("dashboard-match-history");
     // if (matchHistoryInfo["data"].length > 0) {
-
+    // fill info
     // }
     // else
     {
@@ -164,6 +214,73 @@ async function fillData(str) {
       historyHolder.classList.remove("justify-content-start");
     }
     console.log(friendRequestInfo);
+  }
+  if (str == "/achievements") {
+    let achievementsInfo = await fetch(
+      "http://localhost:8080/api/achievements",
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    console.log(achievementsInfo);
+    const achievementsHolder = document.getElementById("achievements-holder");
+    console.log(achievementsHolder);
+    if (achievementsInfo["data"].length > 0) {
+      achievementsInfo["data"].forEach((item) => {
+        const achievementDivHolder = document.createElement("div");
+        const achievementDiv = document.createElement("div");
+
+        achievementDivHolder.classList.add("col-4");
+
+        achievementDiv.classList.add(
+          "flex-grow-1",
+          "m-1",
+          "p-2",
+          "h-fit",
+          "box",
+          "d-flex",
+          "justify-content-start",
+          "align-items-center",
+          "gap-4"
+        );
+
+        achievementDiv.innerHTML = `
+            <img
+              width="64"
+              height="64"
+              class="mt-2"
+              src="${item["icon"]}"
+            />
+            <div class="d-flex flex-column justify-content-center align-items-start">
+              <p>${item["name"]}</p>
+              <p class="description-text">${item["description"]}</p>
+            </div>
+        `;
+        achievementDivHolder.appendChild(achievementDiv);
+        achievementsHolder.appendChild(achievementDivHolder);
+      });
+    } else {
+      achievementsHolder.classList.toggle("justify-content-start");
+      achievementsHolder.classList.toggle("justify-content-center");
+      achievementsHolder.classList.toggle("align-items-start");
+      achievementsHolder.classList.toggle("align-items-center");
+      achievementsHolder.classList.toggle("h-fit");
+      achievementsHolder.classList.toggle("h-75");
+      achievementsHolder.classList.toggle("flex-column");
+      achievementsHolder.classList.toggle("gap-2");
+      achievementsHolder.innerHTML = `
+      <h3 class="text-center bold">accomplished...nothing?</h3>
+      <p class="text-center small">your parents must be real proud.</p>
+      `;
+    }
   }
 }
 

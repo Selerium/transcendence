@@ -1,0 +1,63 @@
+[
+	{
+		"model": "achievements.Achievement",
+		"pk": 1,
+		"fields": {
+			"name": "STARTING OUT STRONG",
+			"description": "win your first game of pong",
+			"icon": "styles/images/achievement.png"
+		}
+	},
+	{
+		"model": "achievements.Achievement",
+		"pk": 2,
+		"fields": {
+			"name": "THIS AIN'T MY FIRST RODEO",
+			"description": "play multiple games with the same person",
+			"icon": "styles/images/achievement.png"
+		}
+	},
+	{
+		"model": "achievements.Achievement",
+		"pk": 3,
+		"fields": {
+			"name": "SO...WHAT ARE WE?",
+			"description": "add a friend on the site",
+			"icon": "styles/images/achievement.png"
+		}
+	},
+	{
+		"model": "achievements.Achievement",
+		"pk": 4,
+		"fields": {
+			"name": "MOM, GRAB THE CAMERA",
+			"description": "win a tournament",
+			"icon": "styles/images/achievement.png"
+		}
+	},
+	{
+		"model": "achievements.Achievement",
+		"pk": 5,
+		"fields": {
+			"name": "THE ROBOTS ARE TAKING OVER",
+			"description": "somehow lose to the AI",
+			"icon": "styles/images/achievement.png"
+		}
+	},
+	{
+		"model": "achievements.AchievementUnlocked",
+		"pk": 1,
+		"fields": {
+			"user_id": 1,
+			"unlocked": 1
+		}
+	},
+	{
+		"model": "achievements.AchievementUnlocked",
+		"pk": 2,
+		"fields": {
+			"user_id": 1,
+			"unlocked": 2
+		}
+	}
+]
