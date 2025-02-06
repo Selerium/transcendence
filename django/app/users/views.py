@@ -19,20 +19,16 @@ def users(request, id=None):
     try:
         user_jwt = request.COOKIES.get('jwt')
         decoded_jwt = jwt.decode(user_jwt, JWT_SECRET, algorithms=["HS256"])
-        # print('----')
-        # print(decoded_jwt)
-        # print('----')
         url = 'https://api.intra.42.fr/v2/me'
         headers = {'Authorization': f'Bearer {decoded_jwt['access']}'}
         response = requests.get(url, headers=headers)
-        # print('----')
-        # print(headers)
-        # print(response)
-        # print('----')
         if response.status_code != 200:
             return ERROR403
+        # this_user = decoded_jwt['data']['id']
     except:
         return ERROR400
+
+    get_object_or_404(User, id=decoded_jwt['data']['id'])
     print('in the users api request:----')
     if (request.method == 'GET'):
         # GET all users' info

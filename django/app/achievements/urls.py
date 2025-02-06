@@ -4,10 +4,7 @@ from . import views
 # paths that are appended on to the url that matched earlier
 	# example: "/api/users/" is appended with "" and "{id}" below
 urlpatterns = [
-	path("", views.friends, name="friends-info"),
-	path("<int:id>", views.friends, name="friend-update"),
-	path("<int:id>/delete", views.deleteFriend, name="friend-delete"),
-	path("requests", views.friendRequests, name="friend-requests-info"),
+	path("", views.achievements, name="get-user-achievements"),
 ]
 
 # '/api/friends/' - GET your friends info

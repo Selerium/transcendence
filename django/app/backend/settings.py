@@ -53,8 +53,8 @@ INSTALLED_APPS = [
     'oauth',
     'me',
     'msgs',
+    'achievements',
     'rest_framework',
-    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [

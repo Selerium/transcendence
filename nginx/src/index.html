@@ -31,18 +31,41 @@
       <div class="row h-100 p-3 gap-3">
         <!-- side nav bar component -->
         <nav class="box navbar flex-column col-2 h-100 justify-content-start">
-          <img id="nav-image" width="128" height="128" class="my-4" src="styles/images/profile-pic-sample.png" style="object-fit: cover; border-radius: 64px;" />
+          <img
+            id="nav-image"
+            width="128"
+            height="128"
+            class="my-4"
+            src="styles/images/profile-pic-sample.png"
+            style="object-fit: cover; border-radius: 64px"
+          />
           <a id="nav-profile" class="link" href="/profile">loading...</a>
           <div class="h-rule"></div>
           <a id="nav-dashboard" class="link" href="/dashboard">dashboard</a>
-          <a id="nav-leaderboards" class="link" href="/leaderboards">leaderboards</a>
-          <a id="nav-achievements" class="link" href="/achievements">achievements</a>
+          <a id="nav-leaderboards" class="link" href="/leaderboards"
+            >leaderboards</a
+          >
+          <a id="nav-achievements" class="link" href="/achievements"
+            >achievements</a
+          >
           <a id="nav-friends" class="link" href="/friends">friends & chat</a>
           <button class="link electrolize">logout</button>
         </nav>
 
         <!-- component for everything else -->
         <div id="main" class="d-flex flex-column col h-100 gap-4"></div>
+      </div>
+    </div>
+    <div
+      id="modal"
+      class="d-flex justify-content-center align-items-center modal-holder"
+      onclick="openModal('close')"
+    >
+      <div
+        id="info-modal"
+        class="modal flex-wrap d-flex gap-4 align-content-start justify-content-start align-items-start"
+      >
+        <h1 id="modal-heading" class="w-100"></h1>
       </div>
     </div>
     <!-- bootstrap scripts  -->
