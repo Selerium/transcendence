@@ -74,7 +74,7 @@ async function fillData(str) {
           "box",
           "d-flex",
           "justify-content-center",
-          "align-items-center",
+          "align-items-center"
         );
 
         achievementDiv.innerHTML = `
@@ -287,7 +287,18 @@ async function fillData(str) {
 async function openModal(str) {
   let modalHolder = document.getElementById("modal");
   let modalInfo = document.getElementById("info-modal");
-  modalInfo.innerHTML = '<h1 id="modal-heading" class="w-100"></h1>';
+  modalInfo.innerHTML = `
+        <h1 id="modal-heading" class="w-100"></h1>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="ionicon"
+          viewBox="0 0 512 512"
+          onclick="openModal('close')"
+        >
+          <path
+            d="M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"
+          />
+        </svg>`;
   let modalHeading = document.getElementById("modal-heading");
 
   if (str == "open-friend") {
@@ -363,10 +374,35 @@ async function openModal(str) {
         <img src="styles/images/1v1.png" />
         <h3>1V1 PLAYER</h3>
       </div>
-      <div onclick="openModal('1v1-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+      <div onclick="createMatch('1v1-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
         <img src="styles/images/1v1.png" />
         <h3>1V1 AI</h3>
       </div>
+    `;
+    modalInfo.appendChild(userContainer);
+    return;
+  }
+  if (str == "1v1-player") {
+    console.log("enter player 2");
+    modalHeading.innerHTML = "ENTER PLAYER NAME";
+
+    modalHolder.style.zIndex = 100;
+    modalHolder.style.opacity = 1;
+
+    const userContainer = document.createElement("div");
+    userContainer.classList.add(
+      "d-flex",
+      "flex-column",
+      "gap-4",
+      "h-75",
+      "w-100",
+      "justify-content-center",
+      "align-items-center"
+    );
+    userContainer.innerHTML = `
+    <label class="electrolize text-center">Enter player 2: </label>  
+    <input id="player2" class="electrolize" type="text" required />
+    <button onclick=createMatch('1v1-player') class="btn small-btn">PLAY</button>
     `;
     modalInfo.appendChild(userContainer);
     return;
@@ -391,13 +427,58 @@ async function openModal(str) {
         <img src="styles/images/2v2.png" />
         <h3>2V2 PLAYER</h3>
       </div>
-      <div onclick="openModal('2v2-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+      <div onclick="createMatch('2v2-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
         <img src="styles/images/2v2.png" />
         <h3>2V2 AI</h3>
       </div>
     `;
     modalInfo.appendChild(userContainer);
     return;
+  }
+  if (str == "2v2-player") {
+    modalHeading.innerHTML = "ENTER PLAYER NAME";
+
+    modalHolder.style.zIndex = 100;
+    modalHolder.style.opacity = 1;
+
+    for (let i = 2; i <= 4; i++) {
+      const userContainer = document.createElement("div");
+      userContainer.classList.add(
+        "d-flex",
+        "flex-column",
+        "h-25",
+        "gap-4",
+        "w-50",
+        "justify-content-center",
+        "align-items-center"
+      );
+      userContainer.innerHTML = `
+      <label class="electrolize text-center">Enter player ${i}: </label>  
+      <input id="player${i}" class="electrolize" type="text" required />
+      `;
+      if (i == 4) {
+        userContainer.classList.toggle("w-50");
+        userContainer.classList.toggle("w-100");
+      }
+      modalInfo.appendChild(userContainer);
+    }
+    const userButton = document.createElement("div");
+    userButton.classList.add(
+      "w-100",
+      "h-25",
+      "d-flex",
+      "justify-content-center",
+      "align-items-center"
+    );
+    userButton.innerHTML = `
+      <button onclick=createMatch('1v1-player') class="btn small-btn">PLAY</button>
+    `;
+    modalInfo.appendChild(userButton);
+    modalInfo.classList.toggle("gap-4");
+    return;
+  }
+  if (str == "tournament") {
+    
   }
   modalHolder.style.zIndex = -100;
   modalHolder.style.opacity = 0;
