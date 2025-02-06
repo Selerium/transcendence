@@ -209,7 +209,7 @@ async function fillData(str) {
       historyHolder.classList.add("justify-content-center");
       historyHolder.classList.remove("justify-content-start");
     }
-    // console.log(friendRequestInfo);
+    console.log(friendRequestInfo);
   }
 // }
 

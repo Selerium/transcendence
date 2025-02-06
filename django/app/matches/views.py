@@ -16,8 +16,6 @@ ERROR403 = Response(data={'success': False, 'message': 'Not Authenticated'}, sta
 def match(request):
 
     if request.method == 'GET':
-        # serializer = MatchSerializer(Match.objects.all(), many=True)
-        # return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
     # Retrieve le matches
         matches = Match.objects.all()
         
@@ -61,7 +59,7 @@ def match(request):
         )
 
         serializer = MatchSerializer(match)
-        return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK               )
+        return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
    # to update match end
     elif (request.method == 'PUT'):
             data = request.data
@@ -77,3 +75,36 @@ def match(request):
             return ERROR400  
     else:
             return ERROR404 
+
+@api_view(['GET'])
+def match_detail(request, match_id):
+    if request.method == 'GET':
+    # Retrieve le matches
+        try:
+            match = Match.objects.get(match_id=match_id)
+        except Match.DoesNotExist:
+            return Response(
+            {'success': False, 'message': 'Match not found'},
+            status=status.HTTP_404_NOT_FOUND
+        )     
+        match_data = {
+            'match_id': match.match_id,
+            'player_one': {
+                'id': match.player_one.id,
+                'username': match.player_one.username,
+                'profile_pic': match.player_one.profile_pic
+            },
+            'player_two': {
+                'id': match.player_two.id if match.player_two else None,
+                'username': match.player_two.username if match.player_two else "AI",
+                'profile_pic': match.player_two.profile_pic if match.player_two else None
+            },
+            'is_ai_opponent': match.is_ai_opponent,
+            'start_time': match.start_time,
+            'end_time': match.end_time,
+            'player_one_score': match.player_one_score,
+            'player_two_score': match.player_two_score
+        }
+        return Response(data={'success': True, 'data': match_data}, status=status.HTTP_200_OK)
+    
+
