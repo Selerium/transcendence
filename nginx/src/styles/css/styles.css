@@ -24,7 +24,6 @@
   border-radius: 16px;
 }
 
-
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -146,11 +145,17 @@ a {
   cursor: pointer;
 }
 
+.reverse-flex-col {
+  flex-direction: column-reverse;
+}
+
 .grid-2 {
   display: grid;
-  grid-template-columns: auto auto;
-  gap: 1rem;
+  grid-template-columns: 49% 49%;
+  column-gap: 1%;
+  row-gap: 2%;
   overflow-y: scroll;
+  overflow-x: hidden;
   max-height: 75%;
 }
 
@@ -300,5 +305,15 @@ ion-icon {
 
   p {
     order: 1;
+  }
+}
+
+.my-message, .friend-message {
+  p {
+    background-color: var(--primary);
+    border: solid 2px;
+    border-color: var(--border);
+    border-radius: 16px;
+    padding: 1rem;
   }
 }

@@ -45,7 +45,7 @@ def messages(request):
     
     if request.method == 'GET':
         try:
-            data = request.data
+            data = request.query_params
             friend2_id = data.get('friend_id')
         except:
             ERROR400
@@ -59,16 +59,23 @@ def messages(request):
         
         serializer = MessageSerializer(msgs, many=True)
         return Response({'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+
     elif request.method == 'POST':
+        data = request.data
         try:
-            data = request.data
-            reciever = data.get('receiver')
+            receiverId = data.get('receiver')
             content = data.get('content')
         except:
             ERROR400
 
+        print(data)
+        print("------")
+        print(receiverId)
+        print("------")
+        print(content)
+
         sender = User.objects.get(id=this_user)
-        receiver = get_object_or_404(User, id=reciever)
+        receiver = get_object_or_404(User, id=receiverId)
         newMsg = Message(sender=sender, receiver=receiver, content=content)
 
         try:

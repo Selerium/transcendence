@@ -1,4 +1,5 @@
 let loggedIn = false;
+let intervalId = null;
 let username;
 
 async function fillData(str) {
@@ -108,7 +109,15 @@ async function fillData(str) {
     let friendsHolder = document.getElementById("friends-friends");
     if (friendsListInfo["data"].length > 0) {
       friendsListInfo["data"].forEach((friend) => {
-        const friendDiv = document.createElement("div");
+        const friendDiv = document.createElement("button");
+        function clicked() {
+          if (intervalId != null)
+            clearInterval(intervalId);
+
+          intervalId = setInterval(() => {
+            pullChats(friend);
+          }, 1000);
+        }
 
         friendDiv.classList.add(
           "box",
@@ -124,10 +133,11 @@ async function fillData(str) {
         );
 
         friendDiv.innerHTML = `
-			<img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" />
-			<p>${friend.username}</p>
-		`;
+          <img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" />
+          <p>${friend.username}</p>
+        `;
 
+        friendDiv.onclick = clicked;
         friendsHolder.appendChild(friendDiv);
       });
     }
@@ -149,6 +159,7 @@ async function fillData(str) {
       });
 
     let requestsHolder = document.getElementById("dashboard-friend-requests");
+    requestsHolder.innerHTML = "";
     if (friendRequestInfo["data"].length > 0) {
       friendRequestInfo["data"].forEach((request) => {
         const userDiv = document.createElement("div");
@@ -196,6 +207,7 @@ async function fillData(str) {
     // juju fetch request /api/matches
 
     let historyHolder = document.getElementById("dashboard-match-history");
+    historyHolder.innerHTML = "";
     // if (matchHistoryInfo["data"].length > 0) {
     // fill info
     // }
@@ -478,7 +490,6 @@ async function openModal(str) {
     return;
   }
   if (str == "tournament") {
-    
   }
   modalHolder.style.zIndex = -100;
   modalHolder.style.opacity = 0;
@@ -503,6 +514,7 @@ async function addFriend(id, t) {
     });
 
   console.log(apiInfo);
+  openModal("close");
 }
 
 async function resolveFriend(answer, reqId) {
@@ -525,4 +537,99 @@ async function resolveFriend(answer, reqId) {
 
   console.log(apiInfo);
   fillData("/dashboard");
+}
+
+let chatLength = null;
+let currentChatUser = null;
+async function pullChats(friend) {
+  let chatInfo = await fetch(
+    `http://localhost:8080/api/msgs?friend_id=${friend.id}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  )
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  console.log("chats between me and " + friend.username + ": ");
+  console.log(chatInfo);
+
+  const chatHolder = document.getElementById("friends-chat");
+  const chatTitle = document.getElementById("friends-username");
+  chatTitle.innerHTML = friend.username;
+
+  let newChatLength = chatInfo['data'].length;
+  // if ((chatLength != null && newChatLength == chatLength) || (currentChatUser != null && currentChatUser == friend.username))
+  //   return ;
+  if (chatInfo["data"].length > 0) {
+    chatLength = chatInfo['data'].length;
+    currentChatUser = friend.username;
+    chatHolder.innerHTML = "";
+
+    chatInfo["data"].forEach((message) => {
+      const messageDiv = document.createElement("div");
+
+      messageDiv.classList.add(
+        "d-flex",
+        "gap-2",
+        "w-100",
+        "align-content-start"
+      );
+
+      if (message.sender == friend.id)
+        messageDiv.classList.add("friend-message", "justify-content-start");
+      else messageDiv.classList.add("my-message", "justify-content-end");
+
+      // <img
+      //   width="32"
+      //   height="32"
+      //   style="object-fit: cover; border-radius: 16px"
+      //   src="${friend.profile_pic}"
+      // />
+      messageDiv.innerHTML = `
+        <p>
+          ${message.content}
+        </p>
+      `;
+      chatHolder.appendChild(messageDiv);
+    });
+  }
+
+  chatHolder.scrollTop = chatHolder.scrollHeight;
+
+  const sendChatButton = document.getElementById("friends-send-chat");
+  function clicked() {
+    sendChat(friend);
+  }
+  sendChatButton.onclick = clicked;
+}
+
+async function sendChat(friend) {
+  const messageInput = document.getElementById("friends-message-input");
+  console.log(messageInput.value);
+
+  let sendInfo = await fetch(`http://localhost:8080/api/msgs/`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      receiver: friend.id,
+      content: messageInput.value,
+    }),
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  console.log(sendInfo);
 }
