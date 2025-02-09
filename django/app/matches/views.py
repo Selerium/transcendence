@@ -3,6 +3,10 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
+from django.conf import settings
+
+import jwt
+import requests
 
 from .serializers import MatchSerializer
 from .models import Match
@@ -11,9 +15,27 @@ ERROR400 = Response(data={'success': False, 'message': 'Invalid fields'}, status
 ERROR404 = Response(data={'success': False, 'message': 'Not Found'}, status=status.HTTP_404_NOT_FOUND)
 ERROR403 = Response(data={'success': False, 'message': 'Not Authenticated'}, status=status.HTTP_403_FORBIDDEN)
 
+JWT_SECRET = settings.JWT_SECRET
 
 @api_view(['GET', 'POST', 'PUT'])
 def match(request):
+    try:
+        user_jwt = request.COOKIES.get('jwt')
+        decoded_jwt = jwt.decode(user_jwt, JWT_SECRET, algorithms=["HS256"])
+        # print('----')
+        # print(decoded_jwt)
+        # print('----')
+        url = 'https://api.intra.42.fr/v2/me'
+        headers = {'Authorization': f'Bearer {decoded_jwt['access']}'}
+        response = requests.get(url, headers=headers)
+        # print('----')
+        # print(headers)
+        # print(response)
+        # print('----')
+        if response.status_code != 200:
+            return ERROR403
+    except:
+        return ERROR400
 
     if request.method == 'GET':
     # Retrieve le matches

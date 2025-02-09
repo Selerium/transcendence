@@ -37,13 +37,16 @@ async function fillData(str) {
 
     let username = info["data"]["username"];
     let image_url = info["data"]["profile_pic"];
+    let role = info["data"]["role"] == 0 ? 'STUDENT' : 'STAFF'
 
     const doc_username = document.getElementById("profile-username");
     const doc_role = document.getElementById("profile-role");
     const doc_image = document.getElementById("profile-image");
     doc_username.innerHTML = username;
-    doc_role.innerHTML = "student";
+    doc_role.innerHTML = role;
     doc_image.src = image_url;
+
+    pullMatchHistory('profile');
   }
   if (str == "/friends") {
     let friendsListInfo = await fetch("http://localhost:8080/api/friends", {
@@ -86,7 +89,6 @@ async function fillData(str) {
     console.log(friendsListInfo);
   }
   if (str == "/dashboard") {
-    console.log('bhai kyu nahi chal raha');
     let friendRequestInfo = await fetch(
       "http://localhost:8080/api/friends/requests",
       {
@@ -145,66 +147,100 @@ async function fillData(str) {
       requestsHolder.classList.add("justify-content-center");
       requestsHolder.classList.remove("justify-content-start");
     }
-    let matchHistoryInfo = await fetch("http://localhost:8080/api/matches/", {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .catch((err) => {
-        return err;
-      });
-    console.log(matchHistoryInfo);
-    let historyHolder = document.getElementById("dashboard-match-history");
-    if (matchHistoryInfo["data"].length > 0) {
-      matchHistoryInfo["data"].forEach((match) => {
-        const matchDiv = document.createElement("div");
-        matchDiv.classList.add(
-          "custom-border",
-          "d-flex",
-          "align-items-center",
-          "justify-content-between",
-          "py-2",
-          "px-4",
-          "gap-2",
-          "w-100"
-        );
-        let result, boxClass;
-        if (match.player_one_score > match.player_two_score) {
-          result = "WIN";
-          boxClass = "win-box";
-        } else if (match.player_two_score > match.player_one_score) {
-          result = "LOSS";
-          boxClass = "loss-box";
-        } else {
-          result = "DRAW";
-          boxClass = "draw-box";
-        }
-        matchDiv.innerHTML = `
-        <h3 class= "bold">${match.player_one.username} (${match.player_one_score})</h3>
-        <h class="electrolize bold ${boxClass}"> ${result}</h3>
-        <h3 class="bold">${match.player_two.username} (${match.player_two_score})</h3>
-      </div>
-        `;
-        historyHolder.appendChild(matchDiv);
-      });
-    } else {
-      const noDataHeading = document.createElement("h3");
-      const noDataMessage = document.createElement("p");
 
-      noDataHeading.classList.add("text-center", "bold");
-      noDataMessage.classList.add("text-center", "small");
-      noDataHeading.innerHTML = "no data to show!";
-      noDataMessage.innerHTML = "this is rather sad looking - play a bit more?";
-      historyHolder.appendChild(noDataHeading);
-      historyHolder.appendChild(noDataMessage);
-      historyHolder.classList.add("justify-content-center");
-      historyHolder.classList.remove("justify-content-start");
-    }
+    // calling the match history
+    pullMatchHistory('dashboard');
   }
 }
 // }
+
+async function pullMatchHistory(str) {
+  let matchHistoryInfo = await fetch("http://localhost:8080/api/matches/", {
+    method: "GET",
+    credentials: "include",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  let historyHolder;
+  let wins = 0, losses = 0, gametime = 0;
+  if (str == 'dashboard')
+    historyHolder = document.getElementById("dashboard-match-history");
+  else
+    historyHolder = document.getElementById("profile-match-history");
+  if (matchHistoryInfo["data"].length > 0) {
+    matchHistoryInfo["data"].forEach((match) => {
+      const matchDiv = document.createElement("div");
+      matchDiv.classList.add(
+        "custom-border",
+        "d-flex",
+        "align-items-center",
+        "justify-content-between",
+        "py-2",
+        "px-4",
+        "gap-2",
+        "w-100"
+      );
+      let result, boxClass;
+      if (match.player_one_score > match.player_two_score) {
+        result = "WIN";
+        boxClass = "win-box";
+        wins++;
+      } else if (match.player_two_score > match.player_one_score) {
+        result = "LOSS";
+        boxClass = "loss-box";
+        losses++;
+      } else {
+        result = "DRAW";
+        boxClass = "draw-box";
+      }
+      matchDiv.innerHTML = `
+      <h3 class= "bold">${match.player_one.username} (${match.player_one_score})</h3>
+      <h class="electrolize bold ${boxClass}"> ${result}</h3>
+      <h3 class="bold">${match.player_two.username} (${match.player_two_score})</h3>
+    </div>
+      `;
+      historyHolder.appendChild(matchDiv);
+
+      let startTime = new Date(match.start_time);
+      let endTime = new Date(match.end_time);
+      gametime += (startTime.getTime() - endTime.getTime()) / 60000;
+      console.log(gametime);
+    });
+
+    if (str == 'profile') {
+      let winsHolder = document.getElementById('profile-wins');
+      let lossesHolder = document.getElementById('profile-losses');
+      let rankHolder = document.getElementById('profile-rank');
+      let ratioHolder = document.getElementById('profile-ratio');
+      let achievementsHolder = document.getElementById('profile-achievements');
+      let gametimeHolder = document.getElementById('profile-gametime');
+      let chartHolder = document.getElementById('profile-chart');
+      
+      winsHolder.innerHTML = wins;
+      lossesHolder.innerHTML = losses;
+      ratioHolder.innerHTML = wins/losses;
+      console.log(gametime);
+      gametimeHolder.innerHTML =  (gametime / matchHistoryInfo["data"].length).toFixed(2);
+    }
+  } else {
+    const noDataHeading = document.createElement("h3");
+    const noDataMessage = document.createElement("p");
+
+    noDataHeading.classList.add("text-center", "bold");
+    noDataMessage.classList.add("text-center", "small");
+    noDataHeading.innerHTML = "no data to show!";
+    noDataMessage.innerHTML = "this is rather sad looking - play a bit more?";
+    historyHolder.appendChild(noDataHeading);
+    historyHolder.appendChild(noDataMessage);
+    historyHolder.classList.add("justify-content-center");
+    historyHolder.classList.remove("justify-content-start");
+  }
+}
 
 async function openModal(str) {
   let modalHolder = document.getElementById("modal");

@@ -23,19 +23,19 @@
     <div
       class="user-metric d-flex flex-column justify-content-center align-items-center"
     >
-      <p class="user-metric-value">3</p>
+      <p id="profile-wins" class="user-metric-value">3</p>
       <p>WINS</p>
     </div>
     <div
       class="user-metric d-flex flex-column justify-content-center align-items-center"
     >
-      <p class="user-metric-value">1</p>
+      <p id="profile-losses" class="user-metric-value">1</p>
       <p>LOSSES</p>
     </div>
     <div
       class="user-metric d-flex flex-column justify-content-center align-items-center"
     >
-      <p class="user-metric-value">#1</p>
+      <p id="profile-rank" class="user-metric-value">#1</p>
       <p>RANK</p>
     </div>
   </div>
@@ -91,13 +91,13 @@
       <div
         class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1"
       >
-        <p class="user-metric-value fixed-width text-center">0.0</p>
+        <p id="profile-ratio" class="user-metric-value fixed-width text-center">0.0</p>
         <p class="text-center fixed-width">WIN/LOSS RATIO</p>
       </div>
       <div
         class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1 me-3"
       >
-        <p class="user-metric-value fixed-width text-center">0.0</p>
+        <p id="profile-achievements" class="user-metric-value fixed-width text-center">0.0</p>
         <p class="text-center fixed-width">ACHIEVEMENTS GAINED</p>
       </div>
     </div>
@@ -105,13 +105,13 @@
       <div
         class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1"
       >
-        <p class="user-metric-value fixed-width text-center">0.0</p>
+        <p id="profile-gametime" class="user-metric-value fixed-width text-center">0.0</p>
         <p class="text-center fixed-width">AVERAGE GAME TIME</p>
       </div>
       <div
         class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1 me-3"
       >
-        <p class="user-metric-value fixed-width text-center">0.0</p>
+        <p id="profile-chart" class="user-metric-value fixed-width text-center">0.0</p>
         <p class="text-center fixed-width">WIN RATE CHART</p>
       </div>
     </div>
@@ -121,35 +121,11 @@
   >
     <div class="d-flex justify-content-between w-100">
       <h3>MATCH HISTORY</h3>
-      <ion-icon name="chevron-forward-sharp"></ion-icon>
     </div>
     <div
-      class="box inner-box d-flex justify-content-between align-items-center w-100 h-fit py-2 px-4"
+      id="profile-match-history"
+      class="d-flex flex-column gap-2 justify-content-start align-items-center flex-grow-1 w-100"
     >
-      <h3 class="">player1</h3>
-      <h3 class=" win-box">WIN/LOSS</h3>
-      <h3 class="">player2</h3>
-    </div>
-    <div
-      class="box inner-box d-flex justify-content-between align-items-center w-100 h-fit py-2 px-4"
-    >
-      <h3 class="">player1</h3>
-      <h3 class=" loss-box">WIN/LOSS</h3>
-      <h3 class="">player2</h3>
-    </div>
-    <div
-      class="box inner-box d-flex justify-content-between align-items-center w-100 h-fit py-2 px-4"
-    >
-      <h3 class="">player1</h3>
-      <h3 class=" win-box">WIN/LOSS</h3>
-      <h3 class="">player2</h3>
-    </div>
-    <div
-      class="box inner-box d-flex justify-content-between align-items-center w-100 h-fit py-2 px-4"
-    >
-      <h3 class="">player1</h3>
-      <h3 class=" loss-box">WIN/LOSS</h3>
-      <h3 class="">player2</h3>
     </div>
   </div>
 </div>
