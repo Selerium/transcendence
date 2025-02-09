@@ -542,6 +542,7 @@ async function resolveFriend(answer, reqId) {
 let chatLength = null;
 let currentChatUser = null;
 let chatLoaded = false;
+
 async function pullChats(friend) {
   let chatInfo = await fetch(
     `http://localhost:8080/api/msgs?friend_id=${friend.id}`,
