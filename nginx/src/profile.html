@@ -23,8 +23,8 @@
         loading...
       </h2>
       <div class="d-flex gap-2">
-        <div class="tag w-fit win-box uppercase text-white" id="profile-role">
-          <p>loading...</p>
+        <div id="profile-role-holder" class="tag w-fit win-box uppercase text-center text-white">
+          <p id="profile-role">loading...</p>
         </div>
       </div>
     </div>
@@ -33,19 +33,19 @@
     <div
       class="user-metric d-flex flex-column justify-content-center align-items-center"
     >
-      <p id="profile-wins" class="user-metric-value">3</p>
+      <p id="profile-wins" class="user-metric-value">-</p>
       <p>WINS</p>
     </div>
     <div
       class="user-metric d-flex flex-column justify-content-center align-items-center"
     >
-      <p id="profile-losses" class="user-metric-value">1</p>
+      <p id="profile-losses" class="user-metric-value">-</p>
       <p>LOSSES</p>
     </div>
     <div
       class="user-metric d-flex flex-column justify-content-center align-items-center"
     >
-      <p id="profile-rank" class="user-metric-value">#1</p>
+      <p id="profile-rank" class="user-metric-value">-</p>
       <p>RANK</p>
     </div>
   </div>
@@ -55,7 +55,7 @@
 <div
   id="profile-achievements-holder"
   class="d-flex flex-wrap w-100 gap-4 h-fit"
-  style="row-gap: 0.5rem !important"
+  style="gap: 0.5rem !important"
 >
   <h3 class="w-100">RECENT ACHIEVEMENTS</h3>
 </div>
@@ -69,13 +69,13 @@
       <div
         class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1"
       >
-        <p id="profile-ratio" class="user-metric-value fixed-width text-center">0.0</p>
+        <p id="profile-ratio" class="user-metric-value fixed-width text-center">-</p>
         <p class="text-center fixed-width">WIN/LOSS RATIO</p>
       </div>
       <div
         class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1 me-3"
       >
-        <p id="profile-achievements" class="user-metric-value fixed-width text-center">0.0</p>
+        <p id="profile-achievements" class="user-metric-value fixed-width text-center">-</p>
         <p class="text-center fixed-width">ACHIEVEMENTS GAINED</p>
       </div>
     </div>
@@ -83,13 +83,13 @@
       <div
         class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1"
       >
-        <p id="profile-gametime" class="user-metric-value fixed-width text-center">0.0</p>
+        <p id="profile-gametime" class="user-metric-value fixed-width text-center">-</p>
         <p class="text-center fixed-width">AVERAGE GAME TIME</p>
       </div>
       <div
-        class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1 me-3"
+        class="d-flex gap-2 box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1 me-3"
       >
-        <p id="profile-chart" class="user-metric-value fixed-width text-center">0.0</p>
+        <canvas id="profile-chart" width="300" height="300" style="width: 64px; height: 64px;"></canvas>
         <p class="text-center fixed-width">WIN RATE CHART</p>
       </div>
     </div>
@@ -98,7 +98,7 @@
     class="d-flex flex-column justify-content-start col-6 h-100 gap-2 ms-1 p-4 box"
   >
     <div class="d-flex justify-content-between w-100">
-      <h3>MATCH HISTORY</h3>
+      <h3 class="p-2 m-0">MATCH HISTORY</h3>
     </div>
     <div
       id="profile-match-history"

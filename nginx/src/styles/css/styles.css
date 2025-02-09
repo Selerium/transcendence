@@ -235,6 +235,14 @@ ion-icon {
   color: white;
 }
 
+.disabled-element {
+  display: none;
+}
+
+.max-w-quarter {
+  max-width: 24%;
+}
+
 .h-fit {
   height: fit-content;
 }
