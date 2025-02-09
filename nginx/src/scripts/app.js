@@ -542,8 +542,14 @@ async function resolveFriend(answer, reqId) {
 let chatLength = null;
 let currentChatUser = null;
 let chatLoaded = false;
-
 async function pullChats(friend) {
+
+  // Set chatLoaded to False if the receipient changes
+  if (currentChatUser !== friend.username) {
+    chatLoaded = false;
+
+  }
+
   let chatInfo = await fetch(
     `http://localhost:8080/api/msgs?friend_id=${friend.id}`,
     {
@@ -564,8 +570,9 @@ async function pullChats(friend) {
   const chatHolder = document.getElementById("friends-chat");
   const chatTitle = document.getElementById("friends-username");
   chatTitle.innerHTML = friend.username;
-
-  let newChatLength = chatInfo['data'].length;
+  
+  let newChatLength = chatInfo["data"].length;
+  let currentChatHeight = chatHolder.scrollHeight;
   // if ((chatLength != null && newChatLength == chatLength) || (currentChatUser != null && currentChatUser == friend.username))
   //   return ;
   if (chatInfo["data"].length > 0) {
@@ -594,19 +601,20 @@ async function pullChats(friend) {
       //   src="${friend.profile_pic}"
       // />
       messageDiv.innerHTML = `
-        <p>
-          ${message.content}
-        </p>
+      <p>
+      ${message.content}
+      </p>
       `;
       chatHolder.appendChild(messageDiv);
     });
   }
-  
-  if (!chatLoaded) {
+
+  // If chat hasn't been loaded OR there's a new message, scroll to top
+  if (!chatLoaded || currentChatHeight != chatHolder.scrollHeight) {
     chatHolder.scrollTop = chatHolder.scrollHeight;
     chatLoaded = true;
   }
-  
+
   const sendChatButton = document.getElementById("friends-send-chat");
   function clicked() {
     sendChat(friend);
