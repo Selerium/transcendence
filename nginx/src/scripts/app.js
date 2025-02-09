@@ -179,7 +179,7 @@ async function pullMatchHistory(str) {
         "custom-border",
         "d-flex",
         "align-items-center",
-        "justify-content-between",
+        "justify-content-evenly",
         "py-2",
         "px-4",
         "gap-2",
@@ -199,9 +199,9 @@ async function pullMatchHistory(str) {
         boxClass = "draw-box";
       }
       matchDiv.innerHTML = `
-      <h3 class= "bold">${match.player_one.username} (${match.player_one_score})</h3>
-      <h class="electrolize bold ${boxClass}"> ${result}</h3>
-      <h3 class="bold">${match.player_two.username} (${match.player_two_score})</h3>
+      <h3 class= "player_1 bold">${match.player_one.username}</h3>
+      <h3 class="electrolize text-center bold ${boxClass}"> ${result}</h3>
+      <h3 class="player_2 bold">${match.player_two.username}</h3>
     </div>
       `;
       historyHolder.appendChild(matchDiv);
