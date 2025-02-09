@@ -242,7 +242,7 @@ ion-icon {
 }
 
 .win-box,
-.loss-box {
+.loss-box, .draw-box {
   border-radius: 8px;
   padding: 8px;
 }
@@ -255,6 +255,9 @@ ion-icon {
   background-color: var(--loss-color);
 }
 
+.draw-box{
+  background-color: var(--border);
+}
 .fixed-width {
   width: 250px;
 }

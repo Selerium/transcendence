@@ -17,7 +17,7 @@ ERROR400 = Response(data={'success': False, 'message': 'Invalid fields'}, status
 ERROR404 = Response(data={'success': False, 'message': 'Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
 CLIENT_ID = 'u-s4t2ud-755c5acf204f051d241dde32f5d7ae8de7c695e8007e25098bd67c5b69780990'
-CLIENT_SECRET = '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'
+CLIENT_SECRET = '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'
 REDIRECT_URI = 'http://localhost:8000/intra_callback/'
 AUTHORIZE_URL = 'https://api.intra.42.fr/oauth/authorize'
 TOKEN_URL = 'https://api.intra.42.fr/oauth/token'

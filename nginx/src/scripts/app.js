@@ -86,6 +86,7 @@ async function fillData(str) {
     console.log(friendsListInfo);
   }
   if (str == "/dashboard") {
+    console.log('bhai kyu nahi chal raha');
     let friendRequestInfo = await fetch(
       "http://localhost:8080/api/friends/requests",
       {
@@ -144,59 +145,51 @@ async function fillData(str) {
       requestsHolder.classList.add("justify-content-center");
       requestsHolder.classList.remove("justify-content-start");
     }
-    let matchHistoryInfo = await fetch(
-      "http://localhost:8080/api/matches/",
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    )
+    let matchHistoryInfo = await fetch("http://localhost:8080/api/matches/", {
+      method: "GET",
+      credentials: "include",
+    })
       .then((response) => {
         return response.json();
       })
       .catch((err) => {
         return err;
       });
-      console.log(matchHistoryInfo);
+    console.log(matchHistoryInfo);
     let historyHolder = document.getElementById("dashboard-match-history");
-    // let historyHolder = document.getElementById("dashboard-match-history");
-    if (matchHistoryInfo["data"].length >0){
-      matchHistoryInfo["data"].forEach((match)=>{
+    if (matchHistoryInfo["data"].length > 0) {
+      matchHistoryInfo["data"].forEach((match) => {
         const matchDiv = document.createElement("div");
-    matchDiv.classList.add(
-      "custom-border",
-      "d-flex",
-      "align-items-center",
-      "justify-content-between",
-      "py-2",
-      "px-4",
-      "gap-2",
-      "w-100"
-    );
-    let result, boxClass;
-    if (match.player_one_score > match.player_two_score) {
-      result = 'WIN';
-      boxClass = 'win-box';
-    } else if (match.player_two_score > match.player_one_score) {
-      result = 'LOSS';
-      boxClass = 'loss-box';
-    } else {
-      result = "DRAW";
-    }
-    matchDiv.innerHTML = `
-    <h3 class= "bold">${match.player_one.username} (${match.player_one_score})</h3>
-    <h class="electrolize bold ${boxClass}"> ${result}</h3>
-    <h3 class="bold">${match.player_two.username} (${match.player_two_score})</h3>
-  </div>
-    `;
-
-    historyHolder.appendChild(matchDiv);
+        matchDiv.classList.add(
+          "custom-border",
+          "d-flex",
+          "align-items-center",
+          "justify-content-between",
+          "py-2",
+          "px-4",
+          "gap-2",
+          "w-100"
+        );
+        let result, boxClass;
+        if (match.player_one_score > match.player_two_score) {
+          result = "WIN";
+          boxClass = "win-box";
+        } else if (match.player_two_score > match.player_one_score) {
+          result = "LOSS";
+          boxClass = "loss-box";
+        } else {
+          result = "DRAW";
+          boxClass = "draw-box";
+        }
+        matchDiv.innerHTML = `
+        <h3 class= "bold">${match.player_one.username} (${match.player_one_score})</h3>
+        <h class="electrolize bold ${boxClass}"> ${result}</h3>
+        <h3 class="bold">${match.player_two.username} (${match.player_two_score})</h3>
+      </div>
+        `;
+        historyHolder.appendChild(matchDiv);
       });
-    }
-    
-    }
-    else
-    {
+    } else {
       const noDataHeading = document.createElement("h3");
       const noDataMessage = document.createElement("p");
 
@@ -209,8 +202,8 @@ async function fillData(str) {
       historyHolder.classList.add("justify-content-center");
       historyHolder.classList.remove("justify-content-start");
     }
-    console.log(friendRequestInfo);
   }
+}
 // }
 
 async function openModal(str) {

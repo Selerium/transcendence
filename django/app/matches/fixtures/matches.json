@@ -1,0 +1,44 @@
+[
+{
+	"model": "matches.Match",
+	"pk": 1,
+	"fields": {
+		"match_id": 1,
+		"player_one":1,
+		"player_two": 2,
+		"is_ai_opponent": false,
+		"player_one_score":"30",
+		"player_two_score":"12",
+		"start_time": "2025-02-06T15:45:06.015573Z",
+		"end_time": "2025-02-06T15:45:06.016176Z"
+	}
+},
+{
+	"model": "matches.Match",
+	"pk": 2,
+	"fields": {
+		"match_id": 2,
+		"player_one":1,
+		"player_two": 2,
+		"is_ai_opponent": false,
+		"player_one_score":"3",
+		"player_two_score":"12",
+		"start_time": "2025-02-06T15:45:06.015573Z",
+		"end_time": "2025-02-06T15:45:06.016176Z"
+	}
+},
+{
+	"model": "matches.Match",
+	"pk": 3,
+	"fields": {
+		"match_id": 3,
+		"player_one":1,
+		"player_two": 2,
+		"is_ai_opponent": false,
+		"player_one_score":"12",
+		"player_two_score":"12",
+		"start_time": "2025-02-06T15:45:06.015573Z",
+		"end_time": "2025-02-06T15:45:06.016176Z"
+	}
+}
+]
