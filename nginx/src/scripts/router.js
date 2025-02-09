@@ -70,7 +70,6 @@ async function changeRoute() {
   navElement.style.fontWeight = "bold";
   navElement.style.color = "var(--accent)";
 
-  console.log(path);
   if (path == "/") {
     fillData('/dashboard');
   }
