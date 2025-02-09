@@ -15,8 +15,8 @@ import jwt
 ERROR400 = Response(data={'success': False, 'message': 'Invalid fields'}, status=status.HTTP_400_BAD_REQUEST)
 ERROR404 = Response(data={'success': False, 'message': 'Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
-CLIENT_ID = 'u-s4t2ud-755c5acf204f051d241dde32f5d7ae8de7c695e8007e25098bd67c5b69780990'
-CLIENT_SECRET = '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'
+CLIENT_ID = 'u-s4t2ud-a942823c9cbcf62d255ca2b37b0150c2973a029880ebf2e94a46ee67572c9748'
+CLIENT_SECRET = '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'
 REDIRECT_URI = 'http://localhost:8000/intra_callback/'
 AUTHORIZE_URL = 'https://api.intra.42.fr/oauth/authorize'
 TOKEN_URL = 'https://api.intra.42.fr/oauth/token'

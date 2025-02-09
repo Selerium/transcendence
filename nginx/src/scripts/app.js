@@ -1,4 +1,5 @@
 let loggedIn = false;
+let intervalId = null;
 let username;
 
 async function fillData(str) {
@@ -74,7 +75,7 @@ async function fillData(str) {
           "box",
           "d-flex",
           "justify-content-center",
-          "align-items-center",
+          "align-items-center"
         );
 
         achievementDiv.innerHTML = `
@@ -108,7 +109,15 @@ async function fillData(str) {
     let friendsHolder = document.getElementById("friends-friends");
     if (friendsListInfo["data"].length > 0) {
       friendsListInfo["data"].forEach((friend) => {
-        const friendDiv = document.createElement("div");
+        const friendDiv = document.createElement("button");
+        function clicked() {
+          if (intervalId != null)
+            clearInterval(intervalId);
+
+          intervalId = setInterval(() => {
+            pullChats(friend);
+          }, 1000);
+        }
 
         friendDiv.classList.add(
           "box",
@@ -124,10 +133,11 @@ async function fillData(str) {
         );
 
         friendDiv.innerHTML = `
-			<img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" />
-			<p>${friend.username}</p>
-		`;
+          <img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" />
+          <p>${friend.username}</p>
+        `;
 
+        friendDiv.onclick = clicked;
         friendsHolder.appendChild(friendDiv);
       });
     }
@@ -149,6 +159,7 @@ async function fillData(str) {
       });
 
     let requestsHolder = document.getElementById("dashboard-friend-requests");
+    requestsHolder.innerHTML = "";
     if (friendRequestInfo["data"].length > 0) {
       friendRequestInfo["data"].forEach((request) => {
         const userDiv = document.createElement("div");
@@ -196,6 +207,7 @@ async function fillData(str) {
     // juju fetch request /api/matches
 
     let historyHolder = document.getElementById("dashboard-match-history");
+    historyHolder.innerHTML = "";
     // if (matchHistoryInfo["data"].length > 0) {
     // fill info
     // }
@@ -287,7 +299,18 @@ async function fillData(str) {
 async function openModal(str) {
   let modalHolder = document.getElementById("modal");
   let modalInfo = document.getElementById("info-modal");
-  modalInfo.innerHTML = '<h1 id="modal-heading" class="w-100"></h1>';
+  modalInfo.innerHTML = `
+        <h1 id="modal-heading" class="w-100"></h1>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="ionicon"
+          viewBox="0 0 512 512"
+          onclick="openModal('close')"
+        >
+          <path
+            d="M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"
+          />
+        </svg>`;
   let modalHeading = document.getElementById("modal-heading");
 
   if (str == "open-friend") {
@@ -363,10 +386,35 @@ async function openModal(str) {
         <img src="styles/images/1v1.png" />
         <h3>1V1 PLAYER</h3>
       </div>
-      <div onclick="openModal('1v1-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+      <div onclick="createMatch('1v1-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
         <img src="styles/images/1v1.png" />
         <h3>1V1 AI</h3>
       </div>
+    `;
+    modalInfo.appendChild(userContainer);
+    return;
+  }
+  if (str == "1v1-player") {
+    console.log("enter player 2");
+    modalHeading.innerHTML = "ENTER PLAYER NAME";
+
+    modalHolder.style.zIndex = 100;
+    modalHolder.style.opacity = 1;
+
+    const userContainer = document.createElement("div");
+    userContainer.classList.add(
+      "d-flex",
+      "flex-column",
+      "gap-4",
+      "h-75",
+      "w-100",
+      "justify-content-center",
+      "align-items-center"
+    );
+    userContainer.innerHTML = `
+    <label class="electrolize text-center">Enter player 2: </label>  
+    <input id="player2" class="electrolize" type="text" required />
+    <button onclick=createMatch('1v1-player') class="btn small-btn">PLAY</button>
     `;
     modalInfo.appendChild(userContainer);
     return;
@@ -391,13 +439,57 @@ async function openModal(str) {
         <img src="styles/images/2v2.png" />
         <h3>2V2 PLAYER</h3>
       </div>
-      <div onclick="openModal('2v2-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+      <div onclick="createMatch('2v2-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
         <img src="styles/images/2v2.png" />
         <h3>2V2 AI</h3>
       </div>
     `;
     modalInfo.appendChild(userContainer);
     return;
+  }
+  if (str == "2v2-player") {
+    modalHeading.innerHTML = "ENTER PLAYER NAME";
+
+    modalHolder.style.zIndex = 100;
+    modalHolder.style.opacity = 1;
+
+    for (let i = 2; i <= 4; i++) {
+      const userContainer = document.createElement("div");
+      userContainer.classList.add(
+        "d-flex",
+        "flex-column",
+        "h-25",
+        "gap-4",
+        "w-50",
+        "justify-content-center",
+        "align-items-center"
+      );
+      userContainer.innerHTML = `
+      <label class="electrolize text-center">Enter player ${i}: </label>  
+      <input id="player${i}" class="electrolize" type="text" required />
+      `;
+      if (i == 4) {
+        userContainer.classList.toggle("w-50");
+        userContainer.classList.toggle("w-100");
+      }
+      modalInfo.appendChild(userContainer);
+    }
+    const userButton = document.createElement("div");
+    userButton.classList.add(
+      "w-100",
+      "h-25",
+      "d-flex",
+      "justify-content-center",
+      "align-items-center"
+    );
+    userButton.innerHTML = `
+      <button onclick=createMatch('1v1-player') class="btn small-btn">PLAY</button>
+    `;
+    modalInfo.appendChild(userButton);
+    modalInfo.classList.toggle("gap-4");
+    return;
+  }
+  if (str == "tournament") {
   }
   modalHolder.style.zIndex = -100;
   modalHolder.style.opacity = 0;
@@ -422,6 +514,7 @@ async function addFriend(id, t) {
     });
 
   console.log(apiInfo);
+  openModal("close");
 }
 
 async function resolveFriend(answer, reqId) {
@@ -444,4 +537,103 @@ async function resolveFriend(answer, reqId) {
 
   console.log(apiInfo);
   fillData("/dashboard");
+}
+
+let chatLength = null;
+let currentChatUser = null;
+let chatLoaded = false;
+async function pullChats(friend) {
+  let chatInfo = await fetch(
+    `http://localhost:8080/api/msgs?friend_id=${friend.id}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  )
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  console.log("chats between me and " + friend.username + ": ");
+  console.log(chatInfo);
+
+  const chatHolder = document.getElementById("friends-chat");
+  const chatTitle = document.getElementById("friends-username");
+  chatTitle.innerHTML = friend.username;
+
+  let newChatLength = chatInfo['data'].length;
+  // if ((chatLength != null && newChatLength == chatLength) || (currentChatUser != null && currentChatUser == friend.username))
+  //   return ;
+  if (chatInfo["data"].length > 0) {
+    chatLength = chatInfo['data'].length;
+    currentChatUser = friend.username;
+    chatHolder.innerHTML = "";
+
+    chatInfo["data"].forEach((message) => {
+      const messageDiv = document.createElement("div");
+
+      messageDiv.classList.add(
+        "d-flex",
+        "gap-2",
+        "w-100",
+        "align-content-start"
+      );
+
+      if (message.sender == friend.id)
+        messageDiv.classList.add("friend-message", "justify-content-start");
+      else messageDiv.classList.add("my-message", "justify-content-end");
+
+      // <img
+      //   width="32"
+      //   height="32"
+      //   style="object-fit: cover; border-radius: 16px"
+      //   src="${friend.profile_pic}"
+      // />
+      messageDiv.innerHTML = `
+        <p>
+          ${message.content}
+        </p>
+      `;
+      chatHolder.appendChild(messageDiv);
+    });
+  }
+  
+  if (!chatLoaded) {
+    chatHolder.scrollTop = chatHolder.scrollHeight;
+    chatLoaded = true;
+  }
+  
+  const sendChatButton = document.getElementById("friends-send-chat");
+  function clicked() {
+    sendChat(friend);
+  }
+  sendChatButton.onclick = clicked;
+}
+
+async function sendChat(friend) {
+  const messageInput = document.getElementById("friends-message-input");
+  console.log(messageInput.value);
+
+  let sendInfo = await fetch(`http://localhost:8080/api/msgs/`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      receiver: friend.id,
+      content: messageInput.value,
+    }),
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  console.log(sendInfo);
 }
