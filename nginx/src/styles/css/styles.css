@@ -7,6 +7,24 @@
   transition: all 300ms ease;
 }
 
+.ionicon {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  width: 32px;
+  height: 32px;
+  color: white;
+  fill: white;
+  cursor: pointer;
+}
+
+.game-border {
+  border: 2px solid;
+  border-color: var(--border);
+  border-radius: 16px;
+}
+
+
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -23,6 +41,17 @@
 
 ::-webkit-scrollbar-thumb:active {
   background: var(--border);
+}
+
+label {
+  color: white;
+}
+
+input {
+  height: 48px;
+  width: 290px;
+  border-radius: 16px;
+  text-align: center;
 }
 
 #main {

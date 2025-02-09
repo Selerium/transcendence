@@ -8,6 +8,7 @@ routes = {
   "/login": "/login.html",
   "/": "/dashboard.html",
   "/not-allowed": "/not-allowed.html",
+  "/play": "/game.html",
 };
 
 navbarIds = {
@@ -44,7 +45,7 @@ async function changeRoute() {
 
   if (routes[path] == undefined) path = "/404";
 
-  const html = await fetch(routes[path]).then((response) => response.text());
+  const html = await fetch(routes[path]).then((response) => response.text()).catch((err) => err);
 
   const main = document.getElementById("main");
   main.style.transform = "translateX(25%)";
@@ -67,8 +68,10 @@ async function changeRoute() {
 
   // setting the active link color and font weight
   const navElement = document.getElementById(navbarIds[path]);
-  navElement.style.fontWeight = "bold";
-  navElement.style.color = "var(--accent)";
+  if (navElement != null || navElement != undefined) {
+    navElement.style.fontWeight = "bold";
+    navElement.style.color = "var(--accent)";
+  }
 
   if (path == "/") {
     fillData('/dashboard');

@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'matches',
     'oauth',
     'me',
+    'achievements',
     'rest_framework',
 ]
 
