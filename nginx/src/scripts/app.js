@@ -1,5 +1,6 @@
 let loggedIn = false;
-let username;
+let my_username = null;
+let my_id;
 
 async function fillData(str) {
   if (!loggedIn) {
@@ -16,6 +17,7 @@ async function fillData(str) {
       });
 
     username = info["data"]["username"];
+    id = info["data"]["id"];
     let image_url = info["data"]["profile_pic"];
 
     const doc_nav_username = document.getElementById("nav-profile");
@@ -23,6 +25,23 @@ async function fillData(str) {
     doc_nav_username.innerHTML = username;
     doc_nav_image.src = image_url;
   }
+
+  if (my_username == null) {
+    let meInfo = await fetch("http://localhost:8080/api/me", {
+      method: "GET",
+      credentials: "include",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+    
+    my_id = meInfo["data"]["id"];
+    my_username = meInfo["data"]["username"];
+  }
+
   if (str == "/profile") {
     let meInfo = await fetch("http://localhost:8080/api/me", {
       method: "GET",
@@ -50,7 +69,34 @@ async function fillData(str) {
     doc_image.src = image_url;
 
     pullMatchHistory("profile");
-    pullAchievements("profile");
+
+    setTimeout(() => {
+      pullAchievements("profile");
+    }, 1000);
+
+    let leaderboardsInfo = await fetch(
+      "http://localhost:8080/api/matches/leaderboards",
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    let globalLeaderboards = document.getElementById("leaderboards-global");
+    if (leaderboardsInfo["data"].length > 0) {
+      leaderboardsInfo["data"].forEach((item, index) => {
+        if (item["user-id"] == my_id) {
+          let rankHolder = document.getElementById("profile-rank");
+          rankHolder.innerHTML = `#${index + 1}`;
+        }
+      });
+    }
   } else if (str == "/friends") {
     let friendsListInfo = await fetch("http://localhost:8080/api/friends", {
       method: "GET",
@@ -153,6 +199,86 @@ async function fillData(str) {
     pullMatchHistory("dashboard");
   } else if (str == "/achievements") {
     pullAchievements("achievements");
+  } else if (str == "/leaderboards") {
+    let leaderboardsInfo = await fetch(
+      "http://localhost:8080/api/matches/leaderboards",
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    let globalLeaderboards = document.getElementById("leaderboards-global");
+    if (leaderboardsInfo["data"].length > 0) {
+      leaderboardsInfo["data"].forEach((item, index) => {
+        const recordHolder = document.createElement("div");
+
+        recordHolder.classList.add(
+          "w-100",
+          "box",
+          "inner-box",
+          "d-flex",
+          "justify-content-between",
+          "align-items-center",
+          "gap-4",
+          "p-4"
+        );
+
+        recordHolder.innerHTML = `
+        <p class="ps-5">${index + 1}</p>
+        <p class="bold">${item["user"]}</p>
+        <p>${item["wins"]} wins</p>
+        `;
+
+        globalLeaderboards.appendChild(recordHolder);
+      });
+    }
+
+    let friendsLeaderboardsInfo = await fetch(
+      "http://localhost:8080/api/matches/leaderboards/friends",
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    let friendsLeaderboard = document.getElementById("leaderboards-friends");
+    if (friendsLeaderboardsInfo["data"].length > 0) {
+      friendsLeaderboardsInfo["data"].forEach((item, index) => {
+        const recordHolder = document.createElement("div");
+
+        recordHolder.classList.add(
+          "w-100",
+          "box",
+          "inner-box",
+          "d-flex",
+          "justify-content-between",
+          "align-items-center",
+          "gap-4",
+          "p-4"
+        );
+
+        recordHolder.innerHTML = `
+        <p class="ps-5">${index + 1}</p>
+        <p class="bold">${item["user"]}</p>
+        <p>${item["wins"]} wins</p>
+        `;
+
+        friendsLeaderboard.appendChild(recordHolder);
+      });
+    }
   }
 }
 
@@ -238,10 +364,13 @@ async function pullAchievements(str) {
 }
 
 async function pullMatchHistory(str) {
-  let matchHistoryInfo = await fetch("http://localhost:8080/api/matches/", {
-    method: "GET",
-    credentials: "include",
-  })
+  let matchHistoryInfo = await fetch(
+    `http://localhost:8080/api/matches?id=${my_id}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  )
     .then((response) => {
       return response.json();
     })
@@ -312,28 +441,23 @@ async function pullMatchHistory(str) {
       ).toFixed(2);
 
       const total = wins + losses;
-      const winsAngle = (wins / total) * 2 * Math.PI; // Angle for wins in radians
-      const lossesAngle = (losses / total) * 2 * Math.PI; // Angle for losses in radians
-
-      // Draw the pie chart
+      const winsAngle = (wins / total) * 2 * Math.PI;
+      const lossesAngle = (losses / total) * 2 * Math.PI;
       const centerX = chartHolder.width / 2;
       const centerY = chartHolder.height / 2;
       const radius = Math.min(centerX, centerY);
 
-      // Draw the wins slice
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.arc(centerX, centerY, radius, 0, winsAngle);
       ctx.closePath();
-      ctx.fillStyle = "#2B5E42"; // Color for wins
+      ctx.fillStyle = "#2B5E42"; // color for wins
       ctx.fill();
-
-      // Draw the losses slice
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.arc(centerX, centerY, radius, winsAngle, winsAngle + lossesAngle);
       ctx.closePath();
-      ctx.fillStyle = "#703738"; // Color for losses
+      ctx.fillStyle = "#703738"; // color for losses
       ctx.fill();
     }
   } else {
@@ -370,7 +494,7 @@ async function openModal(str) {
 
   if (str == "open-friend") {
     modalHeading.innerHTML = "ADD FRIEND";
-    let apiInfo = await fetch("http://localhost:8080/api/users", {
+    let apiInfo = await fetch("http://localhost:8080/api/users/new", {
       method: "GET",
       credentials: "include",
     })
@@ -399,7 +523,7 @@ async function openModal(str) {
             "py-2",
             "px-4",
             "gap-2",
-            "min-w-half"
+            "min-w-half",
           );
           userDiv.innerHTML = `
             <img width="64" height="64" src="${user.profile_pic}" style="object-fit: cover; border-radius: 64px" />

@@ -148,8 +148,8 @@ a {
 
 .grid-2 {
   display: grid;
-  grid-template-columns: auto auto;
-  gap: 1rem;
+  grid-template-columns: 49% 49%;
+  gap: 2%;
   overflow-y: scroll;
   max-height: 75%;
 }
