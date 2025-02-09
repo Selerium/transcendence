@@ -73,7 +73,10 @@ async function changeRoute() {
     navElement.style.color = "var(--accent)";
   }
 
-  fillData(path);
+  if (path == "/") {
+    fillData('/dashboard');
+  }
+  else fillData(path);
 }
 
 window.addEventListener("click", (e) => {

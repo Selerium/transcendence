@@ -35,65 +35,23 @@ async function fillData(str) {
         return err;
       });
 
+    let role = meInfo["data"]["role"] == 0 ? "STUDENT" : "STAFF";
     let username = meInfo["data"]["username"];
     let image_url = meInfo["data"]["profile_pic"];
 
     const doc_username = document.getElementById("profile-username");
+    const doc_role_holder = document.getElementById("profile-role-holder");
     const doc_role = document.getElementById("profile-role");
     const doc_image = document.getElementById("profile-image");
     doc_username.innerHTML = username;
-    doc_role.innerHTML = "student";
+    if (role == "STUDENT") doc_role_holder.classList.toggle("win-box");
+    else doc_role_holder.classList.toggle("loss-box");
+    doc_role.innerHTML = role;
     doc_image.src = image_url;
 
-    let achievementsInfo = await fetch(
-      "http://localhost:8080/api/achievements",
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    )
-      .then((response) => {
-        return response.json();
-      })
-      .catch((err) => {
-        return err;
-      });
-
-    console.log(achievementsInfo);
-    const achievementsHolder = document.getElementById(
-      "profile-achievements-holder"
-    );
-    console.log(achievementsHolder);
-    if (achievementsInfo["data"].length > 0) {
-      achievementsInfo["data"].forEach((item, key) => {
-        if (key > 3) return;
-        const achievementDiv = document.createElement("div");
-
-        achievementDiv.classList.add(
-          "flex-grow-1",
-          "box",
-          "d-flex",
-          "justify-content-center",
-          "align-items-center"
-        );
-
-        achievementDiv.innerHTML = `
-          <img
-            width="64"
-            height="64"
-            class="mt-2"
-            src="${item["icon"]}"
-          />
-          <div class="d-flex flex-column justify-content-center align-items-start">
-            <p>${item["name"]}</p>
-          </div>
-      `;
-        achievementsHolder.appendChild(achievementDiv);
-      });
-    }
-    // what about no achievements ????
-  }
-  if (str == "/friends") {
+    pullMatchHistory("profile");
+    pullAchievements("profile");
+  } else if (str == "/friends") {
     let friendsListInfo = await fetch("http://localhost:8080/api/friends", {
       method: "GET",
       credentials: "include",
@@ -132,8 +90,7 @@ async function fillData(str) {
       });
     }
     console.log(friendsListInfo);
-  }
-  if (str == "/dashboard") {
+  } else if (str == "/dashboard") {
     let friendRequestInfo = await fetch(
       "http://localhost:8080/api/friends/requests",
       {
@@ -192,53 +149,46 @@ async function fillData(str) {
       requestsHolder.classList.add("justify-content-center");
       requestsHolder.classList.remove("justify-content-start");
     }
-
-    // juju fetch request /api/matches
-
-    let historyHolder = document.getElementById("dashboard-match-history");
-    // if (matchHistoryInfo["data"].length > 0) {
-    // fill info
-    // }
-    // else
-    {
-      const noDataHeading = document.createElement("h3");
-      const noDataMessage = document.createElement("p");
-
-      noDataHeading.classList.add("text-center", "bold");
-      noDataMessage.classList.add("text-center", "small");
-      noDataHeading.innerHTML = "no data to show!";
-      noDataMessage.innerHTML = "this is rather sad looking - play a bit more?";
-      historyHolder.appendChild(noDataHeading);
-      historyHolder.appendChild(noDataMessage);
-      historyHolder.classList.add("justify-content-center");
-      historyHolder.classList.remove("justify-content-start");
-    }
-    console.log(friendRequestInfo);
+    // calling the match history
+    pullMatchHistory("dashboard");
+  } else if (str == "/achievements") {
+    pullAchievements("achievements");
   }
-  if (str == "/achievements") {
-    let achievementsInfo = await fetch(
-      "http://localhost:8080/api/achievements",
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    )
-      .then((response) => {
-        return response.json();
-      })
-      .catch((err) => {
-        return err;
-      });
+}
 
-    console.log(achievementsInfo);
-    const achievementsHolder = document.getElementById("achievements-holder");
-    console.log(achievementsHolder);
-    if (achievementsInfo["data"].length > 0) {
-      achievementsInfo["data"].forEach((item) => {
+async function pullAchievements(str) {
+  let achievementsInfo = await fetch("http://localhost:8080/api/achievements", {
+    method: "GET",
+    credentials: "include",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  console.log(achievementsInfo);
+  let achievementsHolder;
+  if (str == "achievements")
+    achievementsHolder = document.getElementById("achievements-holder");
+  else {
+    achievementsHolder = document.getElementById("profile-achievements-holder");
+    achievementsHolder.classList.toggle("gap-4");
+    achievementsHolder.classList.toggle("justify-content-between");
+
+    document.getElementById("profile-achievements").innerHTML =
+      achievementsInfo["data"].length;
+  }
+  console.log(achievementsHolder);
+  if (achievementsInfo["data"].length > 0) {
+    achievementsInfo["data"].forEach((item, index) => {
+      if (str == "achievements" || (str == "profile" && index < 4)) {
         const achievementDivHolder = document.createElement("div");
         const achievementDiv = document.createElement("div");
 
-        achievementDivHolder.classList.add("col-4");
+        if (str == "achievements") achievementDivHolder.classList.add("col-4");
+        else achievementDivHolder.classList.add("flex-grow-1", "max-w-quarter");
 
         achievementDiv.classList.add(
           "flex-grow-1",
@@ -253,34 +203,151 @@ async function fillData(str) {
         );
 
         achievementDiv.innerHTML = `
-            <img
-              width="64"
-              height="64"
-              class="mt-2"
-              src="${item["icon"]}"
-            />
-            <div class="d-flex flex-column justify-content-center align-items-start">
-              <p>${item["name"]}</p>
-              <p class="description-text">${item["description"]}</p>
-            </div>
+        <img
+        width="64"
+        height="64"
+        class="mt-2"
+        src="${item["icon"]}"
+        />
+        <div class="d-flex flex-column justify-content-center align-items-start">
+        <p class="bold">${item["name"]}</p>
+        <p class="description-text ${
+          str == "profile" ? "disabled-element" : ""
+        }">${item["description"]}</p>
+        </div>
         `;
         achievementDivHolder.appendChild(achievementDiv);
         achievementsHolder.appendChild(achievementDivHolder);
-      });
-    } else {
-      achievementsHolder.classList.toggle("justify-content-start");
-      achievementsHolder.classList.toggle("justify-content-center");
-      achievementsHolder.classList.toggle("align-items-start");
-      achievementsHolder.classList.toggle("align-items-center");
-      achievementsHolder.classList.toggle("h-fit");
-      achievementsHolder.classList.toggle("h-75");
-      achievementsHolder.classList.toggle("flex-column");
-      achievementsHolder.classList.toggle("gap-2");
-      achievementsHolder.innerHTML = `
-      <h3 class="text-center bold">accomplished...nothing?</h3>
-      <p class="text-center small">your parents must be real proud.</p>
+      }
+    });
+  } else {
+    achievementsHolder.classList.toggle("justify-content-start");
+    achievementsHolder.classList.toggle("justify-content-center");
+    achievementsHolder.classList.toggle("align-items-start");
+    achievementsHolder.classList.toggle("align-items-center");
+    achievementsHolder.classList.toggle("h-fit");
+    if (str == "achievements") achievementsHolder.classList.toggle("h-75");
+    else achievementsHolder.classList.toggle("h-25");
+    achievementsHolder.classList.toggle("flex-column");
+    achievementsHolder.classList.toggle("gap-2");
+    achievementsHolder.innerHTML = `
+    <h3 class="text-center bold">accomplished...nothing?</h3>
+    <p class="text-center small">your parents must be real proud.</p>
+    `;
+  }
+}
+
+async function pullMatchHistory(str) {
+  let matchHistoryInfo = await fetch("http://localhost:8080/api/matches/", {
+    method: "GET",
+    credentials: "include",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  let historyHolder;
+  let wins = 0,
+    losses = 0,
+    gametime = 0;
+  if (str == "dashboard")
+    historyHolder = document.getElementById("dashboard-match-history");
+  else historyHolder = document.getElementById("profile-match-history");
+  if (matchHistoryInfo["data"].length > 0) {
+    matchHistoryInfo["data"].forEach((match) => {
+      const matchDiv = document.createElement("div");
+      matchDiv.classList.add(
+        "custom-border",
+        "d-flex",
+        "align-items-center",
+        "justify-content-evenly",
+        "py-2",
+        "px-4",
+        "gap-2",
+        "w-100"
+      );
+      let result, boxClass;
+      if (match.player_one_score > match.player_two_score) {
+        result = "WIN";
+        boxClass = "win-box";
+        wins++;
+      } else if (match.player_two_score > match.player_one_score) {
+        result = "LOSS";
+        boxClass = "loss-box";
+        losses++;
+      } else {
+        result = "DRAW";
+        boxClass = "draw-box";
+      }
+      matchDiv.innerHTML = `
+      <h3 class= "player_1 bold">${match.player_one.username}</h3>
+      <h3 class="electrolize text-center bold ${boxClass}"> ${result}</h3>
+      <h3 class="player_2 bold">${match.player_two.username}</h3>
+    </div>
       `;
+      historyHolder.appendChild(matchDiv);
+
+      let startTime = new Date(match.start_time);
+      let endTime = new Date(match.end_time);
+      gametime += (startTime.getTime() - endTime.getTime()) / 60000;
+    });
+
+    if (str == "profile") {
+      let winsHolder = document.getElementById("profile-wins");
+      let lossesHolder = document.getElementById("profile-losses");
+      let rankHolder = document.getElementById("profile-rank");
+      let ratioHolder = document.getElementById("profile-ratio");
+      let gametimeHolder = document.getElementById("profile-gametime");
+      let chartHolder = document.getElementById("profile-chart");
+      const ctx = chartHolder.getContext("2d");
+
+      winsHolder.innerHTML = wins;
+      lossesHolder.innerHTML = losses;
+      ratioHolder.innerHTML = wins / losses;
+      gametimeHolder.innerHTML = (
+        gametime / matchHistoryInfo["data"].length
+      ).toFixed(2);
+
+      const total = wins + losses;
+      const winsAngle = (wins / total) * 2 * Math.PI; // Angle for wins in radians
+      const lossesAngle = (losses / total) * 2 * Math.PI; // Angle for losses in radians
+
+      // Draw the pie chart
+      const centerX = chartHolder.width / 2;
+      const centerY = chartHolder.height / 2;
+      const radius = Math.min(centerX, centerY);
+
+      // Draw the wins slice
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, radius, 0, winsAngle);
+      ctx.closePath();
+      ctx.fillStyle = "#2B5E42"; // Color for wins
+      ctx.fill();
+
+      // Draw the losses slice
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, radius, winsAngle, winsAngle + lossesAngle);
+      ctx.closePath();
+      ctx.fillStyle = "#703738"; // Color for losses
+      ctx.fill();
     }
+  } else {
+    const noDataHeading = document.createElement("h3");
+    const noDataMessage = document.createElement("p");
+
+    noDataHeading.classList.add("text-center", "bold");
+    noDataMessage.classList.add("text-center", "small");
+    noDataHeading.innerHTML = "no data to show!";
+    noDataMessage.innerHTML = "this is rather sad looking - play a bit more?";
+    historyHolder.appendChild(noDataHeading);
+    historyHolder.appendChild(noDataMessage);
+    historyHolder.classList.add("justify-content-center");
+    historyHolder.classList.remove("justify-content-start");
   }
 }
 
@@ -478,7 +545,6 @@ async function openModal(str) {
     return;
   }
   if (str == "tournament") {
-    
   }
   modalHolder.style.zIndex = -100;
   modalHolder.style.opacity = 0;

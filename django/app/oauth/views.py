@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from urllib.parse import urlencode
 from users.models import User
+from users.serializers import UserSerializer
 from users.views import users
 from django.test import RequestFactory
 from django.conf import settings
@@ -15,8 +16,8 @@ import jwt
 ERROR400 = Response(data={'success': False, 'message': 'Invalid fields'}, status=status.HTTP_400_BAD_REQUEST)
 ERROR404 = Response(data={'success': False, 'message': 'Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
-CLIENT_ID = 'u-s4t2ud-755c5acf204f051d241dde32f5d7ae8de7c695e8007e25098bd67c5b69780990'
-CLIENT_SECRET = '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'
+CLIENT_ID = 'u-s4t2ud-0cf592fe5bff0b6cd2a344a6f915993fef2fbf3f5c95fa29a57bbccef061c8dd'
+CLIENT_SECRET = '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'
 REDIRECT_URI = 'http://localhost:8000/intra_callback/'
 AUTHORIZE_URL = 'https://api.intra.42.fr/oauth/authorize'
 TOKEN_URL = 'https://api.intra.42.fr/oauth/token'
@@ -58,6 +59,10 @@ def get_user_info(access_token, refresh_token):
         user_data = response.json()
         username = user_data.get('login')
         profile_image = user_data.get('image',{}).get('link')
+        if user_data.get('kind') == 'student':
+            role = 0
+        else:
+            role = 1
         print(f"username:<{username}> profile_image:<{profile_image}>")
         try:
             User.objects.get(username=username)
@@ -66,6 +71,7 @@ def get_user_info(access_token, refresh_token):
             newUser = User(
                 username=username,
                 profile_pic=profile_image,
+                role=role
             )
             newUser.save()
             print('registered')

@@ -235,6 +235,14 @@ ion-icon {
   color: white;
 }
 
+.disabled-element {
+  display: none;
+}
+
+.max-w-quarter {
+  max-width: 24%;
+}
+
 .h-fit {
   height: fit-content;
 }
@@ -270,10 +278,20 @@ ion-icon {
   }
 }
 
+.player_1{
+  /* margin-right: 0px; */
+}
+
+.player_2{
+  /* margin-left: 80px;/ */
+}
+
 .win-box,
-.loss-box {
-  border-radius: 8px;
-  padding: 8px;
+.loss-box, 
+.draw-box {
+  border-radius: 10px;
+  padding: 10px;
+  width: 100px;
 }
 
 .win-box {
@@ -284,6 +302,9 @@ ion-icon {
   background-color: var(--loss-color);
 }
 
+.draw-box{
+  background-color: var(--border);
+}
 .fixed-width {
   width: 250px;
 }
