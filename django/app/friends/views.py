@@ -33,7 +33,7 @@ def friends(request, id=None):
 	get_object_or_404(User, id=decoded_jwt['data']['id'])
 	# return all friendships
 	if (id == None and request.method == 'GET'):
-		user_friends = Friend.objects.filter(Q(friend1=this_user) | Q(friend2=this_user)).filter(friend_status='1').select_related('friend1', 'friend2')
+		user_friends = Friend.objects.filter(Q(friend1=this_user) | Q(friend2=this_user)).filter(Q(friend_status='1') | Q(friend_status='3')).select_related('friend1', 'friend2')
 
 		response_data = []
 		for request in user_friends:
