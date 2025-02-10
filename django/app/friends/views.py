@@ -33,7 +33,7 @@ def friends(request, id=None):
 	get_object_or_404(User, id=decoded_jwt['data']['id'])
 	# return all friendships
 	if (id == None and request.method == 'GET'):
-		user_friends = Friend.objects.filter(Q(friend1=this_user) | Q(friend2=this_user)).filter(Q(friend_status='1') | Q(friend_status='3')).select_related('friend1', 'friend2')
+		user_friends = Friend.objects.filter(Q(friend1=this_user) | Q(friend2=this_user)).exclude(friend_status='0').select_related('friend1', 'friend2')
 
 		response_data = []
 		for request in user_friends:
@@ -42,7 +42,8 @@ def friends(request, id=None):
 			response_data.append({
 				'id': other_user.id,
 				'username': other_user.username,
-				'profile_pic': other_user.profile_pic
+				'profile_pic': other_user.profile_pic,
+				'friend_status': request.friend_status
 			})
 
 		return Response(data={'success': True, 'data': response_data}, status=status.HTTP_200_OK)
@@ -83,7 +84,13 @@ def friends(request, id=None):
 	# update a friendship
 	elif (id != None and request.method == 'PUT'):
 		data = request.data
-		friend = get_object_or_404(Friend, id=id)
+		print('hii-----')
+		print(id)
+		print('hii-----')
+		friend = User.objects.get(Friend, friend2_id=id, friend1_id=this_user)
+		if not friend:
+			friend = get_object_or_404(Friend, friend1_id=id, friend2_id=this_user)
+		print('-----iih')
 		try:
 			friend.friend_status = data['friend_status']
 			friend.full_clean()

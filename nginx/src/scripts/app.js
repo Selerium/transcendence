@@ -123,6 +123,9 @@ async function fillData(str) {
     const chatTextArea = document.getElementById("friends-message-input");
     sendChatButton.disabled = true;
     chatTextArea.disabled = true;
+    let selectedUserId = null;
+
+    const blockButton = document.getElementById("friends-block-button");
     if (friendsListInfo["data"].length > 0) {
       friendsListInfo["data"].forEach((friend) => {
         const friendDiv = document.createElement("button");
@@ -132,8 +135,15 @@ async function fillData(str) {
           window.intervalId = setInterval(() => {
             pullChats(friend);
           }, 1000);
-        }
 
+          console.log(friend);
+
+          if (friend['friend_status'] != 3)
+            blockButton.disabled = false;
+          else
+            blockButton.disabled = false;
+          // selectedUserId = friend.id;
+        }
         friendDiv.classList.add(
           "box",
           "inner-box",
@@ -154,7 +164,15 @@ async function fillData(str) {
 
         friendDiv.onclick = clicked;
         friendsHolder.appendChild(friendDiv);
+
+        async function helper() {
+          console.log('hiiiiiii');
+          blockButton.disabled = true;
+          blockFriend(friend.id);
+        }
+        blockButton.onclick = helper;
       });
+      
     }
     console.log(friendsListInfo);
   } else if (str == "/dashboard") {
@@ -302,6 +320,22 @@ async function fillData(str) {
       });
     }
   }
+}
+
+async function blockFriend(userid) {
+  let blockInfo = await fetch(`http://localhost:8080/api/friends/${userid}`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ friend_status: "3" }),
+  })
+    .then((response) => response.json())
+    .catch((err) => err);
+
+  console.log(blockInfo); // Debugging
+  // return blockInfo;
 }
 
 async function pullAchievements(str) {
