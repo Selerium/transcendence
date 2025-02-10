@@ -1,8 +1,14 @@
-
 let loggedIn = false;
-let username;
+let my_username = null;
+let my_id;
 
 async function fillData(str) {
+  if (currentChatUser) currentChatUser = null;
+  if (chatLoaded) chatLoaded = null;
+  if (chatLength) chatLength = null;
+
+  if (window.intervalId) clearInterval(window.intervalId);
+
   if (!loggedIn) {
     loggedIn = true;
     let info = await fetch("http://localhost:8080/api/me", {
@@ -17,6 +23,7 @@ async function fillData(str) {
       });
 
     username = info["data"]["username"];
+    id = info["data"]["id"];
     let image_url = info["data"]["profile_pic"];
 
     const doc_nav_username = document.getElementById("nav-profile");
@@ -24,6 +31,23 @@ async function fillData(str) {
     doc_nav_username.innerHTML = username;
     doc_nav_image.src = image_url;
   }
+
+  if (my_username == null) {
+    let meInfo = await fetch("http://localhost:8080/api/me", {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    my_id = meInfo["data"]["id"];
+    my_username = meInfo["data"]["username"];
+  }
+
   if (str == "/profile") {
     let meInfo = await fetch("http://localhost:8080/api/me", {
       method: "GET",
@@ -36,18 +60,28 @@ async function fillData(str) {
         return err;
       });
 
+    let role = meInfo["data"]["role"] == 0 ? "STUDENT" : "STAFF";
     let username = meInfo["data"]["username"];
     let image_url = meInfo["data"]["profile_pic"];
 
     const doc_username = document.getElementById("profile-username");
+    const doc_role_holder = document.getElementById("profile-role-holder");
     const doc_role = document.getElementById("profile-role");
     const doc_image = document.getElementById("profile-image");
     doc_username.innerHTML = username;
-    doc_role.innerHTML = "student";
+    if (role == "STUDENT") doc_role_holder.classList.toggle("win-box");
+    else doc_role_holder.classList.toggle("loss-box");
+    doc_role.innerHTML = role;
     doc_image.src = image_url;
 
-    let achievementsInfo = await fetch(
-      "http://localhost:8080/api/achievements",
+    pullMatchHistory("profile");
+
+    setTimeout(() => {
+      pullAchievements("profile");
+    }, 1000);
+
+    let leaderboardsInfo = await fetch(
+      "http://localhost:8080/api/matches/leaderboards",
       {
         method: "GET",
         credentials: "include",
@@ -60,41 +94,16 @@ async function fillData(str) {
         return err;
       });
 
-    console.log(achievementsInfo);
-    const achievementsHolder = document.getElementById(
-      "profile-achievements-holder"
-    );
-    console.log(achievementsHolder);
-    if (achievementsInfo["data"].length > 0) {
-      achievementsInfo["data"].forEach((item, key) => {
-        if (key > 3) return;
-        const achievementDiv = document.createElement("div");
-
-        achievementDiv.classList.add(
-          "flex-grow-1",
-          "box",
-          "d-flex",
-          "justify-content-center",
-          "align-items-center"
-        );
-
-        achievementDiv.innerHTML = `
-          <img
-            width="64"
-            height="64"
-            class="mt-2"
-            src="${item["icon"]}"
-          />
-          <div class="d-flex flex-column justify-content-center align-items-start">
-            <p>${item["name"]}</p>
-          </div>
-      `;
-        achievementsHolder.appendChild(achievementDiv);
+    let globalLeaderboards = document.getElementById("leaderboards-global");
+    if (leaderboardsInfo["data"].length > 0) {
+      leaderboardsInfo["data"].forEach((item, index) => {
+        if (item["user-id"] == my_id) {
+          let rankHolder = document.getElementById("profile-rank");
+          rankHolder.innerHTML = `#${index + 1}`;
+        }
       });
     }
-    // what about no achievements ????
-  }
-  if (str == "/friends") {
+  } else if (str == "/friends") {
     let friendsListInfo = await fetch("http://localhost:8080/api/friends", {
       method: "GET",
       credentials: "include",
@@ -106,10 +115,24 @@ async function fillData(str) {
         return err;
       });
 
+    let chatHolder = document.getElementById("friends-chat");
+    chatHolder.innerHTML = "";
     let friendsHolder = document.getElementById("friends-friends");
+    friendsHolder.innerHTML = "";
+    const sendChatButton = document.getElementById("friends-send-chat");
+    const chatTextArea = document.getElementById("friends-message-input");
+    sendChatButton.disabled = true;
+    chatTextArea.disabled = true;
     if (friendsListInfo["data"].length > 0) {
       friendsListInfo["data"].forEach((friend) => {
-        const friendDiv = document.createElement("div");
+        const friendDiv = document.createElement("button");
+        function clicked() {
+          if (window.intervalId != null) clearInterval(window.intervalId);
+
+          window.intervalId = setInterval(() => {
+            pullChats(friend);
+          }, 1000);
+        }
 
         friendDiv.classList.add(
           "box",
@@ -125,16 +148,16 @@ async function fillData(str) {
         );
 
         friendDiv.innerHTML = `
-			<img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" />
-			<p>${friend.username}</p>
-		`;
+          <img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" />
+          <p>${friend.username}</p>
+        `;
 
+        friendDiv.onclick = clicked;
         friendsHolder.appendChild(friendDiv);
       });
     }
     console.log(friendsListInfo);
-  }
-  if (str == "/dashboard") {
+  } else if (str == "/dashboard") {
     let friendRequestInfo = await fetch(
       "http://localhost:8080/api/friends/requests",
       {
@@ -150,6 +173,7 @@ async function fillData(str) {
       });
 
     let requestsHolder = document.getElementById("dashboard-friend-requests");
+    requestsHolder.innerHTML = "";
     if (friendRequestInfo["data"].length > 0) {
       friendRequestInfo["data"].forEach((request) => {
         const userDiv = document.createElement("div");
@@ -193,32 +217,13 @@ async function fillData(str) {
       requestsHolder.classList.add("justify-content-center");
       requestsHolder.classList.remove("justify-content-start");
     }
-
-    // juju fetch request /api/matches
-
-    let historyHolder = document.getElementById("dashboard-match-history");
-    // if (matchHistoryInfo["data"].length > 0) {
-    // fill info
-    // }
-    // else
-    {
-      const noDataHeading = document.createElement("h3");
-      const noDataMessage = document.createElement("p");
-
-      noDataHeading.classList.add("text-center", "bold");
-      noDataMessage.classList.add("text-center", "small");
-      noDataHeading.innerHTML = "no data to show!";
-      noDataMessage.innerHTML = "this is rather sad looking - play a bit more?";
-      historyHolder.appendChild(noDataHeading);
-      historyHolder.appendChild(noDataMessage);
-      historyHolder.classList.add("justify-content-center");
-      historyHolder.classList.remove("justify-content-start");
-    }
-    console.log(friendRequestInfo);
-  }
-  if (str == "/achievements") {
-    let achievementsInfo = await fetch(
-      "http://localhost:8080/api/achievements",
+    // calling the match history
+    pullMatchHistory("dashboard");
+  } else if (str == "/achievements") {
+    pullAchievements("achievements");
+  } else if (str == "/leaderboards") {
+    let leaderboardsInfo = await fetch(
+      "http://localhost:8080/api/matches/leaderboards",
       {
         method: "GET",
         credentials: "include",
@@ -231,15 +236,107 @@ async function fillData(str) {
         return err;
       });
 
-    console.log(achievementsInfo);
-    const achievementsHolder = document.getElementById("achievements-holder");
-    console.log(achievementsHolder);
-    if (achievementsInfo["data"].length > 0) {
-      achievementsInfo["data"].forEach((item) => {
+    let globalLeaderboards = document.getElementById("leaderboards-global");
+    if (leaderboardsInfo["data"].length > 0) {
+      leaderboardsInfo["data"].forEach((item, index) => {
+        const recordHolder = document.createElement("div");
+
+        recordHolder.classList.add(
+          "w-100",
+          "box",
+          "inner-box",
+          "d-flex",
+          "justify-content-between",
+          "align-items-center",
+          "gap-4",
+          "p-4"
+        );
+
+        recordHolder.innerHTML = `
+        <p class="ps-5">${index + 1}</p>
+        <p class="bold">${item["user"]}</p>
+        <p>${item["wins"]} wins</p>
+        `;
+
+        globalLeaderboards.appendChild(recordHolder);
+      });
+    }
+
+    let friendsLeaderboardsInfo = await fetch(
+      "http://localhost:8080/api/matches/leaderboards/friends",
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    let friendsLeaderboard = document.getElementById("leaderboards-friends");
+    if (friendsLeaderboardsInfo["data"].length > 0) {
+      friendsLeaderboardsInfo["data"].forEach((item, index) => {
+        const recordHolder = document.createElement("div");
+
+        recordHolder.classList.add(
+          "w-100",
+          "box",
+          "inner-box",
+          "d-flex",
+          "justify-content-between",
+          "align-items-center",
+          "gap-4",
+          "p-4"
+        );
+
+        recordHolder.innerHTML = `
+        <p class="ps-5">${index + 1}</p>
+        <p class="bold">${item["user"]}</p>
+        <p>${item["wins"]} wins</p>
+        `;
+
+        friendsLeaderboard.appendChild(recordHolder);
+      });
+    }
+  }
+}
+
+async function pullAchievements(str) {
+  let achievementsInfo = await fetch("http://localhost:8080/api/achievements", {
+    method: "GET",
+    credentials: "include",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  console.log(achievementsInfo);
+  let achievementsHolder;
+  if (str == "achievements")
+    achievementsHolder = document.getElementById("achievements-holder");
+  else {
+    achievementsHolder = document.getElementById("profile-achievements-holder");
+    achievementsHolder.classList.toggle("gap-4");
+    achievementsHolder.classList.toggle("justify-content-between");
+
+    document.getElementById("profile-achievements").innerHTML =
+      achievementsInfo["data"].length;
+  }
+  console.log(achievementsHolder);
+  if (achievementsInfo["data"].length > 0) {
+    achievementsInfo["data"].forEach((item, index) => {
+      if (str == "achievements" || (str == "profile" && index < 4)) {
         const achievementDivHolder = document.createElement("div");
         const achievementDiv = document.createElement("div");
 
-        achievementDivHolder.classList.add("col-4");
+        if (str == "achievements") achievementDivHolder.classList.add("col-4");
+        else achievementDivHolder.classList.add("flex-grow-1", "max-w-quarter");
 
         achievementDiv.classList.add(
           "flex-grow-1",
@@ -254,34 +351,149 @@ async function fillData(str) {
         );
 
         achievementDiv.innerHTML = `
-            <img
-              width="64"
-              height="64"
-              class="mt-2"
-              src="${item["icon"]}"
-            />
-            <div class="d-flex flex-column justify-content-center align-items-start">
-              <p>${item["name"]}</p>
-              <p class="description-text">${item["description"]}</p>
-            </div>
+        <img
+        width="64"
+        height="64"
+        class="mt-2"
+        src="${item["icon"]}"
+        />
+        <div class="d-flex flex-column justify-content-center align-items-start">
+        <p class="bold">${item["name"]}</p>
+        <p class="description-text ${
+          str == "profile" ? "disabled-element" : ""
+        }">${item["description"]}</p>
+        </div>
         `;
         achievementDivHolder.appendChild(achievementDiv);
         achievementsHolder.appendChild(achievementDivHolder);
-      });
-    } else {
-      achievementsHolder.classList.toggle("justify-content-start");
-      achievementsHolder.classList.toggle("justify-content-center");
-      achievementsHolder.classList.toggle("align-items-start");
-      achievementsHolder.classList.toggle("align-items-center");
-      achievementsHolder.classList.toggle("h-fit");
-      achievementsHolder.classList.toggle("h-75");
-      achievementsHolder.classList.toggle("flex-column");
-      achievementsHolder.classList.toggle("gap-2");
-      achievementsHolder.innerHTML = `
-      <h3 class="text-center bold">accomplished...nothing?</h3>
-      <p class="text-center small">your parents must be real proud.</p>
-      `;
+      }
+    });
+  } else {
+    achievementsHolder.classList.toggle("justify-content-start");
+    achievementsHolder.classList.toggle("justify-content-center");
+    achievementsHolder.classList.toggle("align-items-start");
+    achievementsHolder.classList.toggle("align-items-center");
+    achievementsHolder.classList.toggle("h-fit");
+    if (str == "achievements") achievementsHolder.classList.toggle("h-75");
+    else achievementsHolder.classList.toggle("h-25");
+    achievementsHolder.classList.toggle("flex-column");
+    achievementsHolder.classList.toggle("gap-2");
+    achievementsHolder.innerHTML = `
+    <h3 class="text-center bold">accomplished...nothing?</h3>
+    <p class="text-center small">your parents must be real proud.</p>
+    `;
+  }
+}
+
+async function pullMatchHistory(str) {
+  let matchHistoryInfo = await fetch(
+    `http://localhost:8080/api/matches?id=${my_id}`,
+    {
+      method: "GET",
+      credentials: "include",
     }
+  )
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  let historyHolder;
+  let wins = 0,
+    losses = 0,
+    gametime = 0;
+  if (str == "dashboard")
+    historyHolder = document.getElementById("dashboard-match-history");
+  else historyHolder = document.getElementById("profile-match-history");
+  if (matchHistoryInfo["data"].length > 0) {
+    matchHistoryInfo["data"].forEach((match) => {
+      const matchDiv = document.createElement("div");
+      matchDiv.classList.add(
+        "custom-border",
+        "d-flex",
+        "align-items-center",
+        "justify-content-evenly",
+        "py-2",
+        "px-4",
+        "gap-2",
+        "w-100"
+      );
+      let result, boxClass;
+      if (match.player_one_score > match.player_two_score) {
+        result = "WIN";
+        boxClass = "win-box";
+        wins++;
+      } else if (match.player_two_score > match.player_one_score) {
+        result = "LOSS";
+        boxClass = "loss-box";
+        losses++;
+      } else {
+        result = "DRAW";
+        boxClass = "draw-box";
+      }
+      matchDiv.innerHTML = `
+      <h3 class= "player_1 bold">${match.player_one.username}</h3>
+      <h3 class="electrolize text-center bold ${boxClass}"> ${result}</h3>
+      <h3 class="player_2 bold">${match.player_two.username}</h3>
+    </div>
+      `;
+      historyHolder.appendChild(matchDiv);
+
+      let startTime = new Date(match.start_time);
+      let endTime = new Date(match.end_time);
+      gametime += (startTime.getTime() - endTime.getTime()) / 60000;
+    });
+
+    if (str == "profile") {
+      let winsHolder = document.getElementById("profile-wins");
+      let lossesHolder = document.getElementById("profile-losses");
+      let rankHolder = document.getElementById("profile-rank");
+      let ratioHolder = document.getElementById("profile-ratio");
+      let gametimeHolder = document.getElementById("profile-gametime");
+      let chartHolder = document.getElementById("profile-chart");
+      const ctx = chartHolder.getContext("2d");
+
+      winsHolder.innerHTML = wins;
+      lossesHolder.innerHTML = losses;
+      ratioHolder.innerHTML = (wins / losses).toFixed(2);
+      gametimeHolder.innerHTML = (
+        gametime / matchHistoryInfo["data"].length
+      ).toFixed(2);
+
+      const total = wins + losses;
+      const winsAngle = (wins / total) * 2 * Math.PI;
+      const lossesAngle = (losses / total) * 2 * Math.PI;
+      const centerX = chartHolder.width / 2;
+      const centerY = chartHolder.height / 2;
+      const radius = Math.min(centerX, centerY);
+
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, radius, 0, winsAngle);
+      ctx.closePath();
+      ctx.fillStyle = "#2B5E42"; // color for wins
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, radius, winsAngle, winsAngle + lossesAngle);
+      ctx.closePath();
+      ctx.fillStyle = "#703738"; // color for losses
+      ctx.fill();
+    }
+  } else {
+    const noDataHeading = document.createElement("h3");
+    const noDataMessage = document.createElement("p");
+
+    noDataHeading.classList.add("text-center", "bold");
+    noDataMessage.classList.add("text-center", "small");
+    noDataHeading.innerHTML = "no data to show!";
+    noDataMessage.innerHTML = "this is rather sad looking - play a bit more?";
+    historyHolder.appendChild(noDataHeading);
+    historyHolder.appendChild(noDataMessage);
+    historyHolder.classList.add("justify-content-center");
+    historyHolder.classList.remove("justify-content-start");
   }
 }
 
@@ -304,7 +516,7 @@ async function openModal(str) {
 
   if (str == "open-friend") {
     modalHeading.innerHTML = "ADD FRIEND";
-    let apiInfo = await fetch("http://localhost:8080/api/users", {
+    let apiInfo = await fetch("http://localhost:8080/api/users/new", {
       method: "GET",
       credentials: "include",
     })
@@ -346,7 +558,6 @@ async function openModal(str) {
       });
     } else {
       userContainer.innerHTML = `
-        <h1 class="w-100">ADD FRIENDS</h1>
         <p class="flex-grow-1 h-100">no one to add yet!</p>
       `;
     }
@@ -384,6 +595,7 @@ async function openModal(str) {
     return;
   }
   if (str == "1v1-player") {
+    console.log("enter player 2");
     modalHeading.innerHTML = "ENTER PLAYER NAME";
 
     modalHolder.style.zIndex = 100;
@@ -407,7 +619,35 @@ async function openModal(str) {
     modalInfo.appendChild(userContainer);
     return;
   }
-  if (str == "tournament") {
+  if (str == "2v2") {
+    modalHeading.innerHTML = "2v2";
+
+    modalHolder.style.zIndex = 100;
+    modalHolder.style.opacity = 1;
+
+    const userContainer = document.createElement("div");
+    userContainer.classList.add(
+      "w-100",
+      "h-75",
+      "d-flex",
+      "justify-content-center",
+      "align-items-center",
+      "gap-4"
+    );
+    userContainer.innerHTML = `
+      <div onclick="openModal('2v2-player')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+        <img src="styles/images/2v2.png" />
+        <h3>2V2 PLAYER</h3>
+      </div>
+      <div onclick="createMatch('2v2-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+        <img src="styles/images/2v2.png" />
+        <h3>2V2 AI</h3>
+      </div>
+    `;
+    modalInfo.appendChild(userContainer);
+    return;
+  }
+  if (str == "2v2-player") {
     modalHeading.innerHTML = "ENTER PLAYER NAME";
 
     modalHolder.style.zIndex = 100;
@@ -443,11 +683,13 @@ async function openModal(str) {
       "align-items-center"
     );
     userButton.innerHTML = `
-      <button onclick=createMatch('tournament') class="btn small-btn">PLAY</button>
+      <button onclick=createMatch('1v1-player') class="btn small-btn">PLAY</button>
     `;
     modalInfo.appendChild(userButton);
     modalInfo.classList.toggle("gap-4");
     return;
+  }
+  if (str == "tournament") {
   }
   modalHolder.style.zIndex = -100;
   modalHolder.style.opacity = 0;
@@ -472,6 +714,7 @@ async function addFriend(id, t) {
     });
 
   console.log(apiInfo);
+  openModal("close");
 }
 
 async function resolveFriend(answer, reqId) {
@@ -496,5 +739,112 @@ async function resolveFriend(answer, reqId) {
   fillData("/dashboard");
 }
 
+let chatLength = null;
+let currentChatUser = null;
+let chatLoaded = false;
 
-window.app = app;
+async function pullChats(friend) {
+  // Set chatLoaded to False if the receipient changes
+  if (currentChatUser !== friend.username) {
+    chatLoaded = false;
+  }
+
+  let chatInfo = await fetch(
+    `http://localhost:8080/api/msgs?friend_id=${friend.id}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  )
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  console.log("chats between me and " + friend.username + ": ");
+  console.log(chatInfo);
+
+  const chatHolder = document.getElementById("friends-chat");
+  const chatTitle = document.getElementById("friends-username");
+  chatTitle.innerHTML = friend.username;
+
+  let newChatLength = chatInfo["data"].length;
+  let currentChatHeight = chatHolder.scrollHeight;
+  // if ((chatLength != null && newChatLength == chatLength) || (currentChatUser != null && currentChatUser == friend.username))
+  //   return ;
+  if (chatInfo["data"].length > 0) {
+    chatLength = chatInfo["data"].length;
+    currentChatUser = friend.username;
+    chatHolder.innerHTML = "";
+
+    chatInfo["data"].forEach((message) => {
+      const messageDiv = document.createElement("div");
+
+      messageDiv.classList.add(
+        "d-flex",
+        "gap-2",
+        "w-100",
+        "align-content-start"
+      );
+
+      if (message.sender == friend.id)
+        messageDiv.classList.add("friend-message", "justify-content-start");
+      else messageDiv.classList.add("my-message", "justify-content-end");
+
+      // <img
+      //   width="32"
+      //   height="32"
+      //   style="object-fit: cover; border-radius: 16px"
+      //   src="${friend.profile_pic}"
+      // />
+      messageDiv.innerHTML = `
+      <p>
+      ${message.content}
+      </p>
+      `;
+      chatHolder.appendChild(messageDiv);
+    });
+  }
+
+  // If chat hasn't been loaded OR there's a new message, scroll to top
+  if (!chatLoaded || currentChatHeight != chatHolder.scrollHeight) {
+    chatHolder.scrollTop = chatHolder.scrollHeight;
+    chatLoaded = true;
+  }
+
+  const sendChatButton = document.getElementById("friends-send-chat");
+  const chatTextArea = document.getElementById("friends-message-input");
+  sendChatButton.disabled = false;
+  chatTextArea.disabled = false;
+  function clicked() {
+    sendChat(friend);
+  }
+  sendChatButton.onclick = clicked;
+}
+
+async function sendChat(friend) {
+  const messageInput = document.getElementById("friends-message-input");
+  console.log(messageInput.value);
+
+  let sendInfo = await fetch(`http://localhost:8080/api/msgs/`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      receiver: friend.id,
+      content: messageInput.value,
+    }),
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  messageInput.value = "";
+}

@@ -1,0 +1,47 @@
+[
+    {
+        "model": "msgs.Message",
+        "pk": 1,
+        "fields" : {
+            "sender": 1,
+            "receiver": 2,
+            "content": "hey!"
+        }
+    },
+    {
+        "model": "msgs.Message",
+        "pk": 2,
+        "fields" : {
+            "sender": 2,
+            "receiver": 1,
+            "content": "hiii"
+        }
+    },
+    {
+        "model": "msgs.Message",
+        "pk": 3,
+        "fields" : {
+            "sender": 1,
+            "receiver": 2,
+            "content": "this is a test message this is a test message this is a test message this is a test message this is a test message this is a test message this is a test message."
+        }
+    },
+    {
+        "model": "msgs.Message",
+        "pk": 4,
+        "fields" : {
+            "sender": 1,
+            "receiver": 2,
+            "content": "moooreEEERE TESTINGGGGG"
+        }
+    },
+    {
+        "model": "msgs.Message",
+        "pk": 5,
+        "fields" : {
+            "sender": 2,
+            "receiver": 1,
+            "content": "....cool......"
+        }
+    }
+]

@@ -7,6 +7,10 @@
   transition: all 300ms ease;
 }
 
+:disabled {
+  cursor: not-allowed;
+}
+
 .ionicon {
   position: absolute;
   top: 2rem;
@@ -23,7 +27,6 @@
   border-color: var(--border);
   border-radius: 16px;
 }
-
 
 ::-webkit-scrollbar {
   width: 8px;
@@ -146,11 +149,16 @@ a {
   cursor: pointer;
 }
 
+.reverse-flex-col {
+  flex-direction: column-reverse;
+}
+
 .grid-2 {
   display: grid;
-  grid-template-columns: auto auto;
-  gap: 1rem;
+  grid-template-columns: 49% 49%;
+  gap: 2%;
   overflow-y: scroll;
+  overflow-x: hidden;
   max-height: 75%;
 }
 
@@ -235,6 +243,14 @@ ion-icon {
   color: white;
 }
 
+.disabled-element {
+  display: none;
+}
+
+.max-w-quarter {
+  max-width: 24%;
+}
+
 .h-fit {
   height: fit-content;
 }
@@ -270,10 +286,21 @@ ion-icon {
   }
 }
 
+.player_1,
+.player_2 {
+  width: 100px;
+}
+
+.player_2 {
+  text-align: right;
+}
+
 .win-box,
-.loss-box {
-  border-radius: 8px;
-  padding: 8px;
+.loss-box, 
+.draw-box {
+  border-radius: 10px;
+  padding: 10px;
+  width: 100px;
 }
 
 .win-box {
@@ -284,6 +311,9 @@ ion-icon {
   background-color: var(--loss-color);
 }
 
+.draw-box{
+  background-color: var(--border);
+}
 .fixed-width {
   width: 250px;
 }
@@ -300,5 +330,15 @@ ion-icon {
 
   p {
     order: 1;
+  }
+}
+
+.my-message, .friend-message {
+  p {
+    background-color: var(--primary);
+    border: solid 2px;
+    border-color: var(--border);
+    border-radius: 16px;
+    padding: 1rem;
   }
 }

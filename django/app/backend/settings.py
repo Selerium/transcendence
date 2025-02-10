@@ -50,8 +50,10 @@ INSTALLED_APPS = [
 
     'users',
     'friends',
+    'matches',
     'oauth',
     'me',
+    'msgs',
     'achievements',
     'rest_framework',
 ]

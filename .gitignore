@@ -1,6 +1,9 @@
 # *.sh
 django/app/*/__pycache__/
 django/app/*/*/__pycache__/
+django/app/friends/migrations/
 django/app/*/migrations/
+django/app/*/migrations/*
+removemigrate.sh
 
 postgres/data

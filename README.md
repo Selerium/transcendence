@@ -25,3 +25,11 @@ All three containers are connected on a Docker Network (`trans_network`) that al
 - **POST** `../api/users/`: *creates a new user*
 - **GET** `../api/users/{id}`: *returns data of specific user*
 - **PUT** `../api/users/{id}`: *update data of specific user*
+
+## Resetting migrations
+
+If you need to reset any migrations for whatever reason:
+- in root directory, `sudo rm -rf django/app/*/migrations`
+- in trans_backend, `python3 manage.py makemigrations app_name` for all the required apps
+- in trans_backend, `python3 manage.py migrate`
+- in trans_backend, `python3 manage.py loaddata fixture_name` to load any fixtures models as necessary

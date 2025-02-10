@@ -59,5 +59,29 @@
 			"user_id": 1,
 			"unlocked": 2
 		}
+	},
+	{
+		"model": "achievements.AchievementUnlocked",
+		"pk": 3,
+		"fields": {
+			"user_id": 1,
+			"unlocked": 3
+		}
+	},
+	{
+		"model": "achievements.AchievementUnlocked",
+		"pk": 4,
+		"fields": {
+			"user_id": 1,
+			"unlocked": 4
+		}
+	},
+	{
+		"model": "achievements.AchievementUnlocked",
+		"pk": 5,
+		"fields": {
+			"user_id": 1,
+			"unlocked": 5
+		}
 	}
 ]
