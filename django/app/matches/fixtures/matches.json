@@ -1,0 +1,72 @@
+[
+{
+	"model": "matches.Match",
+	"pk": 1,
+	"fields": {
+		"match_id": 1,
+		"player_one":1,
+		"player_two": 2,
+		"is_ai_opponent": false,
+		"player_one_score":"30",
+		"player_two_score":"12",
+		"start_time": "2025-02-06T15:50:06.015573Z",
+		"end_time": "2025-02-06T15:45:06.016176Z"
+	}
+},
+{
+	"model": "matches.Match",
+	"pk": 2,
+	"fields": {
+		"match_id": 2,
+		"player_one":1,
+		"player_two": 2,
+		"is_ai_opponent": false,
+		"player_one_score":"3",
+		"player_two_score":"12",
+		"start_time": "2025-02-06T15:40:06.015573Z",
+		"end_time": "2025-02-06T15:35:06.016176Z"
+	}
+},
+{
+	"model": "matches.Match",
+	"pk": 3,
+	"fields": {
+		"match_id": 3,
+		"player_one":1,
+		"player_two": 2,
+		"is_ai_opponent": false,
+		"player_one_score":"12",
+		"player_two_score":"12",
+		"start_time": "2025-02-06T15:55:06.015573Z",
+		"end_time": "2025-02-06T15:50:06.016176Z"
+	}
+},
+{
+	"model": "matches.Match",
+	"pk": 4,
+	"fields": {
+		"match_id": 4,
+		"player_one": 3,
+		"player_two": 2,
+		"is_ai_opponent": false,
+		"player_one_score":"12",
+		"player_two_score":"1",
+		"start_time": "2025-02-06T15:55:06.015573Z",
+		"end_time": "2025-02-06T15:50:06.016176Z"
+	}
+},
+{
+	"model": "matches.Match",
+	"pk": 5,
+	"fields": {
+		"match_id": 5,
+		"player_one": 1,
+		"player_two": 3,
+		"is_ai_opponent": false,
+		"player_one_score":"1",
+		"player_two_score":"12",
+		"start_time": "2025-02-06T15:55:06.015573Z",
+		"end_time": "2025-02-06T15:50:06.016176Z"
+	}
+}
+]

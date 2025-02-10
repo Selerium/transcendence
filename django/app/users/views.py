@@ -3,8 +3,11 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.conf import settings
+from django.db.models import Q
+
 from .serializers import UserSerializer
 from .models import User
+from friends.models import Friend
 import jwt
 import requests
 
@@ -85,3 +88,34 @@ def users(request, id=None):
         return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
 
     return ERROR404
+
+@api_view(['GET'])
+def users_new(request):
+    try:
+        user_jwt = request.COOKIES.get('jwt')
+        decoded_jwt = jwt.decode(user_jwt, JWT_SECRET, algorithms=["HS256"])
+        url = 'https://api.intra.42.fr/v2/me'
+        headers = {'Authorization': f'Bearer {decoded_jwt['access']}'}
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            return ERROR403
+        this_user = decoded_jwt['data']['id']
+    except:
+        return ERROR400
+    
+    friends = Friend.objects.filter(
+        (Q(friend1=this_user) | Q(friend2=this_user)) & Q(friend_status='1')
+    )
+    friend_ids = set()
+    for friend in friends:
+        if friend.friend1.id != this_user:
+            friend_ids.add(friend.friend1.id)
+        if friend.friend2.id != this_user:
+            friend_ids.add(friend.friend2.id)
+
+    friend_ids.add(this_user)
+
+    non_friends = User.objects.exclude(id__in=friend_ids)
+    return_data = UserSerializer(non_friends, many=True)
+
+    return Response(data={'success': True, 'data': return_data.data}, status=status.HTTP_200_OK)

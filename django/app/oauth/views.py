@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from urllib.parse import urlencode
 from users.models import User
+from users.serializers import UserSerializer
 from users.views import users
 from django.test import RequestFactory
 from django.conf import settings
@@ -58,6 +59,10 @@ def get_user_info(access_token, refresh_token):
         user_data = response.json()
         username = user_data.get('login')
         profile_image = user_data.get('image',{}).get('link')
+        if user_data.get('kind') == 'student':
+            role = 0
+        else:
+            role = 1
         print(f"username:<{username}> profile_image:<{profile_image}>")
         try:
             User.objects.get(username=username)
@@ -66,6 +71,7 @@ def get_user_info(access_token, refresh_token):
             newUser = User(
                 username=username,
                 profile_pic=profile_image,
+                role=role
             )
             newUser.save()
             print('registered')
