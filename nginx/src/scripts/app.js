@@ -1,3 +1,4 @@
+
 let loggedIn = false;
 let username;
 
@@ -383,7 +384,6 @@ async function openModal(str) {
     return;
   }
   if (str == "1v1-player") {
-    console.log("enter player 2");
     modalHeading.innerHTML = "ENTER PLAYER NAME";
 
     modalHolder.style.zIndex = 100;
@@ -407,35 +407,7 @@ async function openModal(str) {
     modalInfo.appendChild(userContainer);
     return;
   }
-  if (str == "2v2") {
-    modalHeading.innerHTML = "2v2";
-
-    modalHolder.style.zIndex = 100;
-    modalHolder.style.opacity = 1;
-
-    const userContainer = document.createElement("div");
-    userContainer.classList.add(
-      "w-100",
-      "h-75",
-      "d-flex",
-      "justify-content-center",
-      "align-items-center",
-      "gap-4"
-    );
-    userContainer.innerHTML = `
-      <div onclick="openModal('2v2-player')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
-        <img src="styles/images/2v2.png" />
-        <h3>2V2 PLAYER</h3>
-      </div>
-      <div onclick="createMatch('2v2-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
-        <img src="styles/images/2v2.png" />
-        <h3>2V2 AI</h3>
-      </div>
-    `;
-    modalInfo.appendChild(userContainer);
-    return;
-  }
-  if (str == "2v2-player") {
+  if (str == "tournament") {
     modalHeading.innerHTML = "ENTER PLAYER NAME";
 
     modalHolder.style.zIndex = 100;
@@ -471,14 +443,11 @@ async function openModal(str) {
       "align-items-center"
     );
     userButton.innerHTML = `
-      <button onclick=createMatch('1v1-player') class="btn small-btn">PLAY</button>
+      <button onclick=createMatch('tournament') class="btn small-btn">PLAY</button>
     `;
     modalInfo.appendChild(userButton);
     modalInfo.classList.toggle("gap-4");
     return;
-  }
-  if (str == "tournament") {
-    
   }
   modalHolder.style.zIndex = -100;
   modalHolder.style.opacity = 0;
@@ -526,3 +495,6 @@ async function resolveFriend(answer, reqId) {
   console.log(apiInfo);
   fillData("/dashboard");
 }
+
+
+window.app = app;

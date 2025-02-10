@@ -62,6 +62,8 @@ function draw() {
 }
 
 
+
+
 function drawScore(player1Score, player2Score) {
     ctx.font = '48px Arial';
     ctx.fillStyle = '#D1C4E9';
@@ -265,7 +267,6 @@ function predict_ball_position() {
         predictedVelocityY = -predictedVelocityY;
         predictedBallY = predictedBallY < 0 ? ballSize : canvas.height - ballSize;
     }
-
     return { y: predictedBallY };
 }
 
