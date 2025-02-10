@@ -3,6 +3,9 @@ let intervalId = null;
 let username;
 
 async function fillData(str) {
+  if (window.intervalId)
+    clearInterval(window.intervalId);
+
   if (!loggedIn) {
     loggedIn = true;
     let info = await fetch("http://localhost:8080/api/me", {
@@ -111,10 +114,10 @@ async function fillData(str) {
       friendsListInfo["data"].forEach((friend) => {
         const friendDiv = document.createElement("button");
         function clicked() {
-          if (intervalId != null)
-            clearInterval(intervalId);
+          if (window.intervalId != null)
+            clearInterval(window.intervalId);
 
-          intervalId = setInterval(() => {
+          window.intervalId = setInterval(() => {
             pullChats(friend);
           }, 1000);
         }
@@ -542,8 +545,8 @@ async function resolveFriend(answer, reqId) {
 let chatLength = null;
 let currentChatUser = null;
 let chatLoaded = false;
-async function pullChats(friend) {
 
+async function pullChats(friend) {
   // Set chatLoaded to False if the receipient changes
   if (currentChatUser !== friend.username) {
     chatLoaded = false;
