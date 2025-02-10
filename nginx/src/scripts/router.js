@@ -45,9 +45,12 @@ async function changeRoute() {
 
   if (routes[path] == undefined) path = "/404";
 
-  const html = await fetch(routes[path]).then((response) => response.text()).catch((err) => err);
+  const html = await fetch(routes[path])
+    .then((response) => response.text())
+    .catch((err) => err);
 
   const main = document.getElementById("main");
+  main.innerHTML = "";
   main.style.transform = "translateX(25%)";
   main.style.opacity = 0;
   main.style.filter = "blur(16px)";
@@ -74,9 +77,8 @@ async function changeRoute() {
   }
 
   if (path == "/") {
-    fillData('/dashboard');
-  }
-  else fillData(path);
+    fillData("/dashboard");
+  } else fillData(path);
 }
 
 window.addEventListener("click", (e) => {
@@ -91,7 +93,7 @@ window.addEventListener("click", (e) => {
 
 async function checkLogin() {
   let response = await testApi();
-  return (response['success']);
+  return response["success"];
 }
 
 async function testApi(params) {

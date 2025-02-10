@@ -3,6 +3,12 @@ let my_username = null;
 let my_id;
 
 async function fillData(str) {
+  if (currentChatUser) currentChatUser = null;
+  if (chatLoaded) chatLoaded = null;
+  if (chatLength) chatLength = null;
+
+  if (window.intervalId) clearInterval(window.intervalId);
+
   if (!loggedIn) {
     loggedIn = true;
     let info = await fetch("http://localhost:8080/api/me", {
@@ -30,14 +36,14 @@ async function fillData(str) {
     let meInfo = await fetch("http://localhost:8080/api/me", {
       method: "GET",
       credentials: "include",
-  })
-    .then((response) => {
-      return response.json();
     })
-    .catch((err) => {
-      return err;
-    });
-    
+      .then((response) => {
+        return response.json();
+      })
+      .catch((err) => {
+        return err;
+      });
+
     my_id = meInfo["data"]["id"];
     my_username = meInfo["data"]["username"];
   }
@@ -109,10 +115,24 @@ async function fillData(str) {
         return err;
       });
 
+    let chatHolder = document.getElementById("friends-chat");
+    chatHolder.innerHTML = "";
     let friendsHolder = document.getElementById("friends-friends");
+    friendsHolder.innerHTML = "";
+    const sendChatButton = document.getElementById("friends-send-chat");
+    const chatTextArea = document.getElementById("friends-message-input");
+    sendChatButton.disabled = true;
+    chatTextArea.disabled = true;
     if (friendsListInfo["data"].length > 0) {
       friendsListInfo["data"].forEach((friend) => {
-        const friendDiv = document.createElement("div");
+        const friendDiv = document.createElement("button");
+        function clicked() {
+          if (window.intervalId != null) clearInterval(window.intervalId);
+
+          window.intervalId = setInterval(() => {
+            pullChats(friend);
+          }, 1000);
+        }
 
         friendDiv.classList.add(
           "box",
@@ -128,10 +148,11 @@ async function fillData(str) {
         );
 
         friendDiv.innerHTML = `
-			<img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" />
-			<p>${friend.username}</p>
-		`;
+          <img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" />
+          <p>${friend.username}</p>
+        `;
 
+        friendDiv.onclick = clicked;
         friendsHolder.appendChild(friendDiv);
       });
     }
@@ -152,6 +173,7 @@ async function fillData(str) {
       });
 
     let requestsHolder = document.getElementById("dashboard-friend-requests");
+    requestsHolder.innerHTML = "";
     if (friendRequestInfo["data"].length > 0) {
       friendRequestInfo["data"].forEach((request) => {
         const userDiv = document.createElement("div");
@@ -435,7 +457,7 @@ async function pullMatchHistory(str) {
 
       winsHolder.innerHTML = wins;
       lossesHolder.innerHTML = losses;
-      ratioHolder.innerHTML = wins / losses;
+      ratioHolder.innerHTML = (wins / losses).toFixed(2);
       gametimeHolder.innerHTML = (
         gametime / matchHistoryInfo["data"].length
       ).toFixed(2);
@@ -523,7 +545,7 @@ async function openModal(str) {
             "py-2",
             "px-4",
             "gap-2",
-            "min-w-half",
+            "min-w-half"
           );
           userDiv.innerHTML = `
             <img width="64" height="64" src="${user.profile_pic}" style="object-fit: cover; border-radius: 64px" />
@@ -693,6 +715,7 @@ async function addFriend(id, t) {
     });
 
   console.log(apiInfo);
+  openModal("close");
 }
 
 async function resolveFriend(answer, reqId) {
@@ -715,4 +738,114 @@ async function resolveFriend(answer, reqId) {
 
   console.log(apiInfo);
   fillData("/dashboard");
+}
+
+let chatLength = null;
+let currentChatUser = null;
+let chatLoaded = false;
+
+async function pullChats(friend) {
+  // Set chatLoaded to False if the receipient changes
+  if (currentChatUser !== friend.username) {
+    chatLoaded = false;
+  }
+
+  let chatInfo = await fetch(
+    `http://localhost:8080/api/msgs?friend_id=${friend.id}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  )
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  console.log("chats between me and " + friend.username + ": ");
+  console.log(chatInfo);
+
+  const chatHolder = document.getElementById("friends-chat");
+  const chatTitle = document.getElementById("friends-username");
+  chatTitle.innerHTML = friend.username;
+
+  let newChatLength = chatInfo["data"].length;
+  let currentChatHeight = chatHolder.scrollHeight;
+  // if ((chatLength != null && newChatLength == chatLength) || (currentChatUser != null && currentChatUser == friend.username))
+  //   return ;
+  if (chatInfo["data"].length > 0) {
+    chatLength = chatInfo["data"].length;
+    currentChatUser = friend.username;
+    chatHolder.innerHTML = "";
+
+    chatInfo["data"].forEach((message) => {
+      const messageDiv = document.createElement("div");
+
+      messageDiv.classList.add(
+        "d-flex",
+        "gap-2",
+        "w-100",
+        "align-content-start"
+      );
+
+      if (message.sender == friend.id)
+        messageDiv.classList.add("friend-message", "justify-content-start");
+      else messageDiv.classList.add("my-message", "justify-content-end");
+
+      // <img
+      //   width="32"
+      //   height="32"
+      //   style="object-fit: cover; border-radius: 16px"
+      //   src="${friend.profile_pic}"
+      // />
+      messageDiv.innerHTML = `
+      <p>
+      ${message.content}
+      </p>
+      `;
+      chatHolder.appendChild(messageDiv);
+    });
+  }
+
+  // If chat hasn't been loaded OR there's a new message, scroll to top
+  if (!chatLoaded || currentChatHeight != chatHolder.scrollHeight) {
+    chatHolder.scrollTop = chatHolder.scrollHeight;
+    chatLoaded = true;
+  }
+
+  const sendChatButton = document.getElementById("friends-send-chat");
+  const chatTextArea = document.getElementById("friends-message-input");
+  sendChatButton.disabled = false;
+  chatTextArea.disabled = false;
+  function clicked() {
+    sendChat(friend);
+  }
+  sendChatButton.onclick = clicked;
+}
+
+async function sendChat(friend) {
+  const messageInput = document.getElementById("friends-message-input");
+  console.log(messageInput.value);
+
+  let sendInfo = await fetch(`http://localhost:8080/api/msgs/`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      receiver: friend.id,
+      content: messageInput.value,
+    }),
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  messageInput.value = "";
 }

@@ -9,88 +9,38 @@
 <div class="d-flex w-100 h-100">
   <div class="h-100 w-25">
     <div
-      class="box w-100 h-100 me-1 d-flex flex-column gap-2 justify-content-start align-items-center p-4"
+      class="box w-100 h-100 me-1 d-flex flex-column gap-2 justify-content-start align-items-center p-4 scrollable"
+      style="max-height: 83vh"
     >
       <h3 class="p-2">FRIENDS</h3>
       <div
         id="friends-friends"
-        class="d-flex flex-column gap-2 w-100 justify-content-start align-items-center"
-      >
-      </div>
+        class="d-flex flex-column gap-2 w-100 scrollable justify-content-start align-items-center"
+      ></div>
     </div>
   </div>
   <div class="h-100 w-75">
     <div
       class="box w-100 h-100 ms-1 d-flex flex-column gap-2 justify-content-start align-items-center p-4"
+      style="max-height: 83vh"
     >
-      <h3 class="p-2">CHAT</h3>
-      <div class="box inner-box w-100 h-75 p-4 d-flex flex-column gap-4">
-        <div
-          class="friend-message d-flex gap-2 w-100 justify-content-start align-items-start"
-        >
-          <img
-            width="32"
-            height="32"
-            src="styles/images/profile-pic-sample.png"
-          />
-          <p>
-            this is a message this is a message this is a message this is a
-            message this is a message this is a message this is a message this
-            is a message
-          </p>
-        </div>
-        <div
-          class="my-message d-flex gap-2 w-100 justify-content-start align-items-start"
-        >
-          <img
-            width="32"
-            height="32"
-            src="styles/images/profile-pic-sample.png"
-          />
-          <p>
-            this is a message this is a message this is a message this is a
-            message this is a message this is a message this is a message this
-            is a message
-          </p>
-        </div>
-        <div
-          class="my-message d-flex gap-2 w-100 justify-content-start align-items-start"
-        >
-          <img
-            width="32"
-            height="32"
-            src="styles/images/profile-pic-sample.png"
-          />
-          <p>
-            this is a message this is a message this is a message this is a
-            message this is a message this is a message this is a message this
-            is a message
-          </p>
-        </div>
-        <div
-          class="friend-message d-flex gap-2 w-100 justify-content-start align-items-start"
-        >
-          <img
-            width="32"
-            height="32"
-            src="styles/images/profile-pic-sample.png"
-          />
-          <p>
-            this is a message this is a message this is a message this is a
-            message this is a message this is a message this is a message this
-            is a message
-          </p>
-        </div>
-      </div>
+      <h3 id="friends-username" class="p-2">CHAT</h3>
+      <div
+        id="friends-chat"
+        class="box inner-box w-100 h-75 p-4 d-flex flex-column scrollable gap-2"
+      ></div>
       <div class="box inner-box w-100 h-25 p-4 d-flex justify-content-between">
         <textarea
+          disabled
           maxlength="500"
           minlength="1"
           class="w-75 h-100 box p-2 text-white"
           placeholder="Write your message..."
+          id="friends-message-input"
         ></textarea>
-        <ion-icon name=""></ion-icon>
-        <button class="btn w-25 h-100">SEND</button>
+        <button disabled id="friends-send-chat" class="btn w-25 h-100">
+          SEND
+        </button>
       </div>
     </div>
   </div>
