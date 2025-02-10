@@ -24,7 +24,12 @@
       class="box w-100 h-100 ms-1 d-flex flex-column gap-2 justify-content-start align-items-center p-4"
       style="max-height: 83vh"
     >
-      <h3 id="friends-username" class="p-2">CHAT</h3>
+      <div class="w-100 d-flex justify-content-between align-items-center">
+        <a href="username/" id="friends-username" class="p-2">CHAT</a>
+        <button disabled class="btn small-btn" id="friends-block-button" class="p-2">
+          block
+        </button>
+      </div>
       <div
         id="friends-chat"
         class="box inner-box w-100 h-75 p-4 d-flex flex-column scrollable gap-2"

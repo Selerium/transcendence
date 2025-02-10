@@ -558,7 +558,6 @@ async function openModal(str) {
       });
     } else {
       userContainer.innerHTML = `
-        <h1 class="w-100">ADD FRIENDS</h1>
         <p class="flex-grow-1 h-100">no one to add yet!</p>
       `;
     }
