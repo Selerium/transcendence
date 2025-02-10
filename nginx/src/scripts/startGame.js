@@ -1,5 +1,31 @@
 import { waitForCanvasAndStartTrophy } from "../scripts/GameTrophy.js";
+async function initGame(player_one, player_two,player_one_score,player_two_score,is_ai_opponent) {
+    //               player_one=player_one,
+      //             player_two=player_two,
+      //             is_ai_opponent=is_ai_opponent,
+    let apiInfo = await fetch("http://localhost:8080/api/matches/", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        player_one: player_one,
+        player_two: player_two,
+        player_one_score:player_one_score,
+        player_two_score:player_two_score,
+        is_ai_opponent:is_ai_opponent
+      }),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
 
+  
 export function startGame(mode, player1, player2, matchEndCallback){
     const canvas = document.getElementById("startGame");
     const ctx = canvas.getContext("2d");
@@ -309,8 +335,16 @@ export function startGame(mode, player1, player2, matchEndCallback){
             if (matchEndCallback) {
                 matchEndCallback(winner, loser, player1Score, player2Score);
             }
-            else
+            else{
                 waitForCanvasAndStartTrophy(mode , matchResults);
+                if (mode === '1v1-ai') {
+                    initGame(player1,player2,player1Score,player2Score,true)
+               } else {
+                    initGame(player1,player2,player1Score,player2Score,false)
+               }
+               
+            }
+                
         }, 500);
       }
     }

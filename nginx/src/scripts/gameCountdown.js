@@ -15,6 +15,31 @@ let countdownNumber = 4;
 let countdownInterval;
 let rotation = false;
 let animationId = null;
+async function initGame(player_one, player_two,player_one_score,player_two_score,is_ai_opponent) {
+    //               player_one=player_one,
+      //             player_two=player_two,
+      //             is_ai_opponent=is_ai_opponent,
+    let apiInfo = await fetch("http://localhost:8080/api/matches/", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        player_one: player_one,
+        player_two: player_two,
+        player_one_score:player_one_score,
+        player_two_score:player_two_score,
+        is_ai_opponent:is_ai_opponent
+      }),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
 
 export async function gameCountdown() {
     const checkInterval = setInterval(async () => { 
@@ -75,8 +100,12 @@ function runTournament(players) {
 
                     if (nextMatchCallback) {
                         nextMatchCallback(winner);
-                    } else
+                    } else {
+                        initGame(tournamentResults["match1"].player1,tournamentResults["match1"].player2,tournamentResults["match1"].player1Score,tournamentResults["match1"].player2Score,false)
+                        initGame(tournamentResults["match2"].player1,tournamentResults["match2"].player2,tournamentResults["match2"].player1Score,tournamentResults["match2"].player2Score,false)
+                        initGame(tournamentResults["match3"].player1,tournamentResults["match3"].player2,tournamentResults["match3"].player1Score,tournamentResults["match3"].player2Score,false)
                         waitForCanvasAndStartTrophy(mode, tournamentResults);
+                    }
                 });
             });
         });
