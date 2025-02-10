@@ -7,6 +7,10 @@
   transition: all 300ms ease;
 }
 
+:disabled {
+  cursor: not-allowed;
+}
+
 .ionicon {
   position: absolute;
   top: 2rem;
@@ -282,12 +286,13 @@ ion-icon {
   }
 }
 
-.player_1{
-  /* margin-right: 0px; */
+.player_1,
+.player_2 {
+  width: 100px;
 }
 
-.player_2{
-  /* margin-left: 80px;/ */
+.player_2 {
+  text-align: right;
 }
 
 .win-box,

@@ -3,8 +3,11 @@ let my_username = null;
 let my_id;
 
 async function fillData(str) {
-  if (window.intervalId)
-    clearInterval(window.intervalId);
+  if (currentChatUser) currentChatUser = null;
+  if (chatLoaded) chatLoaded = null;
+  if (chatLength) chatLength = null;
+
+  if (window.intervalId) clearInterval(window.intervalId);
 
   if (!loggedIn) {
     loggedIn = true;
@@ -33,14 +36,14 @@ async function fillData(str) {
     let meInfo = await fetch("http://localhost:8080/api/me", {
       method: "GET",
       credentials: "include",
-  })
-    .then((response) => {
-      return response.json();
     })
-    .catch((err) => {
-      return err;
-    });
-    
+      .then((response) => {
+        return response.json();
+      })
+      .catch((err) => {
+        return err;
+      });
+
     my_id = meInfo["data"]["id"];
     my_username = meInfo["data"]["username"];
   }
@@ -112,13 +115,19 @@ async function fillData(str) {
         return err;
       });
 
+    let chatHolder = document.getElementById("friends-chat");
+    chatHolder.innerHTML = "";
     let friendsHolder = document.getElementById("friends-friends");
+    friendsHolder.innerHTML = "";
+    const sendChatButton = document.getElementById("friends-send-chat");
+    const chatTextArea = document.getElementById("friends-message-input");
+    sendChatButton.disabled = true;
+    chatTextArea.disabled = true;
     if (friendsListInfo["data"].length > 0) {
       friendsListInfo["data"].forEach((friend) => {
         const friendDiv = document.createElement("button");
         function clicked() {
-          if (window.intervalId != null)
-            clearInterval(window.intervalId);
+          if (window.intervalId != null) clearInterval(window.intervalId);
 
           window.intervalId = setInterval(() => {
             pullChats(friend);
@@ -448,7 +457,7 @@ async function pullMatchHistory(str) {
 
       winsHolder.innerHTML = wins;
       lossesHolder.innerHTML = losses;
-      ratioHolder.innerHTML = wins / losses;
+      ratioHolder.innerHTML = (wins / losses).toFixed(2);
       gametimeHolder.innerHTML = (
         gametime / matchHistoryInfo["data"].length
       ).toFixed(2);
@@ -536,7 +545,7 @@ async function openModal(str) {
             "py-2",
             "px-4",
             "gap-2",
-            "min-w-half",
+            "min-w-half"
           );
           userDiv.innerHTML = `
             <img width="64" height="64" src="${user.profile_pic}" style="object-fit: cover; border-radius: 64px" />
@@ -739,7 +748,6 @@ async function pullChats(friend) {
   // Set chatLoaded to False if the receipient changes
   if (currentChatUser !== friend.username) {
     chatLoaded = false;
-
   }
 
   let chatInfo = await fetch(
@@ -762,13 +770,13 @@ async function pullChats(friend) {
   const chatHolder = document.getElementById("friends-chat");
   const chatTitle = document.getElementById("friends-username");
   chatTitle.innerHTML = friend.username;
-  
+
   let newChatLength = chatInfo["data"].length;
   let currentChatHeight = chatHolder.scrollHeight;
   // if ((chatLength != null && newChatLength == chatLength) || (currentChatUser != null && currentChatUser == friend.username))
   //   return ;
   if (chatInfo["data"].length > 0) {
-    chatLength = chatInfo['data'].length;
+    chatLength = chatInfo["data"].length;
     currentChatUser = friend.username;
     chatHolder.innerHTML = "";
 
@@ -808,6 +816,9 @@ async function pullChats(friend) {
   }
 
   const sendChatButton = document.getElementById("friends-send-chat");
+  const chatTextArea = document.getElementById("friends-message-input");
+  sendChatButton.disabled = false;
+  chatTextArea.disabled = false;
   function clicked() {
     sendChat(friend);
   }
@@ -836,5 +847,5 @@ async function sendChat(friend) {
       return err;
     });
 
-  console.log(sendInfo);
+  messageInput.value = "";
 }
