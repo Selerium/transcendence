@@ -7,6 +7,7 @@ class Friend(models.Model):
         ('0', 'Pending'),  # Friendship request is pending
         ('1', 'Active'),  # Friendship is active
         ('2', 'Inactive'),  # Friendship is active
+        ('3', 'Blocked')
     ]
 
     # friend_id 
