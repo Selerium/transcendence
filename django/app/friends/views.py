@@ -44,7 +44,8 @@ def friends(request, id=None):
 				'username': other_user.username,
 				'profile_pic': other_user.profile_pic,
 				'friend_status': request.friend_status,
-				'request_id': request.id
+				'request_id': request.id,
+				'blockedBy': ((request.blockedBy == '2' and other_user == request.friend1) or (request.blockedBy == '1' and other_user == request.friend2) or (request.blockedBy == '0'))
 			})
 
 		return Response(data={'success': True, 'data': response_data}, status=status.HTTP_200_OK)
@@ -85,13 +86,27 @@ def friends(request, id=None):
 	# update a friendship
 	elif (id != None and request.method == 'PUT'):
 		data = request.data
-		print('hii-----')
-		print(id)
-		print('hii-----')
 		friend = Friend.objects.get(id=id)
-		print('-----iih')
+		blocking_user = User.objects.get(id=this_user)
+
+		if request.data.get('blockedBy') == '0' and friend.blockedBy == '1' and blocking_user != friend.friend1:
+			return ERROR403
+		elif request.data.get('blockedBy') == '0' and friend.blockedBy == '2' and blocking_user != friend.friend2:
+			return ERROR403
+		elif request.data.get('blockedBy') == '1' and friend.blockedBy != '0':
+			return ERROR403
+		elif request.data.get('blockedBy') == '1' and friend.blockedBy != '0':
+			return ERROR403
+
+		if friend.friend1 == blocking_user:
+			final_block_user = '1'
+		elif friend.friend2 == blocking_user:
+			final_block_user = '2'
+		if request.data.get('blockedBy') == '0':
+			final_block_user = '0'
 		try:
 			friend.friend_status = data['friend_status']
+			friend.blockedBy = final_block_user
 			friend.full_clean()
 			friend.save()
 			serializer = FriendSerializer(friend)

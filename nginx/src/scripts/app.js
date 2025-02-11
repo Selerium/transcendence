@@ -124,26 +124,36 @@ async function fillData(str) {
     let selectedUserId = null;
 
     const blockButton = document.getElementById("friends-block-button");
+    const chatInput = document.getElementById("friends-message-input");
+    const chatSend = document.getElementById("friends-send-chat");
+
     if (friendsListInfo["data"].length > 0) {
       friendsListInfo["data"].forEach((friend) => {
         const friendDiv = document.createElement("button");
-        function clicked() {
+        async function clicked() {
           if (window.intervalId != null) clearInterval(window.intervalId);
 
           let chatHolder = document.getElementById("friends-chat");
           chatHolder.innerHTML = "";
+          if (friend.blockedBy)
+            blockButton.disabled = false;
+          else
+            blockButton.disabled = true;
 
-          blockButton.disabled = false;
-
-          if (friend.friend_status == '1') {
+          if (friend.friend_status == "1") {
             blockButton.innerHTML = "BLOCK";
             blockButton.onclick = helper;
-          }
-          else if (friend.friend_status = '3') {
+
+            chatInput.disabled = false;
+            chatSend.disabled = false;
+          } else if ((friend.friend_status = "3")) {
             blockButton.innerHTML = "UNBLOCK";
             blockButton.onclick = helper2;
+
+            chatInput.disabled = true;
+            chatSend.disabled = true;
           }
-          
+
           console.log(friend);
           window.intervalId = setInterval(() => {
             pullChats(friend);
@@ -179,9 +189,7 @@ async function fillData(str) {
         }
         blockButton.onclick = helper;
       });
-      
-    }
-    else {
+    } else {
       friendsHolder.innerHTML = `
         <h3 class="bold text-center h-100">you don't have any friends!</h3>
         <p class="text-center h-100">...unsurprising, and disappointing.</p>
@@ -336,18 +344,27 @@ async function fillData(str) {
 }
 
 async function blockFriend(userid) {
-  const blockButton = document.getElementById('friends-block-button');
+  const blockButton = document.getElementById("friends-block-button");
+  const chatInput = document.getElementById("friends-message-input");
+  const chatSend = document.getElementById("friends-send-chat");
   let blockInfo = await fetch(`http://localhost:8080/api/friends/${userid}`, {
     method: "PUT",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ friend_status: "3" }),
+    body: JSON.stringify({ friend_status: "3", blockedBy: "1" }),
   })
-    .then((response) => {
-      blockButton.innerHTML = 'UNBLOCK';
-      blockButton.onclick = helper;
+    .then(async (response) => {
+      let answer = await response.json();
+
+      if (answer["success"] == true) {
+        blockButton.innerHTML = "UNBLOCK";
+        blockButton.onclick = helper;
+        chatInput.disabled = true;
+        chatSend.disabled = true;
+      }
+
       return response.json();
     })
     .catch((err) => err);
@@ -355,34 +372,37 @@ async function blockFriend(userid) {
   async function helper() {
     unblockFriend(userid);
   }
-
-  console.log(blockInfo); // Debugging
-  // return blockInfo;
 }
 
 async function unblockFriend(userid) {
-  const blockButton = document.getElementById('friends-block-button');
+  const blockButton = document.getElementById("friends-block-button");
+  const chatInput = document.getElementById("friends-message-input");
+  const chatSend = document.getElementById("friends-send-chat");
+
   let blockInfo = await fetch(`http://localhost:8080/api/friends/${userid}`, {
     method: "PUT",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ friend_status: "1" }),
+    body: JSON.stringify({ friend_status: "1", blockedBy: "0" }),
   })
-    .then((response) => {
-      blockButton.innerHTML = 'BLOCK';
-      blockButton.onclick = helper;
+    .then(async (response) => {
+      let answer = await response.json();
+
+      if (answer["success"] == true) {
+        blockButton.innerHTML = "BLOCK";
+        blockButton.onclick = helper;
+        chatInput.disabled = false;
+        chatSend.disabled = false;
+      }
       return response.json();
     })
     .catch((err) => err);
 
-    async function helper() {
-      blockFriend(userid);
-    }
-
-  console.log(blockInfo); // Debugging
-  // return blockInfo;
+  async function helper() {
+    blockFriend(userid);
+  }
 }
 
 async function pullAchievements(str) {
@@ -823,8 +843,7 @@ async function pullChats(friend) {
 
   let newChatLength = chatInfo["data"].length;
   let currentChatHeight = chatHolder.scrollHeight;
-  // if ((chatLength != null && newChatLength == chatLength) || (currentChatUser != null && currentChatUser == friend.username))
-  //   return ;
+
   if (chatInfo["data"].length > 0) {
     chatLength = chatInfo["data"].length;
     currentChatUser = friend.username;
@@ -843,13 +862,6 @@ async function pullChats(friend) {
       if (message.sender == friend.id)
         messageDiv.classList.add("friend-message", "justify-content-start");
       else messageDiv.classList.add("my-message", "justify-content-end");
-
-      // <img
-      //   width="32"
-      //   height="32"
-      //   style="object-fit: cover; border-radius: 16px"
-      //   src="${friend.profile_pic}"
-      // />
       messageDiv.innerHTML = `
       <p>
       ${message.content}
@@ -857,11 +869,10 @@ async function pullChats(friend) {
       `;
       chatHolder.appendChild(messageDiv);
     });
-  }
-  else {
+  } else {
     chatHolder.innerHTML = `
     <p class="w-100 text-center">(no chats yet. start something new with a message!)</p>
-    `
+    `;
   }
 
   // If chat hasn't been loaded OR there's a new message, scroll to top
@@ -872,8 +883,7 @@ async function pullChats(friend) {
 
   const sendChatButton = document.getElementById("friends-send-chat");
   const chatTextArea = document.getElementById("friends-message-input");
-  sendChatButton.disabled = false;
-  chatTextArea.disabled = false;
+
   function clicked() {
     sendChat(friend);
   }

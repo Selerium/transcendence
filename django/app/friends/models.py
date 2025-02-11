@@ -10,10 +10,17 @@ class Friend(models.Model):
         ('3', 'Blocked')
     ]
 
+    BLOCK_CHOICES = [
+        ('0', 'Not Blocked'),
+        ('1', 'Friend 1 Blocked'),
+        ('2', 'Friend 2 Blocked')
+    ]
+
     # friend_id 
     friend1 = models.ForeignKey(User, related_name='friend1', on_delete=models.CASCADE)  # Ref to users.user_id
     friend2 = models.ForeignKey(User, related_name='friend2', on_delete=models.CASCADE)  # Ref to users.user_id
     sentBy = models.IntegerField(default=0)
+    blockedBy = models.CharField(default='0', choices=BLOCK_CHOICES)
     friend_status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
