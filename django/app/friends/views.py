@@ -87,9 +87,7 @@ def friends(request, id=None):
 		print('hii-----')
 		print(id)
 		print('hii-----')
-		friend = User.objects.get(Friend, friend2_id=id, friend1_id=this_user)
-		if not friend:
-			friend = get_object_or_404(Friend, friend1_id=id, friend2_id=this_user)
+		friend = Friend.objects.get(id=id)
 		print('-----iih')
 		try:
 			friend.friend_status = data['friend_status']
