@@ -65,15 +65,19 @@ def match(request):
     elif request.method == 'POST':
         player_one_id = request.data.get("player_one")
         player_two_id = request.data.get("player_two")
+        player_one_score = request.data.get("player_one_score")
+        player_two_score = request.data.get("player_two_score")
         is_ai_opponent = request.data.get("is_ai_opponent", False)
 
-        player_one = get_object_or_404(User, id=player_one_id)
-        player_two = None if is_ai_opponent else get_object_or_404(User, id=player_two_id)
+        player_one = get_object_or_404(User, username=player_one_id)
+        player_two = None if is_ai_opponent else get_object_or_404(User, username=player_two_id)
 
         # Create a new match
         match = Match.objects.create(
             player_one=player_one,
             player_two=player_two,
+            player_one_score=player_one_score,
+            player_two_score=player_two_score,
             is_ai_opponent=is_ai_opponent,
             start_time=now()
         )
