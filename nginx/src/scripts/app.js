@@ -135,6 +135,7 @@ async function fillData(str) {
 
           let chatHolder = document.getElementById("friends-chat");
           chatHolder.innerHTML = "";
+          blockButton.disabled = false;
           if (friend.blockedBy)
             blockButton.disabled = false;
           else
@@ -150,6 +151,12 @@ async function fillData(str) {
             blockButton.innerHTML = "UNBLOCK";
             blockButton.onclick = helper2;
 
+            chatInput.disabled = true;
+            chatSend.disabled = true;
+          }
+
+          if (friend.username == "SYSTEM") {
+            blockButton.disabled = true;
             chatInput.disabled = true;
             chatSend.disabled = true;
           }

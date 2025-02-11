@@ -81,6 +81,22 @@ export async function gameCountdown() {
     }, 100);
 }
 
+function sendMatchStartNotification(matchNumber, playerA, playerB, receiver) {
+    return fetch(`http://localhost:8080/api/msgs/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            sender: '1',
+            receiver: receiver,
+            content: `Match ${matchNumber} is about to start: ${playerA} vs ${playerB}`
+        })
+    })
+    .then(response => response.json())
+    .catch(error => console.error('Error sending match start notification:', error));
+}
+
 
 function runTournament(players) {
     let tournamentResults = {};
@@ -88,6 +104,8 @@ function runTournament(players) {
     function playMatch(matchNumber, playerA, playerB, nextMatchCallback) {
 
         initMatchLabel(matchNumber, playerA, playerB, () => {
+            sendMatchStartNotification(matchNumber, playerA, playerB, playerA);
+            sendMatchStartNotification(matchNumber, playerB, playerA, playerB);
             initCountDown(() => {
                 startGame(mode, playerA, playerB, (winner, loser, scoreA, scoreB) => {
                     tournamentResults[`match${matchNumber}`] = {

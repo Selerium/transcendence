@@ -67,6 +67,12 @@ def messages(request):
             content = data.get('content')
         except:
             ERROR400
+    
+        system = data.get('sender') #if json body contains 'sender'
+        if system:
+            sender = User.objects.get(id=1) 
+        else:
+            sender = User.objects.get(id=this_user)
 
         print(data)
         print("------")
@@ -74,8 +80,10 @@ def messages(request):
         print("------")
         print(content)
 
-        sender = User.objects.get(id=this_user)
-        receiver = get_object_or_404(User, id=receiverId)
+        if system:
+            receiver = get_object_or_404(User, username=receiverId)
+        else:
+            receiver = get_object_or_404(User, id=receiverId)
 
 
         friendship_blocked = Friend.objects.filter(
