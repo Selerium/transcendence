@@ -1,0 +1,147 @@
+#game-holder {
+    position: relative;  
+    overflow: hidden;
+}
+
+#background-stars {
+    position: absolute;  
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    min-width: 100vw;
+    z-index: -1;  
+    background: transparent;  
+    pointer-events: none;
+
+}
+
+
+#gameCountdown {
+    position: absolute; 
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain;
+}
+
+
+#startGame {
+    position: absolute;
+    width: 85% !important;
+    height: 85% !important;
+    object-fit: contain;
+    overflow: visible !important;
+}
+
+
+#gameTrophy{
+    position: absolute;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain;
+}
+
+
+#winnerText {
+    position: absolute;
+    color:var(--selected);
+    font-size: 7vw !important;
+    font-weight: bold;
+    text-align: center;
+    pointer-events: none;
+    font-family: "electrolize";
+    text-shadow: 2px 2px white;
+    top:0;
+    animation-name: animate;
+    animation-duration: 0.5s;
+    height: 20%;
+    align-content: center;
+}
+
+#allWinners{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: absolute;
+    width: 100%;
+    height: 80%;
+    bottom: 0;
+    padding: 0 5%;
+}
+
+#winnerContainer{
+    display: flex;
+    flex-direction: row;
+    left: 0;
+    justify-content: center;
+    width: 100%;
+    height: 100%;    
+    justify-content: space-between;
+}
+
+
+@keyframes animate {
+    from {
+        clip-path: inset(0 100% 0 0);
+    }
+    to {
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+
+@keyframes animate2 {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+.winnerContainer{
+    display: flex;
+    flex-direction: row;
+    left: 0;
+    justify-content: center;
+    width: 100%;
+    height: 100%;    
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.playerScore {
+    align-content: flex-end;
+    font-size: 3vw !important;
+    font-weight: 500;
+    text-align: center;
+    pointer-events: none; /* Prevent interactions */
+    font-family: "electrolize";
+    color: white;
+    text-shadow: 2px 2px #cdc4f875;
+    text-align: center;
+    animation: animate2 0.5s ease-in-out forwards;
+    display: flex;
+    flex-direction: column;
+}
+
+.highlight {
+    text-align: left !important;
+    font-size: calc(20px + 0.2vh + 0.2vw) !important;
+    color:var(--accent);
+}
+
+
+.highlight-green {
+    color: #00c851;
+    text-shadow: 2px 2px white;
+    font-weight: bold;
+}
+
+
+
+
+
