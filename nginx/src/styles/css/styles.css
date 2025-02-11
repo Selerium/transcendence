@@ -156,6 +156,7 @@ a {
 .grid-2 {
   display: grid;
   grid-template-columns: 49% 49%;
+  grid-template-rows: min-content;
   gap: 2%;
   overflow-y: scroll;
   overflow-x: hidden;
