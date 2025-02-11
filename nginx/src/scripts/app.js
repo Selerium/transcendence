@@ -133,17 +133,21 @@ async function fillData(str) {
           let chatHolder = document.getElementById("friends-chat");
           chatHolder.innerHTML = "";
 
+          blockButton.disabled = false;
+
+          if (friend.friend_status == '1') {
+            blockButton.innerHTML = "BLOCK";
+            blockButton.onclick = helper;
+          }
+          else if (friend.friend_status = '3') {
+            blockButton.innerHTML = "UNBLOCK";
+            blockButton.onclick = helper2;
+          }
+          
+          console.log(friend);
           window.intervalId = setInterval(() => {
             pullChats(friend);
           }, 1000);
-
-          console.log(friend);
-
-          if (friend['friend_status'] != 3)
-            blockButton.disabled = false;
-          else
-            blockButton.disabled = false;
-          // selectedUserId = friend.id;
         }
         friendDiv.classList.add(
           "box",
@@ -167,9 +171,11 @@ async function fillData(str) {
         friendsHolder.appendChild(friendDiv);
 
         async function helper() {
-          console.log('hiiiiiii');
-          blockButton.disabled = true;
-          blockFriend(friend.id);
+          blockFriend(friend.request_id);
+        }
+
+        async function helper2() {
+          unblockFriend(friend.request_id);
         }
         blockButton.onclick = helper;
       });
@@ -330,6 +336,7 @@ async function fillData(str) {
 }
 
 async function blockFriend(userid) {
+  const blockButton = document.getElementById('friends-block-button');
   let blockInfo = await fetch(`http://localhost:8080/api/friends/${userid}`, {
     method: "PUT",
     credentials: "include",
@@ -338,8 +345,41 @@ async function blockFriend(userid) {
     },
     body: JSON.stringify({ friend_status: "3" }),
   })
-    .then((response) => response.json())
+    .then((response) => {
+      blockButton.innerHTML = 'UNBLOCK';
+      blockButton.onclick = helper;
+      return response.json();
+    })
     .catch((err) => err);
+
+  async function helper() {
+    unblockFriend(userid);
+  }
+
+  console.log(blockInfo); // Debugging
+  // return blockInfo;
+}
+
+async function unblockFriend(userid) {
+  const blockButton = document.getElementById('friends-block-button');
+  let blockInfo = await fetch(`http://localhost:8080/api/friends/${userid}`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ friend_status: "1" }),
+  })
+    .then((response) => {
+      blockButton.innerHTML = 'BLOCK';
+      blockButton.onclick = helper;
+      return response.json();
+    })
+    .catch((err) => err);
+
+    async function helper() {
+      blockFriend(userid);
+    }
 
   console.log(blockInfo); // Debugging
   // return blockInfo;

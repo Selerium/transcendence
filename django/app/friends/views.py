@@ -43,7 +43,8 @@ def friends(request, id=None):
 				'id': other_user.id,
 				'username': other_user.username,
 				'profile_pic': other_user.profile_pic,
-				'friend_status': request.friend_status
+				'friend_status': request.friend_status,
+				'request_id': request.id
 			})
 
 		return Response(data={'success': True, 'data': response_data}, status=status.HTTP_200_OK)
