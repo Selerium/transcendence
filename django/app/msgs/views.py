@@ -10,6 +10,7 @@ import jwt
 from django.conf import settings
 from rest_framework.response import Response
 from django.db.models import Q
+from friends.models import Friend
 
 ## GET = retrieve messages (retrieve messages sent or received?)
 ## this would be in use when you want to pull the messages
@@ -75,6 +76,16 @@ def messages(request):
 
         sender = User.objects.get(id=this_user)
         receiver = get_object_or_404(User, id=receiverId)
+
+
+        friendship_blocked = Friend.objects.filter(
+            Q(friend1=sender, friend2=receiver, friend_status='3') | Q(friend1=receiver, friend2=sender, friend_status='3'))
+
+        if (friendship_blocked) :
+            print('friendship blocked!!!!!')
+            return ERROR403
+
+
         newMsg = Message(sender=sender, receiver=receiver, content=content)
 
         try:
