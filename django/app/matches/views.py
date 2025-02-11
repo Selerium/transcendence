@@ -41,7 +41,7 @@ def match(request):
         this_user = int(request.query_params.get('id'))
 
         for match in matches:
-            if (match.player_one.id == this_user or match.player_two.id == this_user):
+            if (match.player_one.id == this_user or (match.player_two and match.player_two.id == this_user)):
                 match_data.append({
                     'match_id': match.match_id,
                     'player_one': {

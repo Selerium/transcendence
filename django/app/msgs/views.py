@@ -30,19 +30,18 @@ def messages(request):
     """
     Handles retrieving and sending messages.
     """
-
     try:
         user_jwt = request.COOKIES.get('jwt')
         decoded_jwt = jwt.decode(user_jwt, JWT_SECRET, algorithms=["HS256"])
-        url = 'https://api.intra.42.fr/v2/me'
-        headers = {'Authorization': f'Bearer {decoded_jwt['access']}'}
-        response = requests.get(url, headers=headers)
         this_user = decoded_jwt['data']['id']
-        if response.status_code != 200:
-            return ERROR403
+        # url = 'https://api.intra.42.fr/v2/me'
+        # headers = {'Authorization': f'Bearer {decoded_jwt['access']}'}
+        # response = requests.get(url, headers=headers)
+        # if response.status_code != 200:
+            # return ERROR403
     except:
             return ERROR400
-    
+
     if request.method == 'GET':
         try:
             data = request.query_params

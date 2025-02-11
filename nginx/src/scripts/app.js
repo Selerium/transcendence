@@ -115,8 +115,6 @@ async function fillData(str) {
         return err;
       });
 
-    let chatHolder = document.getElementById("friends-chat");
-    chatHolder.innerHTML = "";
     let friendsHolder = document.getElementById("friends-friends");
     friendsHolder.innerHTML = "";
     const sendChatButton = document.getElementById("friends-send-chat");
@@ -128,6 +126,9 @@ async function fillData(str) {
         const friendDiv = document.createElement("button");
         function clicked() {
           if (window.intervalId != null) clearInterval(window.intervalId);
+
+          let chatHolder = document.getElementById("friends-chat");
+          chatHolder.innerHTML = "";
 
           window.intervalId = setInterval(() => {
             pullChats(friend);
@@ -155,6 +156,12 @@ async function fillData(str) {
         friendDiv.onclick = clicked;
         friendsHolder.appendChild(friendDiv);
       });
+    }
+    else {
+      friendsHolder.innerHTML = `
+        <h3 class="bold text-center h-100">you don't have any friends!</h3>
+        <p class="text-center h-100">...unsurprising, and disappointing.</p>
+      `;
     }
     console.log(friendsListInfo);
   } else if (str == "/dashboard") {
@@ -369,16 +376,18 @@ async function pullAchievements(str) {
       }
     });
   } else {
-    achievementsHolder.classList.toggle("justify-content-start");
-    achievementsHolder.classList.toggle("justify-content-center");
-    achievementsHolder.classList.toggle("align-items-start");
-    achievementsHolder.classList.toggle("align-items-center");
-    achievementsHolder.classList.toggle("h-fit");
-    if (str == "achievements") achievementsHolder.classList.toggle("h-75");
-    else achievementsHolder.classList.toggle("h-25");
-    achievementsHolder.classList.toggle("flex-column");
-    achievementsHolder.classList.toggle("gap-2");
+    achievementsHolder.classList.remove("justify-content-start");
+    achievementsHolder.classList.remove("justify-content-between");
+    achievementsHolder.classList.add("justify-content-center");
+    achievementsHolder.classList.remove("align-items-start");
+    achievementsHolder.classList.add("align-items-center");
+    achievementsHolder.classList.remove("h-fit");
+    if (str == "achievements") achievementsHolder.classList.add("h-75");
+    else achievementsHolder.classList.add("h-fit");
+    achievementsHolder.classList.add("flex-column");
+    achievementsHolder.classList.add("gap-2");
     achievementsHolder.innerHTML = `
+    <h3 class="w-100">RECENT ACHIEVEMENTS</h3>
     <h3 class="text-center bold">accomplished...nothing?</h3>
     <p class="text-center small">your parents must be real proud.</p>
     `;
@@ -407,6 +416,7 @@ async function pullMatchHistory(str) {
   if (str == "dashboard")
     historyHolder = document.getElementById("dashboard-match-history");
   else historyHolder = document.getElementById("profile-match-history");
+  historyHolder.innerHTML = "";
   if (matchHistoryInfo["data"].length > 0) {
     matchHistoryInfo["data"].forEach((match) => {
       const matchDiv = document.createElement("div");
@@ -457,7 +467,7 @@ async function pullMatchHistory(str) {
 
       winsHolder.innerHTML = wins;
       lossesHolder.innerHTML = losses;
-      ratioHolder.innerHTML = (wins / losses).toFixed(2);
+      ratioHolder.innerHTML = (wins / (losses == 0 ? 1 : losses)).toFixed(2);
       gametimeHolder.innerHTML = (
         gametime / matchHistoryInfo["data"].length
       ).toFixed(2);
@@ -733,9 +743,6 @@ async function pullChats(friend) {
       return err;
     });
 
-  console.log("chats between me and " + friend.username + ": ");
-  console.log(chatInfo);
-
   const chatHolder = document.getElementById("friends-chat");
   const chatTitle = document.getElementById("friends-username");
   chatTitle.innerHTML = friend.username;
@@ -776,6 +783,11 @@ async function pullChats(friend) {
       `;
       chatHolder.appendChild(messageDiv);
     });
+  }
+  else {
+    chatHolder.innerHTML = `
+    <p class="w-100 text-center">(no chats yet. start something new with a message!)</p>
+    `
   }
 
   // If chat hasn't been loaded OR there's a new message, scroll to top
