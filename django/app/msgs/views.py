@@ -86,6 +86,7 @@ def messages(request):
             print('friendship blocked!!!!!')
             return ERROR403
 
+
         newMsg = Message(sender=sender, receiver=receiver, content=content)
 
         try:
