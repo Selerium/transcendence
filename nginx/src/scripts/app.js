@@ -74,7 +74,7 @@ async function fillData(str) {
     doc_role.innerHTML = role;
     doc_image.src = image_url;
 
-    pullMatchHistory("profile");
+    pullMatchHistory("profile", my_id);
 
     setTimeout(() => {
       pullAchievements("profile");
@@ -257,7 +257,7 @@ async function fillData(str) {
       requestsHolder.classList.remove("justify-content-start");
     }
     // calling the match history
-    pullMatchHistory("dashboard");
+    pullMatchHistory("dashboard", my_id);
   } else if (str == "/achievements") {
     pullAchievements("achievements");
   } else if (str == "/leaderboards") {
@@ -488,9 +488,9 @@ async function pullAchievements(str) {
   }
 }
 
-async function pullMatchHistory(str) {
+async function pullMatchHistory(str, id) {
   let matchHistoryInfo = await fetch(
-    `http://localhost:8080/api/matches?id=${my_id}`,
+    `http://localhost:8080/api/matches?id=${id}`,
     {
       method: "GET",
       credentials: "include",
@@ -840,6 +840,7 @@ async function pullChats(friend) {
   const chatHolder = document.getElementById("friends-chat");
   const chatTitle = document.getElementById("friends-username");
   chatTitle.innerHTML = friend.username;
+  chatTitle.href = `profile/${friend.id}`;
 
   let newChatLength = chatInfo["data"].length;
   let currentChatHeight = chatHolder.scrollHeight;
@@ -913,4 +914,61 @@ async function sendChat(friend) {
     });
 
   messageInput.value = "";
+}
+
+async function profileFillData(number) {
+  let userInfo = await fetch(`http://localhost:8080/api/users/${number}`, {
+    method: "GET",
+    credentials: "include",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  let role = userInfo["data"]["role"] == 0 ? "STUDENT" : "STAFF";
+  let username = userInfo["data"]["username"];
+  let image_url = userInfo["data"]["profile_pic"];
+
+  const doc_username = document.getElementById("profile-username");
+  const doc_role_holder = document.getElementById("profile-role-holder");
+  const doc_role = document.getElementById("profile-role");
+  const doc_image = document.getElementById("profile-image");
+  doc_username.innerHTML = username;
+  if (role == "STUDENT") doc_role_holder.classList.toggle("win-box");
+  else doc_role_holder.classList.toggle("loss-box");
+  doc_role.innerHTML = role;
+  doc_image.src = image_url;
+
+  pullMatchHistory("profile", number);
+
+  setTimeout(() => {
+    pullAchievements("profile");
+  }, 1000);
+
+  let leaderboardsInfo = await fetch(
+    "http://localhost:8080/api/matches/leaderboards",
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  )
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  let globalLeaderboards = document.getElementById("leaderboards-global");
+  if (leaderboardsInfo["data"].length > 0) {
+    leaderboardsInfo["data"].forEach((item, index) => {
+      if (item["user-id"] == number) {
+        let rankHolder = document.getElementById("profile-rank");
+        rankHolder.innerHTML = `#${index + 1}`;
+      }
+    });
+  }
 }

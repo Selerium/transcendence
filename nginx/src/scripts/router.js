@@ -20,9 +20,16 @@ navbarIds = {
   "/profile": "nav-profile",
 };
 
-// to write the 404 condition here
+function isNumeric(str) {
+  if (typeof str != "string") return false
+  return !isNaN(str) && !isNaN(parseFloat(str))
+}
+
 async function changeRoute() {
   let path = window.location.pathname;
+  let personNumber = null;
+  let array = path.split('/');
+
   const app = document.getElementById("app");
 
   console.log("checking");
@@ -43,6 +50,13 @@ async function changeRoute() {
   }
   console.log("passed auth");
 
+  console.log(array);
+  if (array.length == 3 && array[1] == 'profile') {
+    if (isNumeric(array[2])) {
+      path = '/profile';
+      personNumber = array[2];
+    }
+  }
   if (routes[path] == undefined) path = "/404";
 
   const html = await fetch(routes[path])
@@ -78,6 +92,10 @@ async function changeRoute() {
 
   if (path == "/") {
     fillData("/dashboard");
+  }
+  else if (personNumber != null) {
+    fillData("");
+    profileFillData(personNumber);
   } else fillData(path);
 }
 
