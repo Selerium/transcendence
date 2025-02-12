@@ -522,8 +522,12 @@ async function pullMatchHistory(str) {
         "py-2",
         "px-4",
         "gap-2",
-        "w-100"
+        "w-100",
+        "clickable",
+        "btn",
+
       );
+      matchDiv.onclick = () => openMatchDetails(match.match_id);
       let result, boxClass;
       if (match.player_one_score > match.player_two_score) {
         result = "WIN";
@@ -539,7 +543,7 @@ async function pullMatchHistory(str) {
       }
       matchDiv.innerHTML = `
       <h3 class="player_1 bold">${match.player_one.username}</h3>
-      <button class="electrolize text-center bold ${boxClass}" onclick="openMatchDetails(${match.match_id})">${result}</button>
+      <h3 class="electrolize text-center bold ${boxClass}">${result}</h3>
       <h3 class="player_2 bold">${match.player_two.username}</h3>`;
     //   matchDiv.innerHTML = `
     //   <h3 class= "player_1 bold">${match.player_one.username}</h3>
@@ -806,31 +810,48 @@ async function openMatchDetails(matchId){
 
             modalHolder.style.zIndex = 100;
             modalHolder.style.opacity = 1;
+            let startTime = new Date(matchData.start_time);
+            let endTime = new Date(matchData.end_time);
+            let startFormatted = startTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            let endFormatted = endTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });  
             modalHeading.innerHTML = 'MATCH DETAIL';
         const userContainer = document.createElement("div");
+        let player1Container = document.createElement("div");
+        let player2Container = document.createElement("div");
+        let timeContainer = document.createElement("div");
+        player1Container.classList.add("inner-box","w-50", "h-50", "p-10", "text-center", "custom-border", "electrolize", "bold");
+        player2Container.classList.add("inner-box","w-50", "h-50","p-10", "text-center", "custom-border", "electrolize", "bold");
+        timeContainer.classList.add("w-50", "p-10", "text-center", "custom-border", "electrolize");
+        player1Container.innerHTML = `
+          <h2>${matchData.player_one.username} </h2>
+          <h3>${matchData.player_one_score}</h3>
+        `;
+        player2Container.innerHTML = `
+          <h3>Player 2: ${matchData.player_two.username} - ${matchData.player_two_score}</h3>
+        `;
+        timeContainer.innerHTML = `<h3>Start Time: ${startFormatted} </h3>
+            <h3>End Time: ${endFormatted} </h3>
+        `;
         userContainer.classList.add(
           "w-100",
-          "h-75",
+          "h-100",
           "d-flex",
           "justify-content-center",
           "align-items-center",
           "gap-4"
         );
-        userContainer.innerHTML = `
-          <div class="custom-border w-100 p-4 text-center">
-            <h3>Player 1: ${matchData.player_one.username} - ${matchData.player_one_score}</h3>
-            <h3>Player 2: ${matchData.player_two.username}- ${matchData.player_two_score}</h3>
-            <h3>Start Time: ${matchData.start_time} </h3>
-          </div>
-        `;
+        // userContainer.innerHTML = `
+        // //   <div class="custom-border w-100 p-4 text-center">
+        // //     <h3>Player 1: ${matchData.player_one.username} - ${matchData.player_one_score}</h3>
+        // //     <h3>Player 2: ${matchData.player_two.username}- ${matchData.player_two_score}</h3>
+        // //     <h3>Start Time: ${startFormatted} </h3>
+        // //     <h3>End Time: ${endFormatted} </h3>
+        // //   </div>
+        // // `;
+        userContainer.appendChild(player1Container);
+        userContainer.appendChild(player2Container);
+        userContainer.appendChild(timeContainer);
         modalInfo.appendChild(userContainer);
-        // modalInfo.innerHTML += `
-        //   <div class="custom-border w-100 p-4 text-center">
-        //     <h3>Player 1: ${matchDetail.player_one.username} - ${matchDetail.player_one_score}</h3>
-        //     <h3>Player 2: ${matchDetail.player_two.username}- ${matchDetail.player_two_score}</h3>
-        //     <h3>Start Time: ${matchDetail.start_time} </h3>
-        //   </div>
-        // `;
       }
       
 async function addFriend(id, t) {
