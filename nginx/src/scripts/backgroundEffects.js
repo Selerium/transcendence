@@ -71,3 +71,8 @@ if (!hasGameCountdownRun) {
     showBckground();
     gameCountdown();
 }
+
+
+window.addEventListener("popstate", function () {
+    location.reload(); 
+});

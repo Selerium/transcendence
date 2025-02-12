@@ -429,10 +429,12 @@ async function pullMatchHistory(str) {
         result = "LOSS";
         boxClass = "loss-box";
         losses++;
-      } else {
+      } else if (String(match.player_two_score) === "0" || String(match.player_one_score) === "0") {
         result = "DRAW";
         boxClass = "draw-box";
-      }
+    } else {
+        return;
+    }    
       matchDiv.innerHTML = `
       <h3 class= "player_1 bold">${match.player_one.username}</h3>
       <h3 class="electrolize text-center bold ${boxClass}"> ${result}</h3>
@@ -586,7 +588,7 @@ async function openModal(str) {
         <img src="styles/images/1v1.png" />
         <h3>1V1 PLAYER</h3>
       </div>
-      <div onclick="createMatch('1v1-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+      <div id="play-btn" onclick="createMatch('1v1-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
         <img src="styles/images/1v1.png" />
         <h3>1V1 AI</h3>
       </div>
@@ -614,7 +616,7 @@ async function openModal(str) {
     userContainer.innerHTML = `
     <label class="electrolize text-center">Enter player 2: </label>  
     <input id="player2" class="electrolize" type="text" required />
-    <button onclick=createMatch('1v1-player') class="btn small-btn">PLAY</button>
+    <button id="play-btn" onclick=createMatch('1v1-player') class="btn small-btn">PLAY</button>
     `;
     modalInfo.appendChild(userContainer);
     return;
@@ -625,12 +627,12 @@ async function openModal(str) {
     modalHolder.style.zIndex = 100;
     modalHolder.style.opacity = 1;
 
+
     for (let i = 2; i <= 4; i++) {
       const userContainer = document.createElement("div");
       userContainer.classList.add(
         "d-flex",
         "flex-column",
-        "h-25",
         "gap-4",
         "w-50",
         "justify-content-center",
@@ -638,9 +640,11 @@ async function openModal(str) {
       );
       userContainer.innerHTML = `
       <label class="electrolize text-center">Enter player ${i}: </label>  
-      <input id="player${i}" class="electrolize" type="text" required />
+      <input id="player${i}" class="electrolize" type="text" required />     
+      <input id="nickname${i}" class="electrolize" type="text" placeholder="Enter Nickname" required/>
       `;
       if (i == 4) {
+        userContainer.style.margin = "10px 0px";
         userContainer.classList.toggle("w-50");
         userContainer.classList.toggle("w-100");
       }
@@ -655,7 +659,10 @@ async function openModal(str) {
       "align-items-center"
     );
     userButton.innerHTML = `
-      <button onclick=createMatch('tournament') class="btn small-btn">PLAY</button>
+    <div style="display: flex; flex-direction: row; gap: 4rem;">
+      <input id="nickname1" class="electrolize" type="text" placeholder="Enter your Nickname" required/>
+      <button id="play-btn" onclick=createMatch('tournament') class="btn small-btn">PLAY</button>
+      <div>
     `;
     modalInfo.appendChild(userButton);
     modalInfo.classList.toggle("gap-4");
