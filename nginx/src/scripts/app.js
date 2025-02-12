@@ -77,7 +77,7 @@ async function fillData(str) {
     pullMatchHistory("profile", my_id);
 
     setTimeout(() => {
-      pullAchievements("profile");
+      pullAchievements("profile", my_id);
     }, 1000);
 
     let leaderboardsInfo = await fetch(
@@ -135,10 +135,8 @@ async function fillData(str) {
 
           let chatHolder = document.getElementById("friends-chat");
           chatHolder.innerHTML = "";
-          if (friend.blockedBy)
-            blockButton.disabled = false;
-          else
-            blockButton.disabled = true;
+          if (friend.blockedBy) blockButton.disabled = false;
+          else blockButton.disabled = true;
 
           if (friend.friend_status == "1") {
             blockButton.innerHTML = "BLOCK";
@@ -259,7 +257,7 @@ async function fillData(str) {
     // calling the match history
     pullMatchHistory("dashboard", my_id);
   } else if (str == "/achievements") {
-    pullAchievements("achievements");
+    pullAchievements("achievements", my_id);
   } else if (str == "/leaderboards") {
     let leaderboardsInfo = await fetch(
       "http://localhost:8080/api/matches/leaderboards",
@@ -405,8 +403,8 @@ async function unblockFriend(userid) {
   }
 }
 
-async function pullAchievements(str) {
-  let achievementsInfo = await fetch("http://localhost:8080/api/achievements", {
+async function pullAchievements(str, id) {
+  let achievementsInfo = await fetch(`http://localhost:8080/api/achievements/${id}`, {
     method: "GET",
     credentials: "include",
   })
@@ -525,17 +523,23 @@ async function pullMatchHistory(str, id) {
         "w-100"
       );
       let result, boxClass;
-      if (match.player_one_score > match.player_two_score) {
+      console.log(match);
+      if (
+        (match.player_one.id == id &&
+          match.player_one_score > match.player_two_score) ||
+        (match.player_two.id == id &&
+          match.player_one_score < match.player_two_score)
+      ) {
         result = "WIN";
         boxClass = "win-box";
         wins++;
-      } else if (match.player_two_score > match.player_one_score) {
+      } else if (match.player_two_score == match.player_one_score) {
+        result = "DRAW";
+        boxClass = "draw-box";
+      } else {
         result = "LOSS";
         boxClass = "loss-box";
         losses++;
-      } else {
-        result = "DRAW";
-        boxClass = "draw-box";
       }
       matchDiv.innerHTML = `
       <h3 class= "player_1 bold">${match.player_one.username}</h3>
@@ -883,12 +887,24 @@ async function pullChats(friend) {
   }
 
   const sendChatButton = document.getElementById("friends-send-chat");
+  const startGameButton = document.getElementById("friends-start-game");
   const chatTextArea = document.getElementById("friends-message-input");
+  startGameButton.disabled = false;
 
   function clicked() {
     sendChat(friend);
   }
+  function makeFriendGame() {
+    let queryParams = `mode=1v1-player&player1=${encodeURIComponent(
+      my_username
+    )}&player2=${encodeURIComponent(friend.username)}`;
+    window.history.pushState({}, "", `/play?${queryParams}`);
+    changeRoute();
+    showBckground();
+    gameCountdown();
+  }
   sendChatButton.onclick = clicked;
+  startGameButton.onclick = makeFriendGame;
 }
 
 async function sendChat(friend) {
@@ -945,7 +961,7 @@ async function profileFillData(number) {
   pullMatchHistory("profile", number);
 
   setTimeout(() => {
-    pullAchievements("profile");
+    pullAchievements("profile", number);
   }, 1000);
 
   let leaderboardsInfo = await fetch(

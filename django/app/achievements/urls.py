@@ -5,6 +5,7 @@ from . import views
 	# example: "/api/users/" is appended with "" and "{id}" below
 urlpatterns = [
 	path("", views.achievements, name="get-user-achievements"),
+	path("<int:id>", views.achievements, name="get-user-achievements"),
 ]
 
 # '/api/friends/' - GET your friends info

@@ -16,7 +16,7 @@ ERROR403 = Response(data={'success': False, 'message': 'Not Authenticated'}, sta
 JWT_SECRET = settings.JWT_SECRET
 
 @api_view(['GET'])
-def achievements(request):
+def achievements(request, id=None):
     # get all achievements a specific user has unlocked
     try:
         user_jwt = request.COOKIES.get('jwt')
@@ -32,7 +32,11 @@ def achievements(request):
 
     if (request.method == 'GET'):
         try:
-            unlocked = AchievementUnlocked.objects.filter(user=this_user)
+            unlocked = ''
+            if (id == None):
+                unlocked = AchievementUnlocked.objects.filter(user=this_user)
+            else:
+                unlocked = AchievementUnlocked.objects.filter(user=id)
 
             response_data = []
             for a in unlocked:

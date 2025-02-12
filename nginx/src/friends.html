@@ -36,7 +36,7 @@
       >
       <p class="w-100 text-center">(click on a user to start texting!)</p>
     </div>
-      <div class="box inner-box w-100 h-25 p-4 d-flex justify-content-between">
+      <div class="box inner-box w-100 h-25 gap-2 p-4 d-flex justify-content-between">
         <textarea
           disabled
           maxlength="500"
@@ -45,9 +45,14 @@
           placeholder="Write your message..."
           id="friends-message-input"
         ></textarea>
-        <button disabled id="friends-send-chat" class="btn w-25 h-100">
-          SEND
-        </button>
+        <div class="d-flex flex-column w-25 gap-2 h-100">
+          <button disabled id="friends-send-chat" class="btn w-100 h-50">
+            SEND
+          </button>
+          <button disabled id="friends-start-game" class="btn w-100 h-50">
+            START GAME
+          </button>
+        </div>
       </div>
     </div>
   </div>
