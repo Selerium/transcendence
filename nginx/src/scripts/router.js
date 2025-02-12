@@ -63,6 +63,11 @@ async function changeRoute() {
     .then((response) => response.text())
     .catch((err) => err);
 
+  if (path == "/login") {
+    app.innerHTML = html;
+    return ;
+  }
+
   const main = document.getElementById("main");
   main.innerHTML = "";
   main.style.transform = "translateX(25%)";
