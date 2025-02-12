@@ -42,6 +42,7 @@ def friends(request, id=None):
 			response_data.append({
 				'id': other_user.id,
 				'username': other_user.username,
+				'alias': other_user.alias,
 				'profile_pic': other_user.profile_pic,
 				'friend_status': request.friend_status,
 				'request_id': request.id,
@@ -148,6 +149,7 @@ def friendRequests(request):
 				'other_user': {
 					'id': other_user.id,
 					'username': other_user.username,
+					'alias': other_user.alias,
 					'profile_pic': other_user.profile_pic,
 					'status': other_user.status,
 					'role': other_user.role,

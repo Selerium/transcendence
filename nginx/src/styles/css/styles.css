@@ -57,6 +57,13 @@ input {
   text-align: center;
 }
 
+input[type=file] {
+  border-radius: initial;
+  height: initial;
+  width: initial;
+  text-align: initial;
+}
+
 #main {
   transform-origin: center center;
 

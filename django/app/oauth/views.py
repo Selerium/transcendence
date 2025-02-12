@@ -70,6 +70,7 @@ def get_user_info(access_token, refresh_token):
             print('registering the user:----')
             newUser = User(
                 username=username,
+                alias=username,
                 profile_pic=profile_image,
                 role=role
             )

@@ -1,6 +1,7 @@
 let loggedIn = false;
 let my_username = null;
 let my_id;
+const defaultImageURL = '/styles/images/profile-pic-sample.png';
 
 async function fillData(str) {
   if (currentChatUser) currentChatUser = null;
@@ -25,10 +26,12 @@ async function fillData(str) {
     username = info["data"]["username"];
     id = info["data"]["id"];
     let image_url = info["data"]["profile_pic"];
+    if (image_url == null)
+      image_url = defaultImageURL;
 
     const doc_nav_username = document.getElementById("nav-profile");
     const doc_nav_image = document.getElementById("nav-image");
-    doc_nav_username.innerHTML = username;
+    doc_nav_username.innerHTML = info["data"]["alias"];
     doc_nav_image.src = image_url;
   }
 
@@ -63,12 +66,19 @@ async function fillData(str) {
     let role = meInfo["data"]["role"] == 0 ? "STUDENT" : "STAFF";
     let username = meInfo["data"]["username"];
     let image_url = meInfo["data"]["profile_pic"];
+    if (image_url == null)
+      image_url = defaultImageURL;
+
+    const editProfileButton = document.getElementById("edit-profile");
+    editProfileButton.style.display = "block";
 
     const doc_username = document.getElementById("profile-username");
+    const doc_alias = document.getElementById("profile-alias");
     const doc_role_holder = document.getElementById("profile-role-holder");
     const doc_role = document.getElementById("profile-role");
     const doc_image = document.getElementById("profile-image");
-    doc_username.innerHTML = username;
+    doc_alias.innerHTML = meInfo["data"]["alias"];
+    doc_username.innerHTML = `(intra: ${username})`;
     if (role == "STUDENT") doc_role_holder.classList.toggle("win-box");
     else doc_role_holder.classList.toggle("loss-box");
     doc_role.innerHTML = role;
@@ -171,8 +181,8 @@ async function fillData(str) {
         );
 
         friendDiv.innerHTML = `
-          <img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" />
-          <p>${friend.username}</p>
+          <img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" onerror="this.src='/styles/images/profile-pic-sample.png'"/>
+          <p>${friend.alias}</p>
         `;
 
         friendDiv.onclick = clicked;
@@ -228,8 +238,8 @@ async function fillData(str) {
         userDiv.innerHTML = `
             <img width="32" height="32" src="${
               request.other_user.profile_pic
-            }" style="object-fit: cover; border-radius: 32px" />
-            <h3 class="w-100 text-center">${request.other_user.username}</h3>
+            }" style="object-fit: cover; border-radius: 32px" onerror="this.src='/styles/images/profile-pic-sample.png'" />
+            <h3 class="w-100 text-center">${request.other_user.alias} [${request.other_user.username}]</h3>
             <button onclick="resolveFriend(${true}, ${
           request.id
         })" class="clickable btn small-btn">accept</button>
@@ -291,8 +301,8 @@ async function fillData(str) {
 
         recordHolder.innerHTML = `
         <p class="ps-5">${index + 1}</p>
-        <p class="bold">${item["user"]}</p>
-        <p>${item["wins"]} wins</p>
+        <p class="bold">${item["alias"]} [${item["user"]}]</p>
+        <p>${item["alias"]} wins</p>
         `;
 
         globalLeaderboards.appendChild(recordHolder);
@@ -331,8 +341,8 @@ async function fillData(str) {
 
         recordHolder.innerHTML = `
         <p class="ps-5">${index + 1}</p>
-        <p class="bold">${item["user"]}</p>
-        <p>${item["wins"]} wins</p>
+        <p class="bold">${item["alias"]} [${item["user"]}]</p>
+        <p>${item["alias"]} wins</p>
         `;
 
         friendsLeaderboard.appendChild(recordHolder);
@@ -404,10 +414,13 @@ async function unblockFriend(userid) {
 }
 
 async function pullAchievements(str, id) {
-  let achievementsInfo = await fetch(`http://localhost:8080/api/achievements/${id}`, {
-    method: "GET",
-    credentials: "include",
-  })
+  let achievementsInfo = await fetch(
+    `http://localhost:8080/api/achievements/${id}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  )
     .then((response) => {
       return response.json();
     })
@@ -472,6 +485,8 @@ async function pullAchievements(str, id) {
     achievementsHolder.classList.remove("justify-content-between");
     achievementsHolder.classList.add("justify-content-center");
     achievementsHolder.classList.remove("align-items-start");
+    achievementsHolder.classList.remove("align-content-start");
+    achievementsHolder.classList.add("align-content-center");
     achievementsHolder.classList.add("align-items-center");
     achievementsHolder.classList.remove("h-fit");
     if (str == "achievements") achievementsHolder.classList.add("h-75");
@@ -479,7 +494,7 @@ async function pullAchievements(str, id) {
     achievementsHolder.classList.add("flex-column");
     achievementsHolder.classList.add("gap-2");
     achievementsHolder.innerHTML = `
-    <h3 class="w-100">RECENT ACHIEVEMENTS</h3>
+    ${str == "profile" ? `<h3 class="w-100">RECENT ACHIEVEMENTS</h3>` : ``}
     <h3 class="text-center bold">accomplished...nothing?</h3>
     <p class="text-center small">your parents must be real proud.</p>
     `;
@@ -542,9 +557,9 @@ async function pullMatchHistory(str, id) {
         losses++;
       }
       matchDiv.innerHTML = `
-      <h3 class= "player_1 bold">${match.player_one.username}</h3>
+      <h3 class= "player_1 bold">${match.player_one.alias}</h3>
       <h3 class="electrolize text-center bold ${boxClass}"> ${result}</h3>
-      <h3 class="player_2 bold">${match.player_two.username}</h3>
+      <h3 class="player_2 bold">${match.player_two.alias}</h3>
     </div>
       `;
       historyHolder.appendChild(matchDiv);
@@ -656,8 +671,8 @@ async function openModal(str) {
             "min-w-half"
           );
           userDiv.innerHTML = `
-            <img width="64" height="64" src="${user.profile_pic}" style="object-fit: cover; border-radius: 64px" />
-            <h3 class="w-25 text-center">${user.username}</h3>
+            <img width="64" height="64" src="${user.profile_pic}" style="object-fit: cover; border-radius: 64px" onerror="this.src='/styles/images/profile-pic-sample.png'" />
+            <h3 class="w-25 text-center">${user.alias} [${user.username}]</h3>
             <button onclick="addFriend(${user.id}, this)" class="clickable btn small-btn">add friend</button>
           `;
 
@@ -769,8 +784,45 @@ async function openModal(str) {
     modalInfo.classList.toggle("gap-4");
     return;
   }
+  if (str == "edit-profile") {
+    console.log("editing profile");
+    modalHeading.innerHTML = "EDIT PROFILE";
+
+    modalHolder.style.zIndex = 100;
+    modalHolder.style.opacity = 1;
+
+    const userContainer = document.createElement("div");
+    userContainer.classList.add(
+      "d-flex",
+      "flex-column",
+      "w-100",
+      "align-items-center",
+      "justify-content-center",
+      "gap-2"
+    );
+    userContainer.innerHTML = `
+    <label class="electrolize text-center w-50">RENAME ALIAS:</label>
+    <input id="alias" class="w-50 text-center electrolize" type="text" required />
+    <button onclick="submitEdits('alias')" class="mt-2 btn small-btn">
+      SUBMIT
+    </button>
+    <label for="profile_pic" class="mt-2 electrolize text-center w-50">CHANGE AVATAR:</label>
+    <input type="file" id="avatar" name="avatar" >
+    <button onclick="submitEdits('avatar')" class="mt-2 btn small-btn">
+      SUBMIT
+    </button>
+    `;
+    modalInfo.appendChild(userContainer);
+    return;
+  }
   modalHolder.style.zIndex = -100;
   modalHolder.style.opacity = 0;
+}
+
+async function clickFileUpload() {
+  let input = document.getElementById('avatar');
+  console.log(input.onclick);
+  input.click();
 }
 
 async function addFriend(id, t) {
@@ -843,7 +895,7 @@ async function pullChats(friend) {
 
   const chatHolder = document.getElementById("friends-chat");
   const chatTitle = document.getElementById("friends-username");
-  chatTitle.innerHTML = friend.username;
+  chatTitle.innerHTML = `${friend.alias} [${friend.username}]`;
   chatTitle.href = `profile/${friend.id}`;
 
   let newChatLength = chatInfo["data"].length;
@@ -947,6 +999,8 @@ async function profileFillData(number) {
   let role = userInfo["data"]["role"] == 0 ? "STUDENT" : "STAFF";
   let username = userInfo["data"]["username"];
   let image_url = userInfo["data"]["profile_pic"];
+  if (image_url == null)
+    image_url = defaultImageURL;
 
   const doc_username = document.getElementById("profile-username");
   const doc_role_holder = document.getElementById("profile-role-holder");
@@ -986,5 +1040,59 @@ async function profileFillData(number) {
         rankHolder.innerHTML = `#${index + 1}`;
       }
     });
+  }
+}
+
+async function submitEdits(str) {
+  const alias = document.getElementById("alias");
+  const profile_pic = document.getElementById("avatar");
+
+  console.log(str);
+  
+  if (str == "alias") {
+    if (!alias.value || alias.value == "") {
+      return;
+    }
+
+    console.log(alias.value);
+
+    let info = await fetch(
+      `http://localhost:8080/api/users/update/alias`,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          alias: alias.value,
+        })
+      }
+    )
+      .then((response) => response.json())
+      .catch((err) => err);
+
+    console.log(info);
+  }
+  else if (str = "avatar") {
+    if (profile_pic.files.length == 0) {
+      return;
+    }
+
+    let formData = new FormData();
+    formData.append('profile_pic', profile_pic.files[0]);
+
+    let info = await fetch(
+      `http://localhost:8080/api/users/update/profile`,
+      {
+        method: "PUT",
+        credentials: "include",
+        body: formData
+      }
+    )
+      .then((response) => response.json())
+      .catch((err) => err);
+
+    console.log(info);
   }
 }

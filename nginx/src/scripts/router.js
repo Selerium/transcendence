@@ -100,6 +100,9 @@ async function changeRoute() {
 }
 
 window.addEventListener("click", (e) => {
+  console.log(e.target.tagName);
+  if (e.target.tagName == "INPUT")
+    return ;
   if (e.target.getAttribute("href") != "/api/oauth") {
     e.preventDefault();
     if (e.target.tagName != "A") return;
