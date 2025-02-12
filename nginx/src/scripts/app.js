@@ -538,11 +538,15 @@ async function pullMatchHistory(str) {
         boxClass = "draw-box";
       }
       matchDiv.innerHTML = `
-      <h3 class= "player_1 bold">${match.player_one.username}</h3>
-      <h3 class="electrolize text-center bold ${boxClass}"> ${result}</h3>
-      <h3 class="player_2 bold">${match.player_two.username}</h3>
-    </div>
-      `;
+      <h3 class="player_1 bold">${match.player_one.username}</h3>
+      <button class="electrolize text-center bold ${boxClass}" onclick="openMatchDetails(${match.match_id})">${result}</button>
+      <h3 class="player_2 bold">${match.player_two.username}</h3>`;
+    //   matchDiv.innerHTML = `
+    //   <h3 class= "player_1 bold">${match.player_one.username}</h3>
+    //   <h3 class="electrolize text-center bold ${boxClass}"> ${result}</h3>
+    //   <h3 class="player_2 bold">${match.player_two.username}</h3>
+    // </div>
+    //   `;
       historyHolder.appendChild(matchDiv);
 
       let startTime = new Date(match.start_time);
@@ -769,6 +773,67 @@ async function openModal(str) {
   modalHolder.style.opacity = 0;
 }
 
+
+async function openMatchDetails(matchId){
+
+  let modalHolder = document.getElementById("modal");
+  let modalInfo = document.getElementById("info-modal");
+  let modalHeading = document.getElementById("modal-heading");
+  modalInfo.innerHTML = `<h1 id="MATCH DETAILS" class="w-100"></h1>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="ionicon"
+          viewBox="0 0 512 512"
+          onclick="openModal('close')"
+        >
+          <path
+            d="M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"
+          />
+        </svg>`;
+
+          let matchDetail = await fetch(`http://localhost:8080/api/matches/?match_id=${matchId}`, {
+            method: "GET",
+            credentials: "include",
+          })
+            .then((response) => {
+              return response.json();
+            })
+            .catch((err) => {
+              return err;
+            });
+            print("giii");
+            console.log("Match Detail:", matchDetail);
+
+            modalHolder.style.zIndex = 100;
+            modalHolder.style.opacity = 1;
+            modalHeading.innerHTML = 'MATCH DETAIL';
+        const userContainer = document.createElement("div");
+        userContainer.classList.add(
+          "w-100",
+          "h-75",
+          "d-flex",
+          "justify-content-center",
+          "align-items-center",
+          "gap-4"
+        );
+        userContainer.innerHTML = `
+          <div class="custom-border w-100 p-4 text-center">
+            <h3>Player 1: ${matchDetail.player_one.username} - ${matchDetail.player_one_score}</h3>
+            <h3>Player 2: ${matchDetail.player_two.username}- ${matchDetail.player_two_score}</h3>
+            <h3>Start Time: ${matchDetail.start_time} </h3>
+          </div>
+        `;
+        modalInfo.appendChild(userContainer);
+        return;
+        // modalInfo.innerHTML += `
+        //   <div class="custom-border w-100 p-4 text-center">
+        //     <h3>Player 1: ${matchDetail.player_one.username} - ${matchDetail.player_one_score}</h3>
+        //     <h3>Player 2: ${matchDetail.player_two.username}- ${matchDetail.player_two_score}</h3>
+        //     <h3>Start Time: ${matchDetail.start_time} </h3>
+        //   </div>
+        // `;
+      }
+      
 async function addFriend(id, t) {
   let apiInfo = await fetch("http://localhost:8080/api/friends/", {
     method: "POST",
