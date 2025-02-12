@@ -19,6 +19,7 @@ class User(models.Model):
     status = models.SmallIntegerField(choices=STATUS_CHOICE, default=0)
     deleted = models.BooleanField(null=False, default=False)
     role = models.SmallIntegerField(choices=ROLE_CHOICES, default=0)
+    verified = models.BooleanField(null=False, default=False)
 
     def __str__(self):
         return self.username

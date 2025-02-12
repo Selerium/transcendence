@@ -5,6 +5,7 @@ routes = {
   "/leaderboards": "/leaderboards.html",
   "/profile": "/profile.html",
   "/404": "/404.html",
+  "/verify": "/2fa.html",
   "/login": "/login.html",
   "/": "/dashboard.html",
   "/not-allowed": "/not-allowed.html",
@@ -26,7 +27,21 @@ async function changeRoute() {
   const app = document.getElementById("app");
 
   console.log("checking");
-  if (!(await checkLogin())) {
+  if (path == "/verify") {
+    const html = await fetch(routes["/verify"]).then((response) =>
+      response.text()
+    );
+    app.style.opacity = 0;
+    app.style.filter = "blur(16px)";
+    app.innerHTML = html;
+
+    setTimeout(() => {
+      app.style.opacity = 1;
+      app.style.filter = "";
+    }, 200);
+    return;
+  }
+  if (!(await checkLogin()) || !(await check2fa())) {
     console.log("failed auth");
     const html = await fetch(routes["/login"]).then((response) =>
       response.text()
@@ -41,6 +56,7 @@ async function changeRoute() {
     }, 200);
     return;
   }
+
   console.log("passed auth");
 
   if (routes[path] == undefined) path = "/404";
@@ -48,6 +64,10 @@ async function changeRoute() {
   const html = await fetch(routes[path])
     .then((response) => response.text())
     .catch((err) => err);
+
+  app.innerHTML = await fetch("/index.html").then((response) =>
+    response.text()
+  );
 
   const main = document.getElementById("main");
   main.innerHTML = "";
@@ -94,6 +114,51 @@ window.addEventListener("click", (e) => {
 async function checkLogin() {
   let response = await testApi();
   return response["success"];
+}
+
+async function verify2fa() {
+  // send verification code to backend
+  const email = document.getElementById("email");
+  const code = document.getElementById("code");
+
+  let info = await fetch("http://localhost:8080/api/verify/", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: email.value,
+      code: code.value,
+    }),
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  if (info.success) {
+    window.history.pushState({}, "", "/dashboard");
+    changeRoute();
+  }
+}
+
+async function check2fa() {
+  // check if user is verified
+  let info = await fetch("http://localhost:8080/api/verify/check", {
+    method: "GET",
+    credentials: "include",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  return info["success"];
 }
 
 async function testApi(params) {

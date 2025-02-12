@@ -45,6 +45,7 @@ services:
       build: ./nginx/
       ports:
         - 8080:80
+        - 587:587
       volumes:
         - frontend_data:/usr/share/nginx/html
       networks:

@@ -10,6 +10,7 @@ from users.views import users
 from django.test import RequestFactory
 from django.conf import settings
 from users.serializers import UserSerializer
+from two_f_a.views import send_2fa_code
 import requests
 import jwt
 
@@ -102,7 +103,8 @@ def intra_callback(request):
         if user_info:
             # authenticate user as 'username' and give them JWT
             jwt_token = jwt_generator(user_info, access_token, refresh_token)
-            response = redirect('http://localhost:8080/dashboard')
+            send_2fa_code(user_info['username'])
+            response = redirect('http://localhost:8080/verify')
             response.set_cookie(
                 key="jwt",
                 value = jwt_token,
