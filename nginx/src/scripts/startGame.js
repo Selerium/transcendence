@@ -89,7 +89,7 @@ export async function startGame(
     y: canvas.height / 2,
     dx: 5,
     dy: 5,
-    speed: 5,
+    speed: 8,
     radius: Math.min(canvas.width, canvas.height) * 0.02,
   };
   let paddleWidth = canvas.width * 0.02;
@@ -191,13 +191,12 @@ export async function startGame(
 
     const collisionLeft = checkPaddleCollision(ball, player1Paddle);
     if (collisionLeft === "hit") {
-      console.log("HITTTT");
       leftrelativeIntersectY =
         paddleHeight / 10 / 2 - (ball.y - player1Paddle.y) / 10;
       normalizedRelativeIntersectionY =
         leftrelativeIntersectY / (paddleHeight / 10 / 2);
       bounceAngle = normalizedRelativeIntersectionY * 1.1;
-      ball.speed += 0.5;
+      ball.speed += 1;
       ball.dx = ball.speed * Math.cos(bounceAngle);
       ball.dy = ball.speed * -Math.sin(bounceAngle);
       // ball.x = player1Paddle.x + player1Paddle.width + ball.radius;
@@ -210,19 +209,17 @@ export async function startGame(
 
     const collisionRight = checkPaddleCollision(ball, player2Paddle);
     if (collisionRight === "hit") {
-      console.log("HITTTT-right");
       leftrelativeIntersectY =
         paddleHeight / 10 / 2 - (ball.y - player2Paddle.y) / 10;
       normalizedRelativeIntersectionY =
         leftrelativeIntersectY / (paddleHeight / 10 / 2);
       bounceAngle = normalizedRelativeIntersectionY * 1.1;
-      ball.speed += 0.5;
+      ball.speed += 1;
       ball.dx = ball.speed * Math.cos(bounceAngle);
       ball.dy = ball.speed * -Math.sin(bounceAngle);
       // ball.x = player2Paddle.x + player2Paddle.width + ball.radius;
       if (ball.dx > 0) ball.dx *= -1;
     } else if (collisionRight === "corner") {
-      console.log('1111');
       player1Score++;
       resetBall();
       return;
@@ -257,7 +254,6 @@ export async function startGame(
       player2Score++;
       resetBall();
     } else if (ball.x + ball.radius > canvas.width) {
-      console.log('22222');
       player1Score++;
       resetBall();
     }
@@ -446,11 +442,7 @@ export async function startGame(
   }
 
   function checkWinner() {
-    console.log(player1Score);
-    console.log(player2Score);
-    console.log(gameOver);
     if (player1Score === 1 || player2Score === 1 || gameOver == true) {
-      console.log("hey there");
       cancelAnimationFrame(gameLoopId);
       clearInterval(aiControlInterval);
       clearInterval(timerInterval);

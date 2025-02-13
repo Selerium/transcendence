@@ -189,6 +189,7 @@ function initCountDown(callback) {
     camera.position.set(0, 0, 5);
 
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+	renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
 
@@ -196,6 +197,7 @@ function initCountDown(callback) {
         color: 0xffffff,
         roughness: 0.3,
         metalness: 0.1,
+		precision: 'highp'
     });
 
     shadowLight = new THREE.SpotLight(0x150E32, 2);
@@ -240,6 +242,7 @@ function initMatchLabel(matchNumber, player1, player2, callback) {
         color: 0xf0c419,
         roughness: 0.3,
         metalness: 0.1,
+		precision: 'highp'
     });
 
 
@@ -247,7 +250,8 @@ function initMatchLabel(matchNumber, player1, player2, callback) {
         color: 0xffffff,
         roughness: 0.3,
         metalness: 0.1,
-    });
+		precision: 'highp'
+	});
 
     shadowLight = new THREE.SpotLight(0x150E32, 2);
     shadowLight.position.set(0, 5, 5);
@@ -265,8 +269,8 @@ function initMatchLabel(matchNumber, player1, player2, callback) {
             let playersText = `${player1} vs ${player2}`;
 
 
-            let textSize = Math.max(1, canvasWidth * 0.0011); 
-            let playersTextSize = Math.max(0.5, canvasWidth * 0.0005); 
+            let textSize = 1; 
+            let playersTextSize = 0.8; 
 
 
             let textGeometry = new THREE.TextGeometry(matchText, {
@@ -274,10 +278,9 @@ function initMatchLabel(matchNumber, player1, player2, callback) {
                 size: textSize, 
                 height: textSize * 0.1,
                 curveSegments: 12,
-                bevelEnabled: true,
-                bevelThickness: textSize * 0.07,
-                bevelSize: textSize * 0.03,
-                bevelSegments: 5,
+                // bevelEnabled: true,
+                // bevelThickness: textSize * 0.07,
+                // bevelSize: textSize * 0.03,
             });
 
             let playersGeometry = new THREE.TextGeometry(playersText, {
@@ -285,10 +288,9 @@ function initMatchLabel(matchNumber, player1, player2, callback) {
                 size: playersTextSize,
                 height: playersTextSize * 0.1,
                 curveSegments: 12,
-                bevelEnabled: true,
-                bevelThickness: playersTextSize * 0.07,
-                bevelSize: playersTextSize * 0.03,
-                bevelSegments: 5,
+                // bevelEnabled: true,
+                // bevelThickness: playersTextSize * 0.07,
+                // bevelSize: playersTextSize * 0.001,
             });
 
             textGeometry.center();
