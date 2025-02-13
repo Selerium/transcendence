@@ -1,6 +1,8 @@
 let scene, camera, renderer, trophyGroup,  textWinner, textScore;
 let text = null;
 
+let trophyLoopId;
+
 
 export function waitForCanvasAndStartTrophy(mode , tournamentResults) {
     const checkInterval = setInterval(() => {
@@ -8,6 +10,10 @@ export function waitForCanvasAndStartTrophy(mode , tournamentResults) {
         if (canvas) {
             clearInterval(checkInterval);
             initTrophy(canvas,mode , tournamentResults); 
+        }
+        else 
+        {
+        cancelAnimationFrame(trophyLoopId);
         }
     }, 100);
 }
@@ -137,11 +143,11 @@ function createMatchContainer(matchTitle, player1, player1Score, player2, player
     return matchContainer;
 }
 
-allWinners.appendChild(createMatchContainer("Match 1", tournamentResults["match1"].player1, tournamentResults["match1"].player1Score, tournamentResults["match1"].player2, tournamentResults["match1"].player2Score));
+allWinners.appendChild(createMatchContainer("Match 1", tournamentResults["match1"].player1Nickname, tournamentResults["match1"].player1Score, tournamentResults["match1"].player2, tournamentResults["match1"].player2Score));
 if (mode === "tournament") 
 {
-    allWinners.appendChild(createMatchContainer("Match 2", tournamentResults["match2"].player1, tournamentResults["match2"].player1Score, tournamentResults["match2"].player2, tournamentResults["match2"].player2Score));
-    allWinners.appendChild(createMatchContainer("Final Match", tournamentResults["match3"].player1, tournamentResults["match3"].player1Score, tournamentResults["match3"].player2, tournamentResults["match3"].player2Score));
+    allWinners.appendChild(createMatchContainer("Match 2", tournamentResults["match2"].player1Nickname, tournamentResults["match2"].player1Score, tournamentResults["match2"].player2Nickname, tournamentResults["match2"].player2Score));
+    allWinners.appendChild(createMatchContainer("Final Match", tournamentResults["match3"].player1Nickname, tournamentResults["match3"].player1Score, tournamentResults["match3"].player2Nickname, tournamentResults["match3"].player2Score));
 }
 
 gameHolder.appendChild(allWinners);
@@ -174,7 +180,7 @@ gameHolder.appendChild(allWinners);
 }
 
 function animate() {
-    requestAnimationFrame(animate);
+    trophyLoopId = requestAnimationFrame(animate);
     if (trophyGroup) trophyGroup.rotation.y += 0.01;
     renderer.render(scene, camera);
 }

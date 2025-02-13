@@ -18,6 +18,8 @@ import mimetypes
 # DEBUG = True
 JWT_SECRET = 'you-shouldnt-be-looking-at-this-if-youre-not-django-himself-so-move-along-now-also-keep-swimming-also-free-palestine'
 
+DEBUG=True
+
 mimetypes.add_type("text/css",".css",True)
 mimetypes.add_type("text/javascript",".js",True)
 
@@ -36,8 +38,6 @@ ALLOWED_HOSTS = [
 	'database',
 	'server',
 ]
-
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
