@@ -100,12 +100,31 @@ export async function gameCountdown() {
     }, 100);
 }
 
+window.gameCountdown = gameCountdown;
+
+function sendMatchStartNotification(matchNumber, playerA, playerB, receiver) {
+    return fetch(`http://localhost:8080/api/msgs/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            sender: '1',
+            receiver: receiver,
+            content: `Match ${matchNumber} is about to start: ${playerA} vs ${playerB}`
+        })
+    })
+    .then(response => response.json())
+    .catch(error => console.error('Error sending match start notification:', error));
+}
 
 function runTournament(players, nicknames) {
     let tournamentResults = {};
 
     function playMatch(matchNumber, playerA, playerB, nickname1, nickname2, nextMatchCallback) {
         initMatchLabel(matchNumber, nickname1, nickname2, () => {
+            sendMatchStartNotification(matchNumber, playerA, playerB, playerA);
+            sendMatchStartNotification(matchNumber, playerB, playerA, playerB);
             initCountDown(() => {
                 startGame(mode, nickname1, nickname2, playerA, playerB, (winner, loser, scoreA, scoreB, winnerNickname) => {
                     tournamentResults[`match${matchNumber}`] = {

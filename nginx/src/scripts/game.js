@@ -2,7 +2,10 @@ import { showBckground } from "../scripts/backgroundEffects.js";
 import { gameCountdown } from "../scripts/gameCountdown.js";
 
 export async function createMatch(mode) {
-    document.getElementById("play-btn").style.display = "none";
+    let thingy = document.getElementById("play-btn");
+    if (thingy)
+        thingy.style.display = "none";
+
     let player1, player2, player3, player4;
     let player1nickname, player2nickname, player3nickname, player4nickname;
 
@@ -17,7 +20,7 @@ export async function createMatch(mode) {
     });
 
     if (!info || !info["data"] || !info["data"]["username"]) {
-        document.getElementById("play-btn").style.display = "block";
+        if (thingy) thingy.style.display = "block";
         console.error("Failed to fetch the current user.");
         return;
     }
@@ -56,7 +59,7 @@ export async function createMatch(mode) {
     let emptyPlayers = selectedPlayers.some(selectedPlayers => !selectedPlayers);
     let emptyNicknames = selectedNicknames.some(selectedNicknames => !selectedNicknames);
     if (emptyNicknames || emptyPlayers) {
-        document.getElementById("play-btn").style.display = "block";
+        if (thingy) document.getElementById("play-btn").style.display = "block";
         return;
     }
 
@@ -65,13 +68,13 @@ export async function createMatch(mode) {
     if (duplicatePlayers.length > 0 || duplicateNicknames.length > 0) {
         duplicatePlayers.forEach(player => showErrorMessage(player, "Cloning detected!"));
         duplicateNicknames.forEach(nickname => showErrorMessage(nickname, "Pick a new nickname!"));
-        document.getElementById("play-btn").style.display = "block";
+        if (thingy) document.getElementById("play-btn").style.display = "block";
         return;
     }
 
     let users = await fetchAllUsers();
     if (!users) {
-        document.getElementById("play-btn").style.display = "block";
+        if (thingy) document.getElementById("play-btn").style.display = "block";
         return;
     }
 
@@ -79,7 +82,7 @@ export async function createMatch(mode) {
     let nonExistingPlayers = selectedPlayers.filter(player => !userSet.has(player));
 
     if (nonExistingPlayers.length > 0) {
-        document.getElementById("play-btn").style.display = "block";
+        if (thingy) document.getElementById("play-btn").style.display = "block";
         nonExistingPlayers.forEach(player => showErrorMessage(player, `"${player}" is a ghost! 👻`));
         return;
     }

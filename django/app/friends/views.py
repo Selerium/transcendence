@@ -38,6 +38,16 @@ def friends(request, id=None):
 		user_friends = Friend.objects.filter(Q(friend1=this_user) | Q(friend2=this_user)).exclude(friend_status='0').select_related('friend1', 'friend2')
 
 		response_data = []
+		
+		response_data.append({
+			'id': '1',
+			'username': 'SYSTEM',
+			'profile_pic': 'styles/images/tournament.png',
+			'friend_status': '1',
+			'request_id': '0',
+			'blockedBy': '0'
+		})
+
 		for request in user_friends:
 			other_user = request.friend1 if request.friend2.id == this_user else request.friend2
 
@@ -48,7 +58,7 @@ def friends(request, id=None):
 				'profile_pic': other_user.profile_pic,
 				'friend_status': request.friend_status,
 				'request_id': request.id,
-				'blockedBy': ((request.blockedBy == '2' and other_user == request.friend1) or (request.blockedBy == '1' and other_user == request.friend2) or (request.blockedBy == '0'))
+				'blockedBy': ((request.blockedBy == '2' and other_user == request.friend1) or (request.blockedBy == '1' and other_user == request.friend2) or (request.blockedBy == '0')) or (request.friend_status == '1')
 			})
 
 		return Response(data={'success': True, 'data': response_data}, status=status.HTTP_200_OK)
@@ -93,14 +103,13 @@ def friends(request, id=None):
 		friend = Friend.objects.get(id=id)
 		blocking_user = User.objects.get(id=this_user)
 
-		if request.data.get('blockedBy') == '0' and friend.blockedBy == '1' and blocking_user != friend.friend1:
-			return ERROR403
-		elif request.data.get('blockedBy') == '0' and friend.blockedBy == '2' and blocking_user != friend.friend2:
-			return ERROR403
-		elif request.data.get('blockedBy') == '1' and friend.blockedBy != '0':
-			return ERROR403
-		elif request.data.get('blockedBy') == '1' and friend.blockedBy != '0':
-			return ERROR403
+		if friend.friend_status == '3':
+			if request.data.get('blockedBy') == '0' and friend.blockedBy == '1' and blocking_user != friend.friend1:
+				return ERROR403
+			elif request.data.get('blockedBy') == '0' and friend.blockedBy == '2' and blocking_user != friend.friend2:
+				return ERROR403
+			elif request.data.get('blockedBy') == '1' and friend.blockedBy != '0':
+				return ERROR403
 
 		if friend.friend1 == blocking_user:
 			final_block_user = '1'

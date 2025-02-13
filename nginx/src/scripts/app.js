@@ -1,3 +1,6 @@
+// import { showBckground } from "/scripts/backgroundEffects";
+// import { gameCountdown } from "/scripts/gameCountdown";
+
 let loggedIn = false;
 let my_username = null;
 let my_id;
@@ -158,6 +161,12 @@ async function fillData(str) {
             blockButton.innerHTML = "UNBLOCK";
             blockButton.onclick = helper2;
 
+            chatInput.disabled = true;
+            chatSend.disabled = true;
+          }
+
+          if (friend.username == "SYSTEM") {
+            blockButton.disabled = true;
             chatInput.disabled = true;
             chatSend.disabled = true;
           }
@@ -953,13 +962,17 @@ async function pullChats(friend) {
     sendChat(friend);
   }
   function makeFriendGame() {
-    let queryParams = `mode=1v1-player&player1=${encodeURIComponent(
-      my_username
-    )}&player2=${encodeURIComponent(friend.username)}`;
-    window.history.pushState({}, "", `/play?${queryParams}`);
-    changeRoute();
-    showBckground();
-    gameCountdown();
+    if (friend.username == 'SYSTEM')
+      createMatch('1v1-ai');
+    else {
+      let queryParams = `mode=1v1-player&player1=${encodeURIComponent(
+        my_username
+      )}&player2=${encodeURIComponent(friend.username)}`;
+      window.history.pushState({}, "", `/play?${queryParams}`);
+      changeRoute();
+      showBckground();
+      gameCountdown();
+    }
   }
   sendChatButton.onclick = clicked;
   startGameButton.onclick = makeFriendGame;

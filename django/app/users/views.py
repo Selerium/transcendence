@@ -186,6 +186,7 @@ def users_new(request):
             friend_ids.add(friend.friend2.id)
 
     friend_ids.add(this_user)
+    friend_ids.add(1)
 
     non_friends = User.objects.exclude(id__in=friend_ids)
     return_data = UserSerializer(non_friends, many=True)

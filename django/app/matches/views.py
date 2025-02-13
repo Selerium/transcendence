@@ -77,7 +77,7 @@ def match(request):
         player_one = get_object_or_404(User, username=player_one_id)
         player_two = None if is_ai_opponent else get_object_or_404(User, username=player_two_id)
 
-        if (player_two == None and player_two_score > player_one_score):
+        if (player_two == None and player_two_score and player_one_score and player_two_score > player_one_score):
             try:
                 unlocked = Achievement.objects.get(name='IM GONNA LOSE MY JOB TO AI')
 
@@ -100,7 +100,7 @@ def match(request):
             except:
                 return ERROR404
 
-        if (Match.objects.filter(player_one=player_one).count() == 0 and player_one_score > player_two_score):
+        if (Match.objects.filter(player_one=player_one).count() == 0 and player_one_score and player_two_score and player_one_score > player_two_score):
             try:
                 unlocked = Achievement.objects.get(name="BEGINNER'S LUCK")
 
