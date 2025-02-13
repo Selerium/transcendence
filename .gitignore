@@ -9,3 +9,7 @@ removemigrate.sh
 postgres/data
 
 django/app/media/*
+
+django/.env
+nginx/.env
+postgres/.env
