@@ -777,82 +777,77 @@ async function openModal(str) {
   modalHolder.style.opacity = 0;
 }
 
+async function openMatchDetails(matchId) {
+  let modalHolder = document.getElementById("modal");
+  let modalInfo = document.getElementById("info-modal");
+  let modalHeading = document.getElementById("modal-heading");
 
-async function openMatchDetails(matchId){
+  modalInfo.innerHTML = `
+    <h1 id="match_details" class="w-100"></h1>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="ionicon"
+      viewBox="0 0 512 512"
+      onclick="openModal('close')"
+    >
+      <path d="M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"/>
+    </svg>`;
 
-	let modalHolder = document.getElementById("modal");
-	let modalInfo = document.getElementById("info-modal");
-	let modalHeading = document.getElementById("modal-heading");
-	modalInfo.innerHTML = `<h1 id="MATCH DETAILS" class="w-100"></h1>
-	<svg
-	xmlns="http://www.w3.org/2000/svg"
-	class="ionicon"
-	viewBox="0 0 512 512"
-	onclick="openModal('close')"
-	>
-	<path
-	d="M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"
-	/>
-	</svg>`;
-						
-						let matchDetail = await fetch(`http://localhost:8080/api/matches/${matchId}`, {
-							method: "GET",
-							credentials: "include",
-						})
-						.then((response) => {
-							return response.json();
-						})
-						.catch((err) => {
-							return err;
-						});
-						console.log("Match Detail:", matchDetail);
-						const matchData = matchDetail.data;
+  let matchDetail = await fetch(`http://localhost:8080/api/matches/${matchId}`, {
+    method: "GET",
+    credentials: "include",
+  })
+    .then((response) => response.json())
+    .catch((err) => err);
 
-            modalHolder.style.zIndex = 100;
-            modalHolder.style.opacity = 1;
-            let startTime = new Date(matchData.start_time);
-            let endTime = new Date(matchData.end_time);
-            let startFormatted = startTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            let endFormatted = endTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });  
-            modalHeading.innerHTML = 'MATCH DETAIL';
-        const userContainer = document.createElement("div");
-        let player1Container = document.createElement("div");
-        let player2Container = document.createElement("div");
-        let timeContainer = document.createElement("div");
-        player1Container.classList.add("inner-box","w-50", "h-50", "p-10", "text-center", "custom-border", "electrolize", "bold");
-        player2Container.classList.add("inner-box","w-50", "h-50","p-10", "text-center", "custom-border", "electrolize", "bold");
-        timeContainer.classList.add("w-50", "p-10", "text-center", "custom-border", "electrolize");
-        player1Container.innerHTML = `
-          <h2>${matchData.player_one.username} </h2>
-          <h3>${matchData.player_one_score}</h3>
-        `;
-        player2Container.innerHTML = `
-          <h3>Player 2: ${matchData.player_two.username} - ${matchData.player_two_score}</h3>
-        `;
-        timeContainer.innerHTML = `<h3>Start Time: ${startFormatted} </h3>
-            <h3>End Time: ${endFormatted} </h3>
-        `;
-        userContainer.classList.add(
-          "w-100",
-          "h-100",
-          "d-flex",
-          "justify-content-center",
-          "align-items-center",
-          "gap-4"
-        );
-        // userContainer.innerHTML = `
-        // //   <div class="custom-border w-100 p-4 text-center">
-        // //     <h3>Player 1: ${matchData.player_one.username} - ${matchData.player_one_score}</h3>
-        // //     <h3>Player 2: ${matchData.player_two.username}- ${matchData.player_two_score}</h3>
-        // //     <h3>Start Time: ${startFormatted} </h3>
-        // //     <h3>End Time: ${endFormatted} </h3>
-        // //   </div>
-        // // `;
-        userContainer.appendChild(player1Container);
-        userContainer.appendChild(player2Container);
-        userContainer.appendChild(timeContainer);
-        modalInfo.appendChild(userContainer);
-      }
+  console.log("Match Detail:", matchDetail);
+  const matchData = matchDetail.data;
+
+  modalHolder.style.zIndex = 100;
+  modalHolder.style.opacity = 1;
+
+  let startTime = new Date(matchData.start_time);
+  let endTime = new Date(matchData.end_time);
+  let startFormatted = startTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  let endFormatted = endTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  const userContainer = document.createElement("div");
+  userContainer.classList.add("h-100","flex-fill", "d-flex", "flex-column", "gap-4" ,"align-items-center", "justify-content-evenly");
+
+  let playersContainer = document.createElement("div");
+  playersContainer.classList.add("d-flex", "w-50", "h-50", "gap-4");
+  
+  let player1Container = document.createElement("div");
+  let timeContainer = document.createElement("div");
+  let player2Container = document.createElement("div");
+  player1Container.classList.add("d-flex", "flex-column", "inner-box", "w-50", "h-100", "p-4", "align-items-center", "justify-content-center", "text-center", "custom-border", "electrolize", "bold");
+  player2Container.classList.add("d-flex", "flex-column", "inner-box", "w-50", "h-100", "p-4", "text-center", "align-items-center", "justify-content-center", "custom-border", "electrolize", "bold");
+  timeContainer.classList.add("d-flex", "flex-column", "inner-box", "w-50", "h-100", "p-4", "text-center", "custom-border", "electrolize", "bold", "align-items-center", "justify-content-center");
+  
+  player1Container.innerHTML = `
+  <h2>${matchData.player_one.username}</h2>
+  <h1>SCORE</h1>
+    <h1>${matchData.player_one_score}</h1>
+  `;
+
+  player2Container.innerHTML = `
+    <h2>${matchData.player_two.username}</h2>
+    <h1>SCORE</h1>
+    <h1>${matchData.player_two_score}</h1>
+  `;
+  timeContainer.innerHTML = `
+  <h1>Start Time</h1>
+  <h2> ${startFormatted}</h2>
+    <h1>End Time<h1>
+    <h2> ${endFormatted}</h2>
+    `;
+    playersContainer.appendChild(player1Container);
+    playersContainer.appendChild(player2Container);
+  userContainer.appendChild(playersContainer);
+  userContainer.appendChild(timeContainer);  
+  modalInfo.appendChild(userContainer);
+}
+
       
 async function addFriend(id, t) {
   let apiInfo = await fetch("http://localhost:8080/api/friends/", {
