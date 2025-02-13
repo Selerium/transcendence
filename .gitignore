@@ -7,3 +7,5 @@ django/app/*/migrations/*
 removemigrate.sh
 
 postgres/data
+
+django/app/media
