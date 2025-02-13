@@ -16,7 +16,9 @@ import mimetypes
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-JWT_SECRET = 'you-shouldnt-be-looking-at-this-if-youre-not-django-himself-so-move-along-now-also-keep-swimming-also-free-palestine'
+JWT_SECRET = os.environ['JWT_SECRET']
+CLIENT_ID = os.environ['CLIENT_ID']
+CLIENT_SECRET = os.environ['CLIENT_SECRET']
 
 DEBUG=True
 
@@ -31,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-82p7zv-9(eo2jb4ykj80=qf%7xopddl%b$owx^eqn3z!@e^bg&'
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 ALLOWED_HOSTS = [
 	'localhost',
@@ -96,11 +98,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'database',
-        'USER': 'postgres',
-        'PASSWORD': '1234',
-        'HOST': 'database',
-        'PORT': '5432',
+        'NAME': os.environ['DB_NAME'],
+        'USER': os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASS'],
+        'HOST': os.environ['DB_HOST'],
+        'PORT': os.environ['DB_PORT'],
     }
 }
 
@@ -150,20 +152,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DEFAULT_FROM_EMAIL = 'johnadi02@gmail.com'
+DEFAULT_FROM_EMAIL = os.environ['EMAIL_HOST_USER']
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email provider's SMTP server
-EMAIL_PORT = 587  # Port for TLS
-EMAIL_USE_TLS = True  # Use TLS for secure connection
-EMAIL_HOST_USER = 'johnadi02@gmail.com'  # Your email address
-EMAIL_HOST_PASSWORD = 'ejgf qchy squt dznh'  # Your email password or app-specific password
-
-
-# # django XSS protection stuffs
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-
-# CSP_DEFAULT_SRC = ("'self'",)
-# CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'")
-# CSP_OBJECT_SRC = ("'none'",)
-
-# SECURE_BROWSER_XSS_FILTER = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASS']

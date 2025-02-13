@@ -55,14 +55,16 @@ export async function createMatch(mode) {
     }
     clearErrorMessages();
 
-    if (player2.toLowerCase() == 'SYSTEM'.toLowerCase())
-        showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
-    else if (player3.toLowerCase() == 'SYSTEM'.toLowerCase())
-        showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
-    else if (player4.toLowerCase() == 'SYSTEM'.toLowerCase())
-        showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
-    if (player2 == 'SYSTEM' || player3 == 'SYSTEM' || player4 == 'SYSTEM')
-        return ;
+    if (mode == "tournament") {
+        if (player2.toLowerCase() == 'SYSTEM'.toLowerCase())
+            showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
+        else if (player3.toLowerCase() == 'SYSTEM'.toLowerCase())
+            showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
+        else if (player4.toLowerCase() == 'SYSTEM'.toLowerCase())
+            showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
+        if (player2 == 'SYSTEM' || player3 == 'SYSTEM' || player4 == 'SYSTEM')
+            return ;
+    }
 
     let emptyPlayers = selectedPlayers.some(selectedPlayers => !selectedPlayers);
     let emptyNicknames = selectedNicknames.some(selectedNicknames => !selectedNicknames);
@@ -144,10 +146,10 @@ function findDuplicates(players) {
     let seen = new Set();
     let duplicates = [];
     for (let player of players) {
-        if (seen.has(player)) {
-            duplicates.push(player);
+        if (seen.has(String(player).toLowerCase)) {
+            duplicates.push(String(player).toLowerCase);
         } else {
-            seen.add(player);
+            seen.add(String(player).toLowerCase);
         }
     }
     return duplicates;
