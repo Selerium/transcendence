@@ -10,6 +10,8 @@ from users.views import users
 from django.test import RequestFactory
 from django.conf import settings
 from users.serializers import UserSerializer
+from achievements.models import AchievementUnlocked, Achievement
+from achievements.serializers import AchievementUnlockedSerializer
 import requests
 import jwt
 
@@ -22,6 +24,7 @@ REDIRECT_URI = 'http://localhost:8000/intra_callback/'
 AUTHORIZE_URL = 'https://api.intra.42.fr/oauth/authorize'
 TOKEN_URL = 'https://api.intra.42.fr/oauth/token'
 JWT_SECRET = settings.JWT_SECRET
+TEAM_MEMBERS = {'jebucoy', 'jadithya', 'juhaamid', 'cafriem', 'cmrabet'}
 
 def jwt_generator(info, access, refresh):
     obj = {
@@ -74,6 +77,11 @@ def get_user_info(access_token, refresh_token):
                 role=role
             )
             newUser.save()
+            if username in TEAM_MEMBERS:
+                unlocked = Achievement.objects.get(name='DID YOU SUBMIT?!')
+                achieved, created = AchievementUnlocked.objects.get_or_create(user=newUser, unlocked=unlocked)
+                    
+    
             print('registered')
         this_user = User.objects.get(username=username)
         serializer = UserSerializer(this_user)
