@@ -544,8 +544,12 @@ async function pullMatchHistory(str, id) {
         "py-2",
         "px-4",
         "gap-2",
-        "w-100"
+        "w-100",
+        "clickable",
+        "btn",
+
       );
+      matchDiv.onclick = () => openMatchDetails(match.match_id);
       let result, boxClass;
       console.log(match);
       if (
@@ -840,6 +844,69 @@ async function clickFileUpload() {
   input.click();
 }
 
+async function openMatchDetails(matchId) {
+  let modalHolder = document.getElementById("modal");
+  let modalInfo = document.getElementById("info-modal");
+  let modalHeading = document.getElementById("modal-heading");
+
+  modalHeading.innerHTML = "MATCH DASHBOARD";
+
+  let matchDetail = await fetch(`http://localhost:8080/api/matches/${matchId}`, {
+    method: "GET",
+    credentials: "include",
+  })
+    .then((response) => response.json())
+    .catch((err) => err);
+
+  console.log("Match Detail:", matchDetail);
+  const matchData = matchDetail.data;
+
+  modalHolder.style.zIndex = 100;
+  modalHolder.style.opacity = 1;
+
+  let startTime = new Date(matchData.start_time);
+  let endTime = new Date(matchData.end_time);
+  let startFormatted = startTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  let endFormatted = endTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  const userContainer = document.createElement("div");
+  userContainer.classList.add("h-75", "w-100", "d-flex", "flex-column", "gap-4" ,"align-items-center", "justify-content-evenly");
+
+  let playersContainer = document.createElement("div");
+  playersContainer.classList.add("d-flex", "w-50", "h-50", "gap-4");
+  
+  let player1Container = document.createElement("div");
+  let timeContainer = document.createElement("div");
+  let player2Container = document.createElement("div");
+  player1Container.classList.add("d-flex", "flex-column", "inner-box", "w-50", "h-100", "p-4", "align-items-center", "justify-content-center", "text-center", "custom-border", "electrolize", "bold");
+  player2Container.classList.add("d-flex", "flex-column", "inner-box", "w-50", "h-100", "p-4", "text-center", "align-items-center", "justify-content-center", "custom-border", "electrolize", "bold");
+  timeContainer.classList.add("d-flex", "flex-column", "inner-box", "w-50", "h-50", "p-4", "text-center", "custom-border", "electrolize", "bold", "align-items-center", "justify-content-center");
+  
+  player1Container.innerHTML = `
+  <h3>${matchData.player_one.username}</h3>
+  <h3>SCORE</h3>
+    <h3>${matchData.player_one_score}</h3>
+  `;
+
+  player2Container.innerHTML = `
+    <h3>${matchData.player_two.username}</h3>
+    <h3>SCORE</h3>
+    <h3>${matchData.player_two_score}</h3>
+  `;
+  timeContainer.innerHTML = `
+  <h3>Start Time</h3>
+  <h3> ${startFormatted}</h3>
+    <h3>End Time<h3>
+    <h3> ${endFormatted}</h3>
+    `;
+    playersContainer.appendChild(player1Container);
+    playersContainer.appendChild(player2Container);
+  userContainer.appendChild(playersContainer);
+  userContainer.appendChild(timeContainer);  
+  modalInfo.appendChild(userContainer);
+}
+
+      
 async function addFriend(id, t) {
   let apiInfo = await fetch("http://localhost:8080/api/friends/", {
     method: "POST",
