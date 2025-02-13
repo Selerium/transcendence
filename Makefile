@@ -1,6 +1,7 @@
 # creates the app as well any required extra folders
 start:
 	mkdir -p ${PWD}/postgres/data/
+	mkdir -p ${PWD}/django/app/media/
 	docker compose -f ./docker-compose.yml up -d --build
 
 # stop the app

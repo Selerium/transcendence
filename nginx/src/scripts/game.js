@@ -32,14 +32,14 @@ export async function createMatch(mode) {
         
     } 
     else if (mode === 'tournament') {
-        player2 = document.getElementById("player2").value;
-        player3 = document.getElementById("player3").value;
-        player4 = document.getElementById("player4").value;
+        player2 = String(document.getElementById("player2").value).toLowerCase();
+        player3 = String(document.getElementById("player3").value).toLowerCase();
+        player4 = String(document.getElementById("player4").value).toLowerCase();
 
-        player1nickname = document.getElementById("nickname1").value;
-        player2nickname = document.getElementById("nickname2").value;
-        player3nickname = document.getElementById("nickname3").value;
-        player4nickname = document.getElementById("nickname4").value;
+        player1nickname = String(document.getElementById("nickname1").value).toLowerCase();
+        player2nickname = String(document.getElementById("nickname2").value).toLowerCase();
+        player3nickname = String(document.getElementById("nickname3").value).toLowerCase();
+        player4nickname = String(document.getElementById("nickname4").value).toLowerCase();
     }
 
     let selectedPlayers = [player1, player2]; // Default for 1v1-player
@@ -55,6 +55,14 @@ export async function createMatch(mode) {
     }
     clearErrorMessages();
 
+    if (player2.toLowerCase() == 'SYSTEM'.toLowerCase())
+        showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
+    else if (player3.toLowerCase() == 'SYSTEM'.toLowerCase())
+        showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
+    else if (player4.toLowerCase() == 'SYSTEM'.toLowerCase())
+        showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
+    if (player2 == 'SYSTEM' || player3 == 'SYSTEM' || player4 == 'SYSTEM')
+        return ;
 
     let emptyPlayers = selectedPlayers.some(selectedPlayers => !selectedPlayers);
     let emptyNicknames = selectedNicknames.some(selectedNicknames => !selectedNicknames);

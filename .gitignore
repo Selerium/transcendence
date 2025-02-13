@@ -8,4 +8,4 @@ removemigrate.sh
 
 postgres/data
 
-django/app/media
+django/app/media/*
