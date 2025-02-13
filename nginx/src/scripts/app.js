@@ -567,7 +567,7 @@ async function pullMatchHistory(str, id) {
 
       let startTime = new Date(match.start_time);
       let endTime = new Date(match.end_time);
-      gametime += (startTime.getTime() - endTime.getTime()) / 60000;
+      gametime += (endTime.getTime() - startTime.getTime()) / 60000;
     });
 
     if (str == "profile") {
