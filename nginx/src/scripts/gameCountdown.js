@@ -15,31 +15,43 @@ let countdownNumber = 4;
 let countdownInterval;
 let rotation = false;
 let animationId = null;
-async function initGame(player_one, player_two,player_one_score,player_two_score,is_ai_opponent) {
-    //               player_one=player_one,
-      //             player_two=player_two,
-      //             is_ai_opponent=is_ai_opponent,
-    let apiInfo = await fetch("http://localhost:8080/api/matches/", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        player_one: player_one,
-        player_two: player_two,
-        player_one_score:player_one_score,
-        player_two_score:player_two_score,
-        is_ai_opponent:is_ai_opponent
-      }),
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .catch((err) => {
-        return err;
-      });
-  }
+
+let matchIds = {
+    match1: { matchid: null },
+    match2: { matchid: null },
+    match3: { matchid: null }
+};
+async function initGame2(matchIds, tournamentResults) {
+    for (const matchKey of Object.keys(matchIds)) {
+        let matchData = tournamentResults[matchKey];
+
+        if (matchIds[matchKey].matchid && matchData?.player1Score !== undefined && matchData?.player2Score !== undefined) {
+            
+            try {
+                let response = await fetch("http://localhost:8080/api/matches/", {
+                    method: "PUT",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        match_id: matchIds[matchKey].matchid,
+                        player_one_score: matchData.player1Score,
+                        player_two_score: matchData.player2Score,
+                    }),
+                });
+
+                let apiInfo = await response.json();
+                console.log(`Updated ${matchKey}:`, apiInfo);
+            } catch (err) {
+                console.error(`Error updating ${matchKey}:`, err);
+            }
+        } else {
+            console.warn(`Skipping ${matchKey}: Missing match ID or scores`);
+        }
+    }
+}
+
 
 export async function gameCountdown() {
     const checkInterval = setInterval(async () => { 
@@ -68,10 +80,17 @@ export async function gameCountdown() {
                     urlParams.get("player4") || null
                 ];
 
+                const nicknames = [
+                    urlParams.get("nickname1") || players[0],
+                    urlParams.get("nickname2") || players[1],
+                    urlParams.get("nickname3") || players[2],
+                    urlParams.get("nickname4") || players[3]
+                ];
+
                 if (mode === "tournament") {
-                    runTournament(players); 
+                    runTournament(players, nicknames); 
                 } else {
-                    initCountDown(() => startGame(mode, players[0], players[1], null));
+                    initCountDown(() => startGame(mode, nicknames[0], nicknames[1], players[0], players[1], null));
                 }
 
             } catch (error) {
@@ -82,28 +101,29 @@ export async function gameCountdown() {
 }
 
 
-function runTournament(players) {
+function runTournament(players, nicknames) {
     let tournamentResults = {};
 
-    function playMatch(matchNumber, playerA, playerB, nextMatchCallback) {
-
-        initMatchLabel(matchNumber, playerA, playerB, () => {
+    function playMatch(matchNumber, playerA, playerB, nickname1, nickname2, nextMatchCallback) {
+        initMatchLabel(matchNumber, nickname1, nickname2, () => {
             initCountDown(() => {
-                startGame(mode, playerA, playerB, (winner, loser, scoreA, scoreB) => {
+                startGame(mode, nickname1, nickname2, playerA, playerB, (winner, loser, scoreA, scoreB, winnerNickname) => {
                     tournamentResults[`match${matchNumber}`] = {
                         player1: playerA,
+                        player1Nickname: nickname1,
                         player1Score: scoreA,
                         player2: playerB,
+                        player2Nickname: nickname2,
                         player2Score: scoreB,
-                        winner: winner
+                        winner: winner,
+                        winnerNickname: winnerNickname
                     };
 
                     if (nextMatchCallback) {
-                        nextMatchCallback(winner);
+                        nextMatchCallback(winner, winnerNickname);
                     } else {
-                        initGame(tournamentResults["match1"].player1,tournamentResults["match1"].player2,tournamentResults["match1"].player1Score,tournamentResults["match1"].player2Score,false)
-                        initGame(tournamentResults["match2"].player1,tournamentResults["match2"].player2,tournamentResults["match2"].player1Score,tournamentResults["match2"].player2Score,false)
-                        initGame(tournamentResults["match3"].player1,tournamentResults["match3"].player2,tournamentResults["match3"].player1Score,tournamentResults["match3"].player2Score,false)
+                        // Update all matches in the
+                        // initGame2(matchIds, tournamentResults);
                         waitForCanvasAndStartTrophy(mode, tournamentResults);
                     }
                 });
@@ -111,12 +131,13 @@ function runTournament(players) {
         });
     }
 
-    playMatch(1, players[0], players[1], (winner1) => { 
-        playMatch(2, players[2], players[3], (winner2) => { 
-            playMatch(3, winner1, winner2, null); 
+    playMatch(1, players[0], players[1], nicknames[0], nicknames[1], (winner1, winner1Nickname) => { 
+        playMatch(2, players[2], players[3], nicknames[2], nicknames[3], (winner2, winner2Nickname) => { 
+            playMatch(3, winner1, winner2, winner1Nickname, winner2Nickname, null); 
         });
     });
 }
+
 
 function resetCountdownVariables() {
     if (typeof countdownInterval !== "undefined") {
@@ -269,7 +290,7 @@ function initMatchLabel(matchNumber, player1, player2, callback) {
 
             setTimeout(() => {
                 scene.remove(matchTextMesh);
-                matchTextMesh.geometry.dispose();
+                // matchTextMesh.geometry.dispose();
                 matchTextMesh = null;
                 callback(); 
             }, 4000);
