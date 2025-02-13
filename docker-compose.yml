@@ -47,6 +47,7 @@ services:
       ports:
         - 80:80
         - 443:443
+        - 587:587
       volumes:
         - frontend_data:/usr/share/nginx/html
         - media:/media

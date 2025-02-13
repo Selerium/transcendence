@@ -150,6 +150,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+DEFAULT_FROM_EMAIL = 'johnadi02@gmail.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email provider's SMTP server
+EMAIL_PORT = 587  # Port for TLS
+EMAIL_USE_TLS = True  # Use TLS for secure connection
+EMAIL_HOST_USER = 'johnadi02@gmail.com'  # Your email address
+EMAIL_HOST_PASSWORD = 'ejgf qchy squt dznh'  # Your email password or app-specific password
+
+
 # # django XSS protection stuffs
 # SECURE_CONTENT_TYPE_NOSNIFF = True
 

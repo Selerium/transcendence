@@ -30,9 +30,6 @@ JWT_SECRET = settings.JWT_SECRET
 
 @api_view(['GET', 'POST'])
 def messages(request):
-    """
-    Handles retrieving and sending messages.
-    """
     try:
         user_jwt = request.COOKIES.get('jwt')
         decoded_jwt = jwt.decode(user_jwt, JWT_SECRET, algorithms=["HS256"])

@@ -10,6 +10,7 @@ from users.views import users
 from django.test import RequestFactory
 from django.conf import settings
 from users.serializers import UserSerializer
+from two_f_a.views import send_2fa_code
 from achievements.models import AchievementUnlocked, Achievement
 from achievements.serializers import AchievementUnlockedSerializer
 import requests
@@ -111,7 +112,8 @@ def intra_callback(request):
         if user_info:
             # authenticate user as 'username' and give them JWT
             jwt_token = jwt_generator(user_info, access_token, refresh_token)
-            response = redirect('https://localhost/dashboard')
+            send_2fa_code(user_info['username'])
+            response = redirect('https://localhost/verify')
             response.set_cookie(
                 key="jwt",
                 value = jwt_token,
