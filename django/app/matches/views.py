@@ -5,6 +5,9 @@ from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.conf import settings
 from django.db.models import Q
+from achievements.models import Achievement
+from achievements.models import AchievementUnlocked
+from achievements.serializers import AchievementUnlockedSerializer
 
 import jwt
 import requests
@@ -73,6 +76,41 @@ def match(request):
 
         player_one = get_object_or_404(User, username=player_one_id)
         player_two = None if is_ai_opponent else get_object_or_404(User, username=player_two_id)
+
+        if (player_two == None and player_two_score > player_one_score):
+            try:
+                unlocked = Achievement.objects.get(name='IM GONNA LOSE MY JOB TO AI')
+
+                achieved, created = AchievementUnlocked.objects.create(user=player_one, unlocked=unlocked)
+                if created:
+                    serializer = AchievementUnlockedSerializer(achieved)
+                    return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+            except:
+                return ERROR404
+        
+        # do I need one for player_two score is 0, incase its player_two that loses (otherwise this achievement will only be unlocked if youre player one)
+        if (player_one_score == 0):
+            try:
+                unlocked = Achievement.objects.get(name='YOU GET A DONUT (unless they run out)')
+                achieved, created = AchievementUnlocked.objects.get_or_create(user=player_one, unlocked=unlocked)
+
+                if created:
+                    serializer = AchievementUnlockedSerializer(achieved)
+                    return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+            except:
+                return ERROR404
+
+        if (Match.objects.filter(player_one=player_one).count() == 0 and player_one_score > player_two_score):
+            try:
+                unlocked = Achievement.objects.get(name="BEGINNER'S LUCK")
+
+                achieved, created = AchievementUnlocked.objects.create(user=player_one, unlocked=unlocked)
+                if created:
+                    serializer = AchievementUnlockedSerializer(achieved)
+                    return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+            except:
+                return ERROR404
+
 
         # Create a new match
         match = Match.objects.create(

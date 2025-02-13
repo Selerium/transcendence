@@ -7,6 +7,8 @@ from django.conf import settings
 from .serializers import FriendSerializer
 from .models import Friend
 from users.models import User
+from achievements.models import Achievement, AchievementUnlocked
+from achievements.serializers import AchievementUnlockedSerializer
 
 import jwt
 import requests
@@ -58,6 +60,7 @@ def friends(request, id=None):
 			friend2=User.objects.get(id=data.get('friend')),
 			sentBy=this_user
 		)
+
 		try:
 			checkFriend = Friend.objects.get(friend1=newFriend.friend1, friend2=newFriend.friend2)
 			if (checkFriend):

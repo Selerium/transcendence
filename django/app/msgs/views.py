@@ -11,6 +11,8 @@ from django.conf import settings
 from rest_framework.response import Response
 from django.db.models import Q
 from friends.models import Friend
+from achievements.models import Achievement, AchievementUnlocked
+from achievements.serializers import AchievementSerializer, AchievementUnlockedSerializer
 
 ## GET = retrieve messages (retrieve messages sent or received?)
 ## this would be in use when you want to pull the messages
@@ -41,14 +43,14 @@ def messages(request):
         # if response.status_code != 200:
             # return ERROR403
     except:
-            return ERROR400
+        return ERROR400
 
     if request.method == 'GET':
         try:
             data = request.query_params
             friend2_id = data.get('friend_id')
         except:
-            ERROR400
+            return ERROR400
 
         print(friend2_id)
         friend1 = User.objects.get(id=this_user)
@@ -66,7 +68,7 @@ def messages(request):
             receiverId = data.get('receiver')
             content = data.get('content')
         except:
-            ERROR400
+            return ERROR400
 
         print(data)
         print("------")
@@ -85,6 +87,15 @@ def messages(request):
             print('friendship blocked!!!!!')
             return ERROR403
 
+        if Message.objects.filter(sender=sender).count() >= 1:
+            try:
+                unlocked = Achievement.objects.get(name='HAVE YOU HEARD OF SLACK?')
+                achieved, created = AchievementUnlocked.objects.get_or_create(user=sender, unlocked=unlocked)
+                if created:
+                    serializer = AchievementUnlockedSerializer(achieved)
+                    return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+            except:
+                return ERROR404
 
         newMsg = Message(sender=sender, receiver=receiver, content=content)
 
@@ -94,5 +105,4 @@ def messages(request):
             return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
         except:
             return ERROR400
-
 

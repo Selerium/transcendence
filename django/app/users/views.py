@@ -17,6 +17,7 @@ ERROR404 = Response(data={'success': False, 'message': 'Not Found'}, status=stat
 ERROR403 = Response(data={'success': False, 'message': 'Not Authenticated'}, status=status.HTTP_403_FORBIDDEN)
 
 JWT_SECRET = settings.JWT_SECRET
+TEAM_MEMBERS = {'jebucoy', 'jadithya', 'juhaamid', 'cmrabet', 'cafriem'}
 
 @api_view(['PUT'])
 def updateAlias(request):
@@ -110,6 +111,7 @@ def users(request, id=None):
             user = get_object_or_404(User, id=id, deleted=False)
             serializer = UserSerializer(user)
             return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+        
 
     # POST and create a new user
     elif (request.method == 'POST' and id is None):
@@ -122,6 +124,8 @@ def users(request, id=None):
         print('test 0:----')
         print(data.get('username'))
         print(data.get('profile_pic'))
+       
+
         try:
             print('test 1:----')
             newUser.full_clean()
@@ -132,6 +136,8 @@ def users(request, id=None):
             return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
         except:
             return ERROR400
+
+
 
     # PUT an update for one user
     elif (request.method == 'PUT' and not id == None):
