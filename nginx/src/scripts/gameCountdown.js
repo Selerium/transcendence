@@ -28,7 +28,7 @@ async function initGame2(matchIds, tournamentResults) {
         if (matchIds[matchKey].matchid && matchData?.player1Score !== undefined && matchData?.player2Score !== undefined) {
             
             try {
-                let response = await fetch("http://localhost:8080/api/matches/", {
+                let response = await fetch("https://localhost/api/matches/", {
                     method: "PUT",
                     credentials: "include",
                     headers: {
@@ -60,7 +60,7 @@ export async function gameCountdown() {
             clearInterval(checkInterval);
 
             try {
-                let info = await fetch("http://localhost:8080/api/me", {
+                let info = await fetch("https://localhost/api/me", {
                     method: "GET",
                     credentials: "include",
                 })
@@ -103,7 +103,7 @@ export async function gameCountdown() {
 window.gameCountdown = gameCountdown;
 
 function sendMatchStartNotification(matchNumber, playerA, playerB, receiver) {
-    return fetch(`http://localhost:8080/api/msgs/`, {
+    return fetch(`https://localhost/api/msgs/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

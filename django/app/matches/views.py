@@ -135,6 +135,39 @@ def match(request):
                 }, partial=True)
             if serializer.is_valid():
                 serializer.save()
+                if (match.player_one_score < match.player_two_score and (match.player_two == None or match.player_two.id == None)):
+                    try:
+                        unlocked = Achievement.objects.get(name='IM GONNA LOSE MY JOB TO AI')
+
+                        achieved, created = AchievementUnlocked.objects.create(user=match.player_one, unlocked=unlocked)
+                        if created:
+                            serializer = AchievementUnlockedSerializer(achieved)
+                            return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+                    except:
+                        print('this achievement didnt work ' + unlocked.name)
+
+                if (match.player_two and match.player_two_score == 0):
+                    try:
+                        unlocked = Achievement.objects.get(name='YOU GET A DONUT (unless they run out)')
+                        achieved, created = AchievementUnlocked.objects.get_or_create(user=match.player_two, unlocked=unlocked)
+
+                        if created:
+                            serializer = AchievementUnlockedSerializer(achieved)
+                            return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+                    except:
+                        print('this achievement didnt work ' + unlocked.name)
+
+                if (Match.objects.filter(player_one=match.player_one).count() == 0 and match.player_one_score and match.player_two_score and match.player_one_score > match.player_two_score):
+                    try:
+                        unlocked = Achievement.objects.get(name="BEGINNER'S LUCK")
+
+                        achieved, created = AchievementUnlocked.objects.create(user=match.player_one, unlocked=unlocked)
+                        if created:
+                            serializer = AchievementUnlockedSerializer(achieved)
+                            return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
+                    except:
+                        print('this achievement didnt work ' + unlocked.name)
+
                 return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
             return ERROR400  
     else:

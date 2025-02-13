@@ -9,7 +9,7 @@ async function initGame(
   player_two_score,
   is_ai_opponent
 ) {
-  let apiInfo = await fetch("http://localhost:8080/api/matches/", {
+  let apiInfo = await fetch("https://localhost/api/matches/", {
     method: "POST",
     credentials: "include",
     headers: {
@@ -37,7 +37,7 @@ async function initGame(
 }
 
 async function initGame2(matchidd, player_one_score, player_two_score) {
-  let apiInfo = await fetch("http://localhost:8080/api/matches/", {
+  let apiInfo = await fetch("https://localhost/api/matches/", {
     method: "PUT",
     credentials: "include",
     headers: {
