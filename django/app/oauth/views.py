@@ -18,7 +18,7 @@ ERROR404 = Response(data={'success': False, 'message': 'Not Found'}, status=stat
 
 CLIENT_ID = 'u-s4t2ud-0cf592fe5bff0b6cd2a344a6f915993fef2fbf3f5c95fa29a57bbccef061c8dd'
 CLIENT_SECRET = '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'
-REDIRECT_URI = 'http://localhost:8000/intra_callback/'
+REDIRECT_URI = 'https://localhost/api/intra_callback/'
 AUTHORIZE_URL = 'https://api.intra.42.fr/oauth/authorize'
 TOKEN_URL = 'https://api.intra.42.fr/oauth/token'
 JWT_SECRET = settings.JWT_SECRET
@@ -103,7 +103,7 @@ def intra_callback(request):
         if user_info:
             # authenticate user as 'username' and give them JWT
             jwt_token = jwt_generator(user_info, access_token, refresh_token)
-            response = redirect('http://localhost:8080/dashboard')
+            response = redirect('https://localhost/dashboard')
             response.set_cookie(
                 key="jwt",
                 value = jwt_token,
@@ -114,4 +114,4 @@ def intra_callback(request):
             )
             return response
     # let them know they're not authenticated bc not found in intra API
-    return redirect('http://localhost:8080/not-allowed')
+    return redirect('https://localhost/not-allowed')

@@ -4,7 +4,7 @@ import { gameCountdown } from "../scripts/gameCountdown.js";
 export async function createMatch(mode) {
 
     let player1, player2, player3, player4;
-    let info = await fetch("http://localhost:8080/api/me", {
+    let info = await fetch("https://localhost/api/me", {
         method: "GET",
         credentials: "include",
       })

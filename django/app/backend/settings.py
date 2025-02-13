@@ -15,7 +15,7 @@ import os
 import mimetypes
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 JWT_SECRET = 'you-shouldnt-be-looking-at-this-if-youre-not-django-himself-so-move-along-now-also-keep-swimming-also-free-palestine'
 
 mimetypes.add_type("text/css",".css",True)
@@ -37,6 +37,7 @@ ALLOWED_HOSTS = [
 	'server',
 ]
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
@@ -148,3 +149,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# # django XSS protection stuffs
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# CSP_DEFAULT_SRC = ("'self'",)
+# CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'")
+# CSP_OBJECT_SRC = ("'none'",)
+
+# SECURE_BROWSER_XSS_FILTER = True

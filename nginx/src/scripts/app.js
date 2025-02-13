@@ -12,7 +12,7 @@ async function fillData(str) {
 
   if (!loggedIn) {
     loggedIn = true;
-    let info = await fetch("http://localhost:8080/api/me", {
+    let info = await fetch("https://localhost/api/me", {
       method: "GET",
       credentials: "include",
     })
@@ -36,7 +36,7 @@ async function fillData(str) {
   }
 
   if (my_username == null) {
-    let meInfo = await fetch("http://localhost:8080/api/me", {
+    let meInfo = await fetch("https://localhost/api/me", {
       method: "GET",
       credentials: "include",
     })
@@ -52,7 +52,7 @@ async function fillData(str) {
   }
 
   if (str == "/profile") {
-    let meInfo = await fetch("http://localhost:8080/api/me", {
+    let meInfo = await fetch("https://localhost/api/me", {
       method: "GET",
       credentials: "include",
     })
@@ -91,7 +91,7 @@ async function fillData(str) {
     }, 1000);
 
     let leaderboardsInfo = await fetch(
-      "http://localhost:8080/api/matches/leaderboards",
+      "https://localhost/api/matches/leaderboards",
       {
         method: "GET",
         credentials: "include",
@@ -114,7 +114,7 @@ async function fillData(str) {
       });
     }
   } else if (str == "/friends") {
-    let friendsListInfo = await fetch("http://localhost:8080/api/friends", {
+    let friendsListInfo = await fetch("https://localhost/api/friends", {
       method: "GET",
       credentials: "include",
     })
@@ -206,7 +206,7 @@ async function fillData(str) {
     console.log(friendsListInfo);
   } else if (str == "/dashboard") {
     let friendRequestInfo = await fetch(
-      "http://localhost:8080/api/friends/requests",
+      "https://localhost/api/friends/requests",
       {
         method: "GET",
         credentials: "include",
@@ -270,7 +270,7 @@ async function fillData(str) {
     pullAchievements("achievements", my_id);
   } else if (str == "/leaderboards") {
     let leaderboardsInfo = await fetch(
-      "http://localhost:8080/api/matches/leaderboards",
+      "https://localhost/api/matches/leaderboards",
       {
         method: "GET",
         credentials: "include",
@@ -310,7 +310,7 @@ async function fillData(str) {
     }
 
     let friendsLeaderboardsInfo = await fetch(
-      "http://localhost:8080/api/matches/leaderboards/friends",
+      "https://localhost/api/matches/leaderboards/friends",
       {
         method: "GET",
         credentials: "include",
@@ -355,7 +355,7 @@ async function blockFriend(userid) {
   const blockButton = document.getElementById("friends-block-button");
   const chatInput = document.getElementById("friends-message-input");
   const chatSend = document.getElementById("friends-send-chat");
-  let blockInfo = await fetch(`http://localhost:8080/api/friends/${userid}`, {
+  let blockInfo = await fetch(`https://localhost/api/friends/${userid}`, {
     method: "PUT",
     credentials: "include",
     headers: {
@@ -387,7 +387,7 @@ async function unblockFriend(userid) {
   const chatInput = document.getElementById("friends-message-input");
   const chatSend = document.getElementById("friends-send-chat");
 
-  let blockInfo = await fetch(`http://localhost:8080/api/friends/${userid}`, {
+  let blockInfo = await fetch(`https://localhost/api/friends/${userid}`, {
     method: "PUT",
     credentials: "include",
     headers: {
@@ -415,7 +415,7 @@ async function unblockFriend(userid) {
 
 async function pullAchievements(str, id) {
   let achievementsInfo = await fetch(
-    `http://localhost:8080/api/achievements/${id}`,
+    `https://localhost/api/achievements/${id}`,
     {
       method: "GET",
       credentials: "include",
@@ -503,7 +503,7 @@ async function pullAchievements(str, id) {
 
 async function pullMatchHistory(str, id) {
   let matchHistoryInfo = await fetch(
-    `http://localhost:8080/api/matches?id=${id}`,
+    `https://localhost/api/matches?id=${id}`,
     {
       method: "GET",
       credentials: "include",
@@ -639,7 +639,7 @@ async function openModal(str) {
 
   if (str == "open-friend") {
     modalHeading.innerHTML = "ADD FRIEND";
-    let apiInfo = await fetch("http://localhost:8080/api/users/new", {
+    let apiInfo = await fetch("https://localhost/api/users/new", {
       method: "GET",
       credentials: "include",
     })
@@ -826,7 +826,7 @@ async function clickFileUpload() {
 }
 
 async function addFriend(id, t) {
-  let apiInfo = await fetch("http://localhost:8080/api/friends/", {
+  let apiInfo = await fetch("https://localhost/api/friends/", {
     method: "POST",
     credentials: "include",
     headers: {
@@ -848,7 +848,7 @@ async function addFriend(id, t) {
 }
 
 async function resolveFriend(answer, reqId) {
-  let apiInfo = await fetch(`http://localhost:8080/api/friends/${reqId}`, {
+  let apiInfo = await fetch(`https://localhost/api/friends/${reqId}`, {
     method: "PUT",
     credentials: "include",
     headers: {
@@ -880,7 +880,7 @@ async function pullChats(friend) {
   }
 
   let chatInfo = await fetch(
-    `http://localhost:8080/api/msgs?friend_id=${friend.id}`,
+    `https://localhost/api/msgs?friend_id=${friend.id}`,
     {
       method: "GET",
       credentials: "include",
@@ -963,7 +963,7 @@ async function sendChat(friend) {
   const messageInput = document.getElementById("friends-message-input");
   console.log(messageInput.value);
 
-  let sendInfo = await fetch(`http://localhost:8080/api/msgs/`, {
+  let sendInfo = await fetch(`https://localhost/api/msgs/`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -985,7 +985,7 @@ async function sendChat(friend) {
 }
 
 async function profileFillData(number) {
-  let userInfo = await fetch(`http://localhost:8080/api/users/${number}`, {
+  let userInfo = await fetch(`https://localhost/api/users/${number}`, {
     method: "GET",
     credentials: "include",
   })
@@ -1019,7 +1019,7 @@ async function profileFillData(number) {
   }, 1000);
 
   let leaderboardsInfo = await fetch(
-    "http://localhost:8080/api/matches/leaderboards",
+    "https://localhost/api/matches/leaderboards",
     {
       method: "GET",
       credentials: "include",
@@ -1057,7 +1057,7 @@ async function submitEdits(str) {
     console.log(alias.value);
 
     let info = await fetch(
-      `http://localhost:8080/api/users/update/alias`,
+      `https://localhost/api/users/update/alias`,
       {
         method: "PUT",
         credentials: "include",
@@ -1083,7 +1083,7 @@ async function submitEdits(str) {
     formData.append('profile_pic', profile_pic.files[0]);
 
     let info = await fetch(
-      `http://localhost:8080/api/users/update/profile`,
+      `https://localhost/api/users/update/profile`,
       {
         method: "PUT",
         credentials: "include",

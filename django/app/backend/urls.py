@@ -31,7 +31,7 @@ urlpatterns = [
     path('api/msgs/', include("msgs.urls")),
     path('api/matches/', include("matches.urls")),
     path('api/achievements/', include("achievements.urls")),
-    path('intra_callback/', oauth.views.intra_callback),
+    path('api/intra_callback/', oauth.views.intra_callback),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

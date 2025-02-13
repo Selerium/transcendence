@@ -220,7 +220,7 @@ nav {
     max-width: 140px;
     max-height: 140px;
   }
-  button {
+  .exit-button {
     position: absolute;
     bottom: 2rem;
     background: none;
