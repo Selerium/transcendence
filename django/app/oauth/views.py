@@ -11,6 +11,8 @@ from django.test import RequestFactory
 from django.conf import settings
 from users.serializers import UserSerializer
 from two_f_a.views import send_2fa_code
+from achievements.models import AchievementUnlocked, Achievement
+from achievements.serializers import AchievementUnlockedSerializer
 import requests
 import jwt
 
@@ -19,10 +21,11 @@ ERROR404 = Response(data={'success': False, 'message': 'Not Found'}, status=stat
 
 CLIENT_ID = 'u-s4t2ud-0cf592fe5bff0b6cd2a344a6f915993fef2fbf3f5c95fa29a57bbccef061c8dd'
 CLIENT_SECRET = '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'
-REDIRECT_URI = 'http://localhost:8000/intra_callback/'
+REDIRECT_URI = 'https://localhost/api/intra_callback/'
 AUTHORIZE_URL = 'https://api.intra.42.fr/oauth/authorize'
 TOKEN_URL = 'https://api.intra.42.fr/oauth/token'
 JWT_SECRET = settings.JWT_SECRET
+TEAM_MEMBERS = {'jebucoy', 'jadithya', 'juhaamid', 'cafriem', 'cmrabet'}
 
 def jwt_generator(info, access, refresh):
     obj = {
@@ -71,10 +74,16 @@ def get_user_info(access_token, refresh_token):
             print('registering the user:----')
             newUser = User(
                 username=username,
+                alias=username,
                 profile_pic=profile_image,
                 role=role
             )
             newUser.save()
+            if username in TEAM_MEMBERS:
+                unlocked = Achievement.objects.get(name='DID YOU SUBMIT?!')
+                achieved, created = AchievementUnlocked.objects.get_or_create(user=newUser, unlocked=unlocked)
+                    
+    
             print('registered')
         this_user = User.objects.get(username=username)
         serializer = UserSerializer(this_user)
@@ -104,7 +113,7 @@ def intra_callback(request):
             # authenticate user as 'username' and give them JWT
             jwt_token = jwt_generator(user_info, access_token, refresh_token)
             send_2fa_code(user_info['username'])
-            response = redirect('http://localhost:8080/verify')
+            response = redirect('https://localhost/verify')
             response.set_cookie(
                 key="jwt",
                 value = jwt_token,
@@ -115,4 +124,4 @@ def intra_callback(request):
             )
             return response
     # let them know they're not authenticated bc not found in intra API
-    return redirect('http://localhost:8080/not-allowed')
+    return redirect('https://localhost/not-allowed')

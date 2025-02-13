@@ -1,4 +1,9 @@
 FROM nginx:latest
 
 RUN apt update -y --no-install-recommends
+RUN apt install -y --no-install-recommends openssl libssl-dev
 COPY nginx.conf /etc/nginx/
+
+RUN mkdir -p /etc/nginx/certs
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/certs/nginx.key -out /etc/nginx/certs/nginx.crt -subj "/C=AE/ST=AD/L=AD/O=42AbuDhabi/OU=jadithya/CN=jadithya"
+

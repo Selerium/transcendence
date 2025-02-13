@@ -1,6 +1,10 @@
+// import { showBckground } from "/scripts/backgroundEffects";
+// import { gameCountdown } from "/scripts/gameCountdown";
+
 let loggedIn = false;
 let my_username = null;
 let my_id;
+const defaultImageURL = '/styles/images/profile-pic-sample.png';
 
 async function fillData(str) {
   if (currentChatUser) currentChatUser = null;
@@ -11,7 +15,7 @@ async function fillData(str) {
 
   if (!loggedIn) {
     loggedIn = true;
-    let info = await fetch("http://localhost:8080/api/me", {
+    let info = await fetch("https://localhost/api/me", {
       method: "GET",
       credentials: "include",
     })
@@ -25,15 +29,17 @@ async function fillData(str) {
     username = info["data"]["username"];
     id = info["data"]["id"];
     let image_url = info["data"]["profile_pic"];
+    if (image_url == null)
+      image_url = defaultImageURL;
 
     const doc_nav_username = document.getElementById("nav-profile");
     const doc_nav_image = document.getElementById("nav-image");
-    doc_nav_username.innerHTML = username;
+    doc_nav_username.innerHTML = info["data"]["alias"];
     doc_nav_image.src = image_url;
   }
 
   if (my_username == null) {
-    let meInfo = await fetch("http://localhost:8080/api/me", {
+    let meInfo = await fetch("https://localhost/api/me", {
       method: "GET",
       credentials: "include",
     })
@@ -49,7 +55,7 @@ async function fillData(str) {
   }
 
   if (str == "/profile") {
-    let meInfo = await fetch("http://localhost:8080/api/me", {
+    let meInfo = await fetch("https://localhost/api/me", {
       method: "GET",
       credentials: "include",
     })
@@ -63,25 +69,32 @@ async function fillData(str) {
     let role = meInfo["data"]["role"] == 0 ? "STUDENT" : "STAFF";
     let username = meInfo["data"]["username"];
     let image_url = meInfo["data"]["profile_pic"];
+    if (image_url == null)
+      image_url = defaultImageURL;
+
+    const editProfileButton = document.getElementById("edit-profile");
+    editProfileButton.style.display = "block";
 
     const doc_username = document.getElementById("profile-username");
+    const doc_alias = document.getElementById("profile-alias");
     const doc_role_holder = document.getElementById("profile-role-holder");
     const doc_role = document.getElementById("profile-role");
     const doc_image = document.getElementById("profile-image");
-    doc_username.innerHTML = username;
+    doc_alias.innerHTML = meInfo["data"]["alias"];
+    doc_username.innerHTML = `(intra: ${username})`;
     if (role == "STUDENT") doc_role_holder.classList.toggle("win-box");
     else doc_role_holder.classList.toggle("loss-box");
     doc_role.innerHTML = role;
     doc_image.src = image_url;
 
-    pullMatchHistory("profile");
+    pullMatchHistory("profile", my_id);
 
     setTimeout(() => {
-      pullAchievements("profile");
+      pullAchievements("profile", my_id);
     }, 1000);
 
     let leaderboardsInfo = await fetch(
-      "http://localhost:8080/api/matches/leaderboards",
+      "https://localhost/api/matches/leaderboards",
       {
         method: "GET",
         credentials: "include",
@@ -104,7 +117,7 @@ async function fillData(str) {
       });
     }
   } else if (str == "/friends") {
-    let friendsListInfo = await fetch("http://localhost:8080/api/friends", {
+    let friendsListInfo = await fetch("https://localhost/api/friends", {
       method: "GET",
       credentials: "include",
     })
@@ -135,10 +148,8 @@ async function fillData(str) {
 
           let chatHolder = document.getElementById("friends-chat");
           chatHolder.innerHTML = "";
-          if (friend.blockedBy)
-            blockButton.disabled = false;
-          else
-            blockButton.disabled = true;
+          if (friend.blockedBy) blockButton.disabled = false;
+          else blockButton.disabled = true;
 
           if (friend.friend_status == "1") {
             blockButton.innerHTML = "BLOCK";
@@ -150,6 +161,12 @@ async function fillData(str) {
             blockButton.innerHTML = "UNBLOCK";
             blockButton.onclick = helper2;
 
+            chatInput.disabled = true;
+            chatSend.disabled = true;
+          }
+
+          if (friend.username == "SYSTEM") {
+            blockButton.disabled = true;
             chatInput.disabled = true;
             chatSend.disabled = true;
           }
@@ -173,8 +190,8 @@ async function fillData(str) {
         );
 
         friendDiv.innerHTML = `
-          <img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" />
-          <p>${friend.username}</p>
+          <img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" onerror="this.src='/styles/images/profile-pic-sample.png'"/>
+          <p>${friend.alias}</p>
         `;
 
         friendDiv.onclick = clicked;
@@ -198,7 +215,7 @@ async function fillData(str) {
     console.log(friendsListInfo);
   } else if (str == "/dashboard") {
     let friendRequestInfo = await fetch(
-      "http://localhost:8080/api/friends/requests",
+      "https://localhost/api/friends/requests",
       {
         method: "GET",
         credentials: "include",
@@ -230,8 +247,8 @@ async function fillData(str) {
         userDiv.innerHTML = `
             <img width="32" height="32" src="${
               request.other_user.profile_pic
-            }" style="object-fit: cover; border-radius: 32px" />
-            <h3 class="w-100 text-center">${request.other_user.username}</h3>
+            }" style="object-fit: cover; border-radius: 32px" onerror="this.src='/styles/images/profile-pic-sample.png'" />
+            <h3 class="w-100 text-center">${request.other_user.alias} [${request.other_user.username}]</h3>
             <button onclick="resolveFriend(${true}, ${
           request.id
         })" class="clickable btn small-btn">accept</button>
@@ -257,12 +274,12 @@ async function fillData(str) {
       requestsHolder.classList.remove("justify-content-start");
     }
     // calling the match history
-    pullMatchHistory("dashboard");
+    pullMatchHistory("dashboard", my_id);
   } else if (str == "/achievements") {
-    pullAchievements("achievements");
+    pullAchievements("achievements", my_id);
   } else if (str == "/leaderboards") {
     let leaderboardsInfo = await fetch(
-      "http://localhost:8080/api/matches/leaderboards",
+      "https://localhost/api/matches/leaderboards",
       {
         method: "GET",
         credentials: "include",
@@ -293,8 +310,8 @@ async function fillData(str) {
 
         recordHolder.innerHTML = `
         <p class="ps-5">${index + 1}</p>
-        <p class="bold">${item["user"]}</p>
-        <p>${item["wins"]} wins</p>
+        <p class="bold">${item["alias"]} [${item["user"]}]</p>
+        <p>${item["alias"]} wins</p>
         `;
 
         globalLeaderboards.appendChild(recordHolder);
@@ -302,7 +319,7 @@ async function fillData(str) {
     }
 
     let friendsLeaderboardsInfo = await fetch(
-      "http://localhost:8080/api/matches/leaderboards/friends",
+      "https://localhost/api/matches/leaderboards/friends",
       {
         method: "GET",
         credentials: "include",
@@ -333,8 +350,8 @@ async function fillData(str) {
 
         recordHolder.innerHTML = `
         <p class="ps-5">${index + 1}</p>
-        <p class="bold">${item["user"]}</p>
-        <p>${item["wins"]} wins</p>
+        <p class="bold">${item["alias"]} [${item["user"]}]</p>
+        <p>${item["alias"]} wins</p>
         `;
 
         friendsLeaderboard.appendChild(recordHolder);
@@ -347,7 +364,7 @@ async function blockFriend(userid) {
   const blockButton = document.getElementById("friends-block-button");
   const chatInput = document.getElementById("friends-message-input");
   const chatSend = document.getElementById("friends-send-chat");
-  let blockInfo = await fetch(`http://localhost:8080/api/friends/${userid}`, {
+  let blockInfo = await fetch(`https://localhost/api/friends/${userid}`, {
     method: "PUT",
     credentials: "include",
     headers: {
@@ -379,7 +396,7 @@ async function unblockFriend(userid) {
   const chatInput = document.getElementById("friends-message-input");
   const chatSend = document.getElementById("friends-send-chat");
 
-  let blockInfo = await fetch(`http://localhost:8080/api/friends/${userid}`, {
+  let blockInfo = await fetch(`https://localhost/api/friends/${userid}`, {
     method: "PUT",
     credentials: "include",
     headers: {
@@ -405,11 +422,14 @@ async function unblockFriend(userid) {
   }
 }
 
-async function pullAchievements(str) {
-  let achievementsInfo = await fetch("http://localhost:8080/api/achievements", {
-    method: "GET",
-    credentials: "include",
-  })
+async function pullAchievements(str, id) {
+  let achievementsInfo = await fetch(
+    `https://localhost/api/achievements/${id}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  )
     .then((response) => {
       return response.json();
     })
@@ -474,6 +494,8 @@ async function pullAchievements(str) {
     achievementsHolder.classList.remove("justify-content-between");
     achievementsHolder.classList.add("justify-content-center");
     achievementsHolder.classList.remove("align-items-start");
+    achievementsHolder.classList.remove("align-content-start");
+    achievementsHolder.classList.add("align-content-center");
     achievementsHolder.classList.add("align-items-center");
     achievementsHolder.classList.remove("h-fit");
     if (str == "achievements") achievementsHolder.classList.add("h-75");
@@ -481,16 +503,16 @@ async function pullAchievements(str) {
     achievementsHolder.classList.add("flex-column");
     achievementsHolder.classList.add("gap-2");
     achievementsHolder.innerHTML = `
-    <h3 class="w-100">RECENT ACHIEVEMENTS</h3>
+    ${str == "profile" ? `<h3 class="w-100">RECENT ACHIEVEMENTS</h3>` : ``}
     <h3 class="text-center bold">accomplished...nothing?</h3>
     <p class="text-center small">your parents must be real proud.</p>
     `;
   }
 }
 
-async function pullMatchHistory(str) {
+async function pullMatchHistory(str, id) {
   let matchHistoryInfo = await fetch(
-    `http://localhost:8080/api/matches?id=${my_id}`,
+    `https://localhost/api/matches?id=${id}`,
     {
       method: "GET",
       credentials: "include",
@@ -522,32 +544,43 @@ async function pullMatchHistory(str) {
         "py-2",
         "px-4",
         "gap-2",
-        "w-100"
+        "w-100",
+        "clickable",
+        "btn",
+
       );
+      matchDiv.onclick = () => openMatchDetails(match.match_id);
       let result, boxClass;
-      if (match.player_one_score > match.player_two_score) {
+      console.log(match);
+      if (
+        (match.player_one.id == id &&
+          match.player_one_score > match.player_two_score) ||
+        (match.player_two.id == id &&
+          match.player_one_score < match.player_two_score)
+      ) {
         result = "WIN";
         boxClass = "win-box";
         wins++;
-      } else if (match.player_two_score > match.player_one_score) {
+      } else if ((String(match.player_two_score) === "0" && String(match.player_one_score) === "0") || match.player_two_score == match.player_one_score) {
+        result = "DRAW";
+        boxClass = "draw-box";
+      } else {
         result = "LOSS";
         boxClass = "loss-box";
         losses++;
-      } else {
-        result = "DRAW";
-        boxClass = "draw-box";
       }
+
       matchDiv.innerHTML = `
-      <h3 class= "player_1 bold">${match.player_one.username}</h3>
+      <h3 class= "player_1 bold">${match.player_one.alias}</h3>
       <h3 class="electrolize text-center bold ${boxClass}"> ${result}</h3>
-      <h3 class="player_2 bold">${match.player_two.username}</h3>
+      <h3 class="player_2 bold">${match.player_two.alias}</h3>
     </div>
       `;
       historyHolder.appendChild(matchDiv);
 
       let startTime = new Date(match.start_time);
       let endTime = new Date(match.end_time);
-      gametime += (startTime.getTime() - endTime.getTime()) / 60000;
+      gametime += (endTime.getTime() - startTime.getTime()) / 60000;
     });
 
     if (str == "profile") {
@@ -620,7 +653,7 @@ async function openModal(str) {
 
   if (str == "open-friend") {
     modalHeading.innerHTML = "ADD FRIEND";
-    let apiInfo = await fetch("http://localhost:8080/api/users/new", {
+    let apiInfo = await fetch("https://localhost/api/users/new", {
       method: "GET",
       credentials: "include",
     })
@@ -652,8 +685,8 @@ async function openModal(str) {
             "min-w-half"
           );
           userDiv.innerHTML = `
-            <img width="64" height="64" src="${user.profile_pic}" style="object-fit: cover; border-radius: 64px" />
-            <h3 class="w-25 text-center">${user.username}</h3>
+            <img width="64" height="64" src="${user.profile_pic}" style="object-fit: cover; border-radius: 64px" onerror="this.src='/styles/images/profile-pic-sample.png'" />
+            <h3 class="w-25 text-center">${user.alias} [${user.username}]</h3>
             <button onclick="addFriend(${user.id}, this)" class="clickable btn small-btn">add friend</button>
           `;
 
@@ -690,7 +723,7 @@ async function openModal(str) {
         <img src="styles/images/1v1.png" />
         <h3>1V1 PLAYER</h3>
       </div>
-      <div onclick="createMatch('1v1-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+      <div id="play-btn" onclick="createMatch('1v1-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
         <img src="styles/images/1v1.png" />
         <h3>1V1 AI</h3>
       </div>
@@ -718,7 +751,7 @@ async function openModal(str) {
     userContainer.innerHTML = `
     <label class="electrolize text-center">Enter player 2: </label>  
     <input id="player2" class="electrolize" type="text" required />
-    <button onclick=createMatch('1v1-player') class="btn small-btn">PLAY</button>
+    <button id="play-btn" onclick=createMatch('1v1-player') class="btn small-btn">PLAY</button>
     `;
     modalInfo.appendChild(userContainer);
     return;
@@ -729,12 +762,12 @@ async function openModal(str) {
     modalHolder.style.zIndex = 100;
     modalHolder.style.opacity = 1;
 
+
     for (let i = 2; i <= 4; i++) {
       const userContainer = document.createElement("div");
       userContainer.classList.add(
         "d-flex",
         "flex-column",
-        "h-25",
         "gap-4",
         "w-50",
         "justify-content-center",
@@ -742,9 +775,11 @@ async function openModal(str) {
       );
       userContainer.innerHTML = `
       <label class="electrolize text-center">Enter player ${i}: </label>  
-      <input id="player${i}" class="electrolize" type="text" required />
+      <input id="player${i}" class="electrolize" type="text" required />     
+      <input id="nickname${i}" class="electrolize" type="text" placeholder="Enter Nickname" required/>
       `;
       if (i == 4) {
+        userContainer.style.margin = "10px 0px";
         userContainer.classList.toggle("w-50");
         userContainer.classList.toggle("w-100");
       }
@@ -759,18 +794,121 @@ async function openModal(str) {
       "align-items-center"
     );
     userButton.innerHTML = `
-      <button onclick=createMatch('tournament') class="btn small-btn">PLAY</button>
+    <div style="display: flex; flex-direction: row; gap: 4rem;">
+      <input id="nickname1" class="electrolize" type="text" placeholder="Enter your Nickname" required/>
+      <button id="play-btn" onclick=createMatch('tournament') class="btn small-btn">PLAY</button>
+      <div>
     `;
     modalInfo.appendChild(userButton);
     modalInfo.classList.toggle("gap-4");
+    return;
+  }
+  if (str == "edit-profile") {
+    console.log("editing profile");
+    modalHeading.innerHTML = "EDIT PROFILE";
+
+    modalHolder.style.zIndex = 100;
+    modalHolder.style.opacity = 1;
+
+    const userContainer = document.createElement("div");
+    userContainer.classList.add(
+      "d-flex",
+      "flex-column",
+      "w-100",
+      "align-items-center",
+      "justify-content-center",
+      "gap-2"
+    );
+    userContainer.innerHTML = `
+    <label class="electrolize text-center w-50">RENAME ALIAS:</label>
+    <input id="alias" class="w-50 text-center electrolize" type="text" required />
+    <button onclick="submitEdits('alias')" class="mt-2 btn small-btn">
+      SUBMIT
+    </button>
+    <label for="profile_pic" class="mt-2 electrolize text-center w-50">CHANGE AVATAR:</label>
+    <input type="file" id="avatar" name="avatar" >
+    <button onclick="submitEdits('avatar')" class="mt-2 btn small-btn">
+      SUBMIT
+    </button>
+    `;
+    modalInfo.appendChild(userContainer);
     return;
   }
   modalHolder.style.zIndex = -100;
   modalHolder.style.opacity = 0;
 }
 
+async function clickFileUpload() {
+  let input = document.getElementById('avatar');
+  console.log(input.onclick);
+  input.click();
+}
+
+async function openMatchDetails(matchId) {
+  let modalHolder = document.getElementById("modal");
+  let modalInfo = document.getElementById("info-modal");
+  let modalHeading = document.getElementById("modal-heading");
+
+  modalHeading.innerHTML = "MATCH DASHBOARD";
+
+  let matchDetail = await fetch(`https://localhost/api/matches/${matchId}`, {
+    method: "GET",
+    credentials: "include",
+  })
+    .then((response) => response.json())
+    .catch((err) => err);
+
+  console.log("Match Detail:", matchDetail);
+  const matchData = matchDetail.data;
+
+  modalHolder.style.zIndex = 100;
+  modalHolder.style.opacity = 1;
+
+  let startTime = new Date(matchData.start_time);
+  let endTime = new Date(matchData.end_time);
+  let startFormatted = startTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  let endFormatted = endTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  const userContainer = document.createElement("div");
+  userContainer.classList.add("h-75", "w-100", "d-flex", "flex-column", "gap-4" ,"align-items-center", "justify-content-evenly");
+
+  let playersContainer = document.createElement("div");
+  playersContainer.classList.add("d-flex", "w-50", "h-50", "gap-4");
+  
+  let player1Container = document.createElement("div");
+  let timeContainer = document.createElement("div");
+  let player2Container = document.createElement("div");
+  player1Container.classList.add("d-flex", "flex-column", "inner-box", "w-50", "h-100", "p-4", "align-items-center", "justify-content-center", "text-center", "custom-border", "electrolize", "bold");
+  player2Container.classList.add("d-flex", "flex-column", "inner-box", "w-50", "h-100", "p-4", "text-center", "align-items-center", "justify-content-center", "custom-border", "electrolize", "bold");
+  timeContainer.classList.add("d-flex", "flex-column", "inner-box", "w-50", "h-50", "p-4", "text-center", "custom-border", "electrolize", "bold", "align-items-center", "justify-content-center");
+  
+  player1Container.innerHTML = `
+  <h3>${matchData.player_one.username}</h3>
+  <h3>SCORE</h3>
+    <h3>${matchData.player_one_score}</h3>
+  `;
+
+  player2Container.innerHTML = `
+    <h3>${matchData.player_two.username}</h3>
+    <h3>SCORE</h3>
+    <h3>${matchData.player_two_score}</h3>
+  `;
+  timeContainer.innerHTML = `
+  <h3>Start Time</h3>
+  <h3> ${startFormatted}</h3>
+    <h3>End Time<h3>
+    <h3> ${endFormatted}</h3>
+    `;
+    playersContainer.appendChild(player1Container);
+    playersContainer.appendChild(player2Container);
+  userContainer.appendChild(playersContainer);
+  userContainer.appendChild(timeContainer);  
+  modalInfo.appendChild(userContainer);
+}
+
+      
 async function addFriend(id, t) {
-  let apiInfo = await fetch("http://localhost:8080/api/friends/", {
+  let apiInfo = await fetch("https://localhost/api/friends/", {
     method: "POST",
     credentials: "include",
     headers: {
@@ -792,7 +930,7 @@ async function addFriend(id, t) {
 }
 
 async function resolveFriend(answer, reqId) {
-  let apiInfo = await fetch(`http://localhost:8080/api/friends/${reqId}`, {
+  let apiInfo = await fetch(`https://localhost/api/friends/${reqId}`, {
     method: "PUT",
     credentials: "include",
     headers: {
@@ -824,7 +962,7 @@ async function pullChats(friend) {
   }
 
   let chatInfo = await fetch(
-    `http://localhost:8080/api/msgs?friend_id=${friend.id}`,
+    `https://localhost/api/msgs?friend_id=${friend.id}`,
     {
       method: "GET",
       credentials: "include",
@@ -839,7 +977,8 @@ async function pullChats(friend) {
 
   const chatHolder = document.getElementById("friends-chat");
   const chatTitle = document.getElementById("friends-username");
-  chatTitle.innerHTML = friend.username;
+  chatTitle.innerHTML = `${friend.alias} [${friend.username}]`;
+  chatTitle.href = `profile/${friend.id}`;
 
   let newChatLength = chatInfo["data"].length;
   let currentChatHeight = chatHolder.scrollHeight;
@@ -882,19 +1021,35 @@ async function pullChats(friend) {
   }
 
   const sendChatButton = document.getElementById("friends-send-chat");
+  const startGameButton = document.getElementById("friends-start-game");
   const chatTextArea = document.getElementById("friends-message-input");
+  startGameButton.disabled = false;
 
   function clicked() {
     sendChat(friend);
   }
+  function makeFriendGame() {
+    if (friend.username == 'SYSTEM')
+      createMatch('1v1-ai');
+    else {
+      let queryParams = `mode=1v1-player&player1=${encodeURIComponent(
+        my_username
+      )}&player2=${encodeURIComponent(friend.username)}`;
+      window.history.pushState({}, "", `/play?${queryParams}`);
+      changeRoute();
+      showBckground();
+      gameCountdown();
+    }
+  }
   sendChatButton.onclick = clicked;
+  startGameButton.onclick = makeFriendGame;
 }
 
 async function sendChat(friend) {
   const messageInput = document.getElementById("friends-message-input");
   console.log(messageInput.value);
 
-  let sendInfo = await fetch(`http://localhost:8080/api/msgs/`, {
+  let sendInfo = await fetch(`https://localhost/api/msgs/`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -913,4 +1068,117 @@ async function sendChat(friend) {
     });
 
   messageInput.value = "";
+}
+
+async function profileFillData(number) {
+  let userInfo = await fetch(`https://localhost/api/users/${number}`, {
+    method: "GET",
+    credentials: "include",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  let role = userInfo["data"]["role"] == 0 ? "STUDENT" : "STAFF";
+  let username = userInfo["data"]["username"];
+  let image_url = userInfo["data"]["profile_pic"];
+  if (image_url == null)
+    image_url = defaultImageURL;
+
+  const doc_username = document.getElementById("profile-username");
+  const doc_role_holder = document.getElementById("profile-role-holder");
+  const doc_role = document.getElementById("profile-role");
+  const doc_image = document.getElementById("profile-image");
+  doc_username.innerHTML = username;
+  if (role == "STUDENT") doc_role_holder.classList.toggle("win-box");
+  else doc_role_holder.classList.toggle("loss-box");
+  doc_role.innerHTML = role;
+  doc_image.src = image_url;
+
+  pullMatchHistory("profile", number);
+
+  setTimeout(() => {
+    pullAchievements("profile", number);
+  }, 1000);
+
+  let leaderboardsInfo = await fetch(
+    "https://localhost/api/matches/leaderboards",
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  )
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  let globalLeaderboards = document.getElementById("leaderboards-global");
+  if (leaderboardsInfo["data"].length > 0) {
+    leaderboardsInfo["data"].forEach((item, index) => {
+      if (item["user-id"] == number) {
+        let rankHolder = document.getElementById("profile-rank");
+        rankHolder.innerHTML = `#${index + 1}`;
+      }
+    });
+  }
+}
+
+async function submitEdits(str) {
+  const alias = document.getElementById("alias");
+  const profile_pic = document.getElementById("avatar");
+
+  console.log(str);
+  
+  if (str == "alias") {
+    if (!alias.value || alias.value == "") {
+      return;
+    }
+
+    console.log(alias.value);
+
+    let info = await fetch(
+      `https://localhost/api/users/update/alias`,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          alias: alias.value,
+        })
+      }
+    )
+      .then((response) => response.json())
+      .catch((err) => err);
+
+    console.log(info);
+  }
+  else if (str = "avatar") {
+    if (profile_pic.files.length == 0) {
+      return;
+    }
+
+    let formData = new FormData();
+    formData.append('profile_pic', profile_pic.files[0]);
+
+    let info = await fetch(
+      `https://localhost/api/users/update/profile`,
+      {
+        method: "PUT",
+        credentials: "include",
+        body: formData
+      }
+    )
+      .then((response) => response.json())
+      .catch((err) => err);
+
+    console.log(info);
+  }
 }

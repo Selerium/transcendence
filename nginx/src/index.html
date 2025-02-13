@@ -23,8 +23,6 @@
     <link rel="stylesheet" href="/styles/css/login.css" />
     <link rel="stylesheet" href="/styles/css/dashboard.css" />
     <link rel="stylesheet" href="/styles/css/Game.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
   </head>
   <body>
     <div
@@ -33,7 +31,10 @@
     >
       <div class="row h-100 p-3 gap-3">
         <!-- side nav bar component -->
-        <nav class="box navbar flex-column col-2 h-100 justify-content-start">
+        <nav
+          id="nav"
+          class="box navbar flex-column col-2 h-100 justify-content-start"
+        >
           <img
             id="nav-image"
             width="128"
@@ -41,6 +42,7 @@
             class="my-4"
             src="styles/images/profile-pic-sample.png"
             style="object-fit: cover; border-radius: 64px"
+            onerror="this.src='/styles/images/profile-pic-sample.png'"
           />
           <a id="nav-profile" class="link" href="/profile">loading...</a>
           <div class="h-rule"></div>
@@ -52,7 +54,7 @@
             >achievements</a
           >
           <a id="nav-friends" class="link" href="/friends">friends & chat</a>
-          <button class="link electrolize">logout</button>
+          <a href="/login" class="exit-button link electrolize">exit</a>
         </nav>
 
         <!-- component for everything else -->
@@ -67,7 +69,17 @@
         id="info-modal"
         class="modal flex-wrap d-flex gap-4 align-content-start justify-content-start align-items-start"
       >
-        <h1 id="modal-heading" class="w-100"></h1>
+        <h1 id="modal-heading" class="w-100 text-center"></h1>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="ionicon"
+          viewBox="0 0 512 512"
+          onclick="openModal('close')"
+        >
+          <path
+            d="M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"
+          />
+        </svg>
       </div>
     </div>
     <!-- bootstrap scripts  -->
@@ -88,12 +100,15 @@
     ></script>
 
     <!-- router script -->
-    <script src="scripts/router.js"></script>
-    <script src="scripts/app.js"></script>
-    <script type="module" src="scripts/game.js"></script>
-    <script  type="module" src="scripts/backgroundEffects.js"></script>
-        <script type="module" src="scripts/gameCountdown.js"></script>
-        <script type="module" src="scripts/startGame.js"></script>
-    <script type="module" src="scripts/GameTrophy.js" ></script>
+    <script src="/scripts/router.js"></script>
+    <script src="/scripts/app.js"></script>
+
+    <!-- game related scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script type="module" src="/scripts/game.js"></script>
+    <script type="module" src="/scripts/backgroundEffects.js"></script>
+    <script type="module" src="/scripts/gameCountdown.js"></script>
+    <script type="module" src="/scripts/startGame.js"></script>
+    <script type="module" src="/scripts/GameTrophy.js"></script>
   </body>
 </html>
