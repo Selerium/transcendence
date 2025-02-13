@@ -18,8 +18,8 @@ import jwt
 ERROR400 = Response(data={'success': False, 'message': 'Invalid fields'}, status=status.HTTP_400_BAD_REQUEST)
 ERROR404 = Response(data={'success': False, 'message': 'Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
-CLIENT_ID = 'u-s4t2ud-0cf592fe5bff0b6cd2a344a6f915993fef2fbf3f5c95fa29a57bbccef061c8dd'
-CLIENT_SECRET = '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'
+CLIENT_ID = 'u-s4t2ud-df359a270c570d598ff0c4ded54965870e14966e79c7a237ef3d101275185833'
+CLIENT_SECRET = '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'
 REDIRECT_URI = 'http://localhost:8000/intra_callback/'
 AUTHORIZE_URL = 'https://api.intra.42.fr/oauth/authorize'
 TOKEN_URL = 'https://api.intra.42.fr/oauth/token'
@@ -73,6 +73,7 @@ def get_user_info(access_token, refresh_token):
             print('registering the user:----')
             newUser = User(
                 username=username,
+                alias=username,
                 profile_pic=profile_image,
                 role=role
             )

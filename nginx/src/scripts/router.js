@@ -63,6 +63,11 @@ async function changeRoute() {
     .then((response) => response.text())
     .catch((err) => err);
 
+  if (path == "/login") {
+    app.innerHTML = html;
+    return ;
+  }
+
   const main = document.getElementById("main");
   main.innerHTML = "";
   main.style.transform = "translateX(25%)";
@@ -100,6 +105,9 @@ async function changeRoute() {
 }
 
 window.addEventListener("click", (e) => {
+  console.log(e.target.tagName);
+  if (e.target.tagName == "INPUT")
+    return ;
   if (e.target.getAttribute("href") != "/api/oauth") {
     e.preventDefault();
     if (e.target.tagName != "A") return;
