@@ -82,8 +82,7 @@ def get_user_info(access_token, refresh_token):
             if username in TEAM_MEMBERS:
                 unlocked = Achievement.objects.get(name='DID YOU SUBMIT?!')
                 achieved, created = AchievementUnlocked.objects.get_or_create(user=newUser, unlocked=unlocked)
-                    
-    
+
             print('registered')
         this_user = User.objects.get(username=username)
         serializer = UserSerializer(this_user)
