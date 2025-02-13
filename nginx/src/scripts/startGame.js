@@ -37,6 +37,7 @@ export function startGame(mode, player1, player2, matchEndCallback){
       y: canvas.height / 2,
       dx: 5,
       dy: 5,
+	  speed: 5,
       radius: Math.min(canvas.width, canvas.height) * 0.02
     };
     let paddleWidth = canvas.width * 0.02;
@@ -69,6 +70,15 @@ export function startGame(mode, player1, player2, matchEndCallback){
 
     let initialSpeed = 5;
     let speedIncrease = 1.2;
+
+	//recently added:
+	var leftrelativeIntersectY;
+	var rightrelativeIntersectY;
+	var normalizedRelativeIntersectionY;
+	var bounceAngle;
+	var timepast = Date.now();
+	var timenow;
+	//}
 
     const aiUpdateInterval = 1000;
     let aiControlInterval = null;
@@ -132,9 +142,15 @@ export function startGame(mode, player1, player2, matchEndCallback){
 
       const collisionLeft = checkPaddleCollision(ball, player1Paddle);
       if (collisionLeft === "hit") {
-        ball.dx = Math.abs(ball.dx);
-        ball.dy *= speedIncrease; 
-        ball.x = player1Paddle.x + player1Paddle.width + ball.radius;
+		leftrelativeIntersectY = ((paddleHeight / 10) / 2) - ((ball.y - player1Paddle.y) / 10);
+		normalizedRelativeIntersectionY = (leftrelativeIntersectY/((paddleHeight / 10)/2));
+		bounceAngle = normalizedRelativeIntersectionY * 1.1;
+		ball.speed += 0.5;
+		ball.dx = ball.speed * Math.cos(bounceAngle);
+		ball.dy = ball.speed * -Math.sin(bounceAngle);
+		ball.x = player1Paddle.x + player1Paddle.width + ball.radius;
+		if (ball.dx < 0)
+			ball.dx *= -1;
       } else if (collisionLeft === "corner") {
         player2Score++;
         resetBall();
@@ -143,9 +159,15 @@ export function startGame(mode, player1, player2, matchEndCallback){
 
       const collisionRight = checkPaddleCollision(ball, player2Paddle);
       if (collisionRight === "hit") {
-        ball.dx = -Math.abs(ball.dx);
-        ball.dy *= speedIncrease;
-        ball.x = player2Paddle.x - ball.radius;
+		leftrelativeIntersectY = ((paddleHeight / 10) / 2) - ((ball.y - player2Paddle.y) / 10);
+		normalizedRelativeIntersectionY = (leftrelativeIntersectY/((paddleHeight / 10)/2));
+		bounceAngle = normalizedRelativeIntersectionY * 1.1;
+		ball.speed += 0.5;
+		ball.dx = ball.speed * Math.cos(bounceAngle);
+		ball.dy = ball.speed * -Math.sin(bounceAngle);
+		ball.x = player2Paddle.x + player2Paddle.width + ball.radius;
+		if (ball.dx > 0)
+			ball.dx *= -1;
       } else if (collisionRight === "corner") {
         player1Score++;
         resetBall();
