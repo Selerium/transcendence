@@ -449,7 +449,7 @@ async function pullAchievements(str, id) {
     document.getElementById("profile-achievements").innerHTML =
       achievementsInfo["data"].length;
   }
-  console.log(achievementsHolder);
+  achievementsHolder.innerHTML = "";
   if (achievementsInfo["data"].length > 0) {
     achievementsInfo["data"].forEach((item, index) => {
       if (str == "achievements" || (str == "profile" && index < 4)) {
