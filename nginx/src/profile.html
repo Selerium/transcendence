@@ -1,9 +1,14 @@
 <!-- title component -->
 <div class="d-flex w-100 align-items-center justify-content-between">
   <h1 id="heading">PROFILE</h1>
-  <div class="streak-counter box p-2">
-    <h3 class="m-0">play streak: 0🔥</h3>
-  </div>
+  <button
+    style="display: none"
+    class="streak-counter box p-2"
+    id="edit-profile"
+    onclick="openModal('edit-profile')"
+  >
+    <h3 class="m-0">edit profile</h3>
+  </button>
 </div>
 
 <!-- profile header -->
@@ -17,15 +22,20 @@
       height="128"
       id="profile-image"
       style="object-fit: cover"
+      onerror="this.src='/styles/images/profile-pic-sample.png'"
     />
     <div class="profile-info-user d-flex flex-column justify-content-center">
-      <h2 class="electrolize spacing-normal uppercase" id="profile-username">
+      <h2 class="electrolize spacing-normal uppercase" id="profile-alias">
         loading...
       </h2>
-      <div class="d-flex gap-2">
-        <div id="profile-role-holder" class="tag w-fit win-box uppercase text-center text-white">
+      <div class="d-flex gap-2 justify-content-start align-items-center">
+        <div
+          id="profile-role-holder"
+          class="tag w-fit win-box uppercase text-center text-white"
+        >
           <p id="profile-role">loading...</p>
         </div>
+        <p id="profile-username">loading...</p>
       </div>
     </div>
   </div>
@@ -55,7 +65,7 @@
 <div
   id="profile-achievements-holder"
   class="d-flex flex-wrap w-100 gap-4 h-fit"
-  style="gap: 0.5rem !important; min-height: 125px;"
+  style="gap: 0.5rem !important; min-height: 125px"
 >
   <h3 class="w-100">RECENT ACHIEVEMENTS</h3>
 </div>
@@ -69,13 +79,20 @@
       <div
         class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1"
       >
-        <p id="profile-ratio" class="user-metric-value fixed-width text-center">-</p>
+        <p id="profile-ratio" class="user-metric-value fixed-width text-center">
+          -
+        </p>
         <p class="text-center fixed-width">WIN/LOSS RATIO</p>
       </div>
       <div
         class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1 me-3"
       >
-        <p id="profile-achievements" class="user-metric-value fixed-width text-center">-</p>
+        <p
+          id="profile-achievements"
+          class="user-metric-value fixed-width text-center"
+        >
+          -
+        </p>
         <p class="text-center fixed-width">ACHIEVEMENTS GAINED</p>
       </div>
     </div>
@@ -83,13 +100,23 @@
       <div
         class="d-flex box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1"
       >
-        <p id="profile-gametime" class="user-metric-value fixed-width text-center">-</p>
+        <p
+          id="profile-gametime"
+          class="user-metric-value fixed-width text-center"
+        >
+          -
+        </p>
         <p class="text-center fixed-width">AVERAGE GAME TIME</p>
       </div>
       <div
         class="d-flex gap-2 box justify-content-center align-items-center flex-column flex-basis-1 flex-grow-1 me-3"
       >
-        <canvas id="profile-chart" width="300" height="300" style="width: 64px; height: 64px;"></canvas>
+        <canvas
+          id="profile-chart"
+          width="300"
+          height="300"
+          style="width: 64px; height: 64px"
+        ></canvas>
         <p class="text-center fixed-width">WIN RATE CHART</p>
       </div>
     </div>
@@ -103,7 +130,6 @@
     <div
       id="profile-match-history"
       class="d-flex scrollable flex-column gap-2 justify-content-start align-items-center flex-grow-1 w-100"
-    >
-    </div>
+    ></div>
   </div>
 </div>

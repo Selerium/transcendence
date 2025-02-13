@@ -8,8 +8,8 @@ class Match(models.Model):
     player_one = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='matches_player_one')
     player_two = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='matches_player_two')
     is_ai_opponent = models.BooleanField(default=False) 
-    player_one_score = models.BigIntegerField(default=0)
-    player_two_score = models.BigIntegerField(default=0)
+    player_one_score = models.BigIntegerField(default=0 , null=True)
+    player_two_score = models.BigIntegerField(default=0 , null=True)
     start_time = models.DateTimeField()  # Start time of the match
     end_time = models.DateTimeField(auto_now=True)  # End time of the match
 

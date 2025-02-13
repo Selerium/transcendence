@@ -66,8 +66,15 @@ export function showBckground() {
     window.addEventListener("resize", handleResize);
 }
 
+window.showBckground = showBckground;
+
 if (!hasGameCountdownRun) {
     hasGameCountdownRun = true;
     showBckground();
     gameCountdown();
 }
+
+
+window.addEventListener("popstate", function () {
+    location.reload(); 
+});
