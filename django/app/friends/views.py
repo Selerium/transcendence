@@ -42,6 +42,7 @@ def friends(request, id=None):
 		response_data.append({
 			'id': '1',
 			'username': 'SYSTEM',
+			'alias': 'm a r v',
 			'profile_pic': 'styles/images/tournament.png',
 			'friend_status': '1',
 			'request_id': '0',

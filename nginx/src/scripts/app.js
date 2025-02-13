@@ -196,7 +196,7 @@ async function fillData(str) {
 
         friendDiv.onclick = clicked;
         friendsHolder.appendChild(friendDiv);
-
+		console.log(friend)
         async function helper() {
           blockFriend(friend.request_id);
         }
@@ -476,7 +476,7 @@ async function pullAchievements(str, id) {
         width="64"
         height="64"
         class="mt-2"
-        src="${item["icon"]}"
+        src="/${item["icon"]}"
         />
         <div class="d-flex flex-column justify-content-center align-items-start">
         <p class="bold">${item["name"]}</p>
@@ -1084,15 +1084,18 @@ async function profileFillData(number) {
 
   let role = userInfo["data"]["role"] == 0 ? "STUDENT" : "STAFF";
   let username = userInfo["data"]["username"];
+  let alias = userInfo["data"]["alias"];
   let image_url = userInfo["data"]["profile_pic"];
   if (image_url == null)
     image_url = defaultImageURL;
 
   const doc_username = document.getElementById("profile-username");
+  const doc_alias = document.getElementById("profile-alias");
   const doc_role_holder = document.getElementById("profile-role-holder");
   const doc_role = document.getElementById("profile-role");
   const doc_image = document.getElementById("profile-image");
   doc_username.innerHTML = username;
+  doc_alias.innerHTML = alias;
   if (role == "STUDENT") doc_role_holder.classList.toggle("win-box");
   else doc_role_holder.classList.toggle("loss-box");
   doc_role.innerHTML = role;
