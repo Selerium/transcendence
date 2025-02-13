@@ -1,6 +1,7 @@
 let loggedIn = false;
 let my_username = null;
 let my_id;
+const defaultImageURL = '/styles/images/profile-pic-sample.png';
 
 async function fillData(str) {
   if (currentChatUser) currentChatUser = null;
@@ -25,10 +26,12 @@ async function fillData(str) {
     username = info["data"]["username"];
     id = info["data"]["id"];
     let image_url = info["data"]["profile_pic"];
+    if (image_url == null)
+      image_url = defaultImageURL;
 
     const doc_nav_username = document.getElementById("nav-profile");
     const doc_nav_image = document.getElementById("nav-image");
-    doc_nav_username.innerHTML = username;
+    doc_nav_username.innerHTML = info["data"]["alias"];
     doc_nav_image.src = image_url;
   }
 
@@ -63,21 +66,28 @@ async function fillData(str) {
     let role = meInfo["data"]["role"] == 0 ? "STUDENT" : "STAFF";
     let username = meInfo["data"]["username"];
     let image_url = meInfo["data"]["profile_pic"];
+    if (image_url == null)
+      image_url = defaultImageURL;
+
+    const editProfileButton = document.getElementById("edit-profile");
+    editProfileButton.style.display = "block";
 
     const doc_username = document.getElementById("profile-username");
+    const doc_alias = document.getElementById("profile-alias");
     const doc_role_holder = document.getElementById("profile-role-holder");
     const doc_role = document.getElementById("profile-role");
     const doc_image = document.getElementById("profile-image");
-    doc_username.innerHTML = username;
+    doc_alias.innerHTML = meInfo["data"]["alias"];
+    doc_username.innerHTML = `(intra: ${username})`;
     if (role == "STUDENT") doc_role_holder.classList.toggle("win-box");
     else doc_role_holder.classList.toggle("loss-box");
     doc_role.innerHTML = role;
     doc_image.src = image_url;
 
-    pullMatchHistory("profile");
+    pullMatchHistory("profile", my_id);
 
     setTimeout(() => {
-      pullAchievements("profile");
+      pullAchievements("profile", my_id);
     }, 1000);
 
     let leaderboardsInfo = await fetch(
@@ -115,25 +125,48 @@ async function fillData(str) {
         return err;
       });
 
-    let chatHolder = document.getElementById("friends-chat");
-    chatHolder.innerHTML = "";
     let friendsHolder = document.getElementById("friends-friends");
     friendsHolder.innerHTML = "";
     const sendChatButton = document.getElementById("friends-send-chat");
     const chatTextArea = document.getElementById("friends-message-input");
     sendChatButton.disabled = true;
     chatTextArea.disabled = true;
+    let selectedUserId = null;
+
+    const blockButton = document.getElementById("friends-block-button");
+    const chatInput = document.getElementById("friends-message-input");
+    const chatSend = document.getElementById("friends-send-chat");
+
     if (friendsListInfo["data"].length > 0) {
       friendsListInfo["data"].forEach((friend) => {
         const friendDiv = document.createElement("button");
-        function clicked() {
+        async function clicked() {
           if (window.intervalId != null) clearInterval(window.intervalId);
 
+          let chatHolder = document.getElementById("friends-chat");
+          chatHolder.innerHTML = "";
+          if (friend.blockedBy) blockButton.disabled = false;
+          else blockButton.disabled = true;
+
+          if (friend.friend_status == "1") {
+            blockButton.innerHTML = "BLOCK";
+            blockButton.onclick = helper;
+
+            chatInput.disabled = false;
+            chatSend.disabled = false;
+          } else if ((friend.friend_status = "3")) {
+            blockButton.innerHTML = "UNBLOCK";
+            blockButton.onclick = helper2;
+
+            chatInput.disabled = true;
+            chatSend.disabled = true;
+          }
+
+          console.log(friend);
           window.intervalId = setInterval(() => {
             pullChats(friend);
           }, 1000);
         }
-
         friendDiv.classList.add(
           "box",
           "inner-box",
@@ -148,13 +181,27 @@ async function fillData(str) {
         );
 
         friendDiv.innerHTML = `
-          <img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" />
-          <p>${friend.username}</p>
+          <img width="64" height="64" style="object-fit: cover; border-radius: 32px" src="${friend.profile_pic}" onerror="this.src='/styles/images/profile-pic-sample.png'"/>
+          <p>${friend.alias}</p>
         `;
 
         friendDiv.onclick = clicked;
         friendsHolder.appendChild(friendDiv);
+
+        async function helper() {
+          blockFriend(friend.request_id);
+        }
+
+        async function helper2() {
+          unblockFriend(friend.request_id);
+        }
+        blockButton.onclick = helper;
       });
+    } else {
+      friendsHolder.innerHTML = `
+        <h3 class="bold text-center h-100">you don't have any friends!</h3>
+        <p class="text-center h-100">...unsurprising, and disappointing.</p>
+      `;
     }
     console.log(friendsListInfo);
   } else if (str == "/dashboard") {
@@ -191,8 +238,8 @@ async function fillData(str) {
         userDiv.innerHTML = `
             <img width="32" height="32" src="${
               request.other_user.profile_pic
-            }" style="object-fit: cover; border-radius: 32px" />
-            <h3 class="w-100 text-center">${request.other_user.username}</h3>
+            }" style="object-fit: cover; border-radius: 32px" onerror="this.src='/styles/images/profile-pic-sample.png'" />
+            <h3 class="w-100 text-center">${request.other_user.alias} [${request.other_user.username}]</h3>
             <button onclick="resolveFriend(${true}, ${
           request.id
         })" class="clickable btn small-btn">accept</button>
@@ -218,9 +265,9 @@ async function fillData(str) {
       requestsHolder.classList.remove("justify-content-start");
     }
     // calling the match history
-    pullMatchHistory("dashboard");
+    pullMatchHistory("dashboard", my_id);
   } else if (str == "/achievements") {
-    pullAchievements("achievements");
+    pullAchievements("achievements", my_id);
   } else if (str == "/leaderboards") {
     let leaderboardsInfo = await fetch(
       "http://localhost:8080/api/matches/leaderboards",
@@ -254,8 +301,8 @@ async function fillData(str) {
 
         recordHolder.innerHTML = `
         <p class="ps-5">${index + 1}</p>
-        <p class="bold">${item["user"]}</p>
-        <p>${item["wins"]} wins</p>
+        <p class="bold">${item["alias"]} [${item["user"]}]</p>
+        <p>${item["alias"]} wins</p>
         `;
 
         globalLeaderboards.appendChild(recordHolder);
@@ -294,8 +341,8 @@ async function fillData(str) {
 
         recordHolder.innerHTML = `
         <p class="ps-5">${index + 1}</p>
-        <p class="bold">${item["user"]}</p>
-        <p>${item["wins"]} wins</p>
+        <p class="bold">${item["alias"]} [${item["user"]}]</p>
+        <p>${item["alias"]} wins</p>
         `;
 
         friendsLeaderboard.appendChild(recordHolder);
@@ -304,11 +351,76 @@ async function fillData(str) {
   }
 }
 
-async function pullAchievements(str) {
-  let achievementsInfo = await fetch("http://localhost:8080/api/achievements", {
-    method: "GET",
+async function blockFriend(userid) {
+  const blockButton = document.getElementById("friends-block-button");
+  const chatInput = document.getElementById("friends-message-input");
+  const chatSend = document.getElementById("friends-send-chat");
+  let blockInfo = await fetch(`http://localhost:8080/api/friends/${userid}`, {
+    method: "PUT",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ friend_status: "3", blockedBy: "1" }),
   })
+    .then(async (response) => {
+      let answer = await response.json();
+
+      if (answer["success"] == true) {
+        blockButton.innerHTML = "UNBLOCK";
+        blockButton.onclick = helper;
+        chatInput.disabled = true;
+        chatSend.disabled = true;
+      }
+
+      return response.json();
+    })
+    .catch((err) => err);
+
+  async function helper() {
+    unblockFriend(userid);
+  }
+}
+
+async function unblockFriend(userid) {
+  const blockButton = document.getElementById("friends-block-button");
+  const chatInput = document.getElementById("friends-message-input");
+  const chatSend = document.getElementById("friends-send-chat");
+
+  let blockInfo = await fetch(`http://localhost:8080/api/friends/${userid}`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ friend_status: "1", blockedBy: "0" }),
+  })
+    .then(async (response) => {
+      let answer = await response.json();
+
+      if (answer["success"] == true) {
+        blockButton.innerHTML = "BLOCK";
+        blockButton.onclick = helper;
+        chatInput.disabled = false;
+        chatSend.disabled = false;
+      }
+      return response.json();
+    })
+    .catch((err) => err);
+
+  async function helper() {
+    blockFriend(userid);
+  }
+}
+
+async function pullAchievements(str, id) {
+  let achievementsInfo = await fetch(
+    `http://localhost:8080/api/achievements/${id}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  )
     .then((response) => {
       return response.json();
     })
@@ -369,25 +481,29 @@ async function pullAchievements(str) {
       }
     });
   } else {
-    achievementsHolder.classList.toggle("justify-content-start");
-    achievementsHolder.classList.toggle("justify-content-center");
-    achievementsHolder.classList.toggle("align-items-start");
-    achievementsHolder.classList.toggle("align-items-center");
-    achievementsHolder.classList.toggle("h-fit");
-    if (str == "achievements") achievementsHolder.classList.toggle("h-75");
-    else achievementsHolder.classList.toggle("h-25");
-    achievementsHolder.classList.toggle("flex-column");
-    achievementsHolder.classList.toggle("gap-2");
+    achievementsHolder.classList.remove("justify-content-start");
+    achievementsHolder.classList.remove("justify-content-between");
+    achievementsHolder.classList.add("justify-content-center");
+    achievementsHolder.classList.remove("align-items-start");
+    achievementsHolder.classList.remove("align-content-start");
+    achievementsHolder.classList.add("align-content-center");
+    achievementsHolder.classList.add("align-items-center");
+    achievementsHolder.classList.remove("h-fit");
+    if (str == "achievements") achievementsHolder.classList.add("h-75");
+    else achievementsHolder.classList.add("h-fit");
+    achievementsHolder.classList.add("flex-column");
+    achievementsHolder.classList.add("gap-2");
     achievementsHolder.innerHTML = `
+    ${str == "profile" ? `<h3 class="w-100">RECENT ACHIEVEMENTS</h3>` : ``}
     <h3 class="text-center bold">accomplished...nothing?</h3>
     <p class="text-center small">your parents must be real proud.</p>
     `;
   }
 }
 
-async function pullMatchHistory(str) {
+async function pullMatchHistory(str, id) {
   let matchHistoryInfo = await fetch(
-    `http://localhost:8080/api/matches?id=${my_id}`,
+    `http://localhost:8080/api/matches?id=${id}`,
     {
       method: "GET",
       credentials: "include",
@@ -407,6 +523,7 @@ async function pullMatchHistory(str) {
   if (str == "dashboard")
     historyHolder = document.getElementById("dashboard-match-history");
   else historyHolder = document.getElementById("profile-match-history");
+  historyHolder.innerHTML = "";
   if (matchHistoryInfo["data"].length > 0) {
     matchHistoryInfo["data"].forEach((match) => {
       const matchDiv = document.createElement("div");
@@ -421,24 +538,29 @@ async function pullMatchHistory(str) {
         "w-100"
       );
       let result, boxClass;
-      if (match.player_one_score > match.player_two_score) {
+      console.log(match);
+      if (
+        (match.player_one.id == id &&
+          match.player_one_score > match.player_two_score) ||
+        (match.player_two.id == id &&
+          match.player_one_score < match.player_two_score)
+      ) {
         result = "WIN";
         boxClass = "win-box";
         wins++;
-      } else if (match.player_two_score > match.player_one_score) {
+      } else if ((String(match.player_two_score) === "0" && String(match.player_one_score) === "0") || match.player_two_score == match.player_one_score) {
+        result = "DRAW";
+        boxClass = "draw-box";
+      } else {
         result = "LOSS";
         boxClass = "loss-box";
         losses++;
-      } else if (String(match.player_two_score) === "0" || String(match.player_one_score) === "0") {
-        result = "DRAW";
-        boxClass = "draw-box";
-    } else {
-        return;
-    }    
+      }
+
       matchDiv.innerHTML = `
-      <h3 class= "player_1 bold">${match.player_one.username}</h3>
+      <h3 class= "player_1 bold">${match.player_one.alias}</h3>
       <h3 class="electrolize text-center bold ${boxClass}"> ${result}</h3>
-      <h3 class="player_2 bold">${match.player_two.username}</h3>
+      <h3 class="player_2 bold">${match.player_two.alias}</h3>
     </div>
       `;
       historyHolder.appendChild(matchDiv);
@@ -459,7 +581,7 @@ async function pullMatchHistory(str) {
 
       winsHolder.innerHTML = wins;
       lossesHolder.innerHTML = losses;
-      ratioHolder.innerHTML = (wins / losses).toFixed(2);
+      ratioHolder.innerHTML = (wins / (losses == 0 ? 1 : losses)).toFixed(2);
       gametimeHolder.innerHTML = (
         gametime / matchHistoryInfo["data"].length
       ).toFixed(2);
@@ -550,8 +672,8 @@ async function openModal(str) {
             "min-w-half"
           );
           userDiv.innerHTML = `
-            <img width="64" height="64" src="${user.profile_pic}" style="object-fit: cover; border-radius: 64px" />
-            <h3 class="w-25 text-center">${user.username}</h3>
+            <img width="64" height="64" src="${user.profile_pic}" style="object-fit: cover; border-radius: 64px" onerror="this.src='/styles/images/profile-pic-sample.png'" />
+            <h3 class="w-25 text-center">${user.alias} [${user.username}]</h3>
             <button onclick="addFriend(${user.id}, this)" class="clickable btn small-btn">add friend</button>
           `;
 
@@ -668,8 +790,45 @@ async function openModal(str) {
     modalInfo.classList.toggle("gap-4");
     return;
   }
+  if (str == "edit-profile") {
+    console.log("editing profile");
+    modalHeading.innerHTML = "EDIT PROFILE";
+
+    modalHolder.style.zIndex = 100;
+    modalHolder.style.opacity = 1;
+
+    const userContainer = document.createElement("div");
+    userContainer.classList.add(
+      "d-flex",
+      "flex-column",
+      "w-100",
+      "align-items-center",
+      "justify-content-center",
+      "gap-2"
+    );
+    userContainer.innerHTML = `
+    <label class="electrolize text-center w-50">RENAME ALIAS:</label>
+    <input id="alias" class="w-50 text-center electrolize" type="text" required />
+    <button onclick="submitEdits('alias')" class="mt-2 btn small-btn">
+      SUBMIT
+    </button>
+    <label for="profile_pic" class="mt-2 electrolize text-center w-50">CHANGE AVATAR:</label>
+    <input type="file" id="avatar" name="avatar" >
+    <button onclick="submitEdits('avatar')" class="mt-2 btn small-btn">
+      SUBMIT
+    </button>
+    `;
+    modalInfo.appendChild(userContainer);
+    return;
+  }
   modalHolder.style.zIndex = -100;
   modalHolder.style.opacity = 0;
+}
+
+async function clickFileUpload() {
+  let input = document.getElementById('avatar');
+  console.log(input.onclick);
+  input.click();
 }
 
 async function addFriend(id, t) {
@@ -740,17 +899,14 @@ async function pullChats(friend) {
       return err;
     });
 
-  console.log("chats between me and " + friend.username + ": ");
-  console.log(chatInfo);
-
   const chatHolder = document.getElementById("friends-chat");
   const chatTitle = document.getElementById("friends-username");
-  chatTitle.innerHTML = friend.username;
+  chatTitle.innerHTML = `${friend.alias} [${friend.username}]`;
+  chatTitle.href = `profile/${friend.id}`;
 
   let newChatLength = chatInfo["data"].length;
   let currentChatHeight = chatHolder.scrollHeight;
-  // if ((chatLength != null && newChatLength == chatLength) || (currentChatUser != null && currentChatUser == friend.username))
-  //   return ;
+
   if (chatInfo["data"].length > 0) {
     chatLength = chatInfo["data"].length;
     currentChatUser = friend.username;
@@ -769,13 +925,6 @@ async function pullChats(friend) {
       if (message.sender == friend.id)
         messageDiv.classList.add("friend-message", "justify-content-start");
       else messageDiv.classList.add("my-message", "justify-content-end");
-
-      // <img
-      //   width="32"
-      //   height="32"
-      //   style="object-fit: cover; border-radius: 16px"
-      //   src="${friend.profile_pic}"
-      // />
       messageDiv.innerHTML = `
       <p>
       ${message.content}
@@ -783,6 +932,10 @@ async function pullChats(friend) {
       `;
       chatHolder.appendChild(messageDiv);
     });
+  } else {
+    chatHolder.innerHTML = `
+    <p class="w-100 text-center">(no chats yet. start something new with a message!)</p>
+    `;
   }
 
   // If chat hasn't been loaded OR there's a new message, scroll to top
@@ -792,13 +945,24 @@ async function pullChats(friend) {
   }
 
   const sendChatButton = document.getElementById("friends-send-chat");
+  const startGameButton = document.getElementById("friends-start-game");
   const chatTextArea = document.getElementById("friends-message-input");
-  sendChatButton.disabled = false;
-  chatTextArea.disabled = false;
+  startGameButton.disabled = false;
+
   function clicked() {
     sendChat(friend);
   }
+  function makeFriendGame() {
+    let queryParams = `mode=1v1-player&player1=${encodeURIComponent(
+      my_username
+    )}&player2=${encodeURIComponent(friend.username)}`;
+    window.history.pushState({}, "", `/play?${queryParams}`);
+    changeRoute();
+    showBckground();
+    gameCountdown();
+  }
   sendChatButton.onclick = clicked;
+  startGameButton.onclick = makeFriendGame;
 }
 
 async function sendChat(friend) {
@@ -824,4 +988,117 @@ async function sendChat(friend) {
     });
 
   messageInput.value = "";
+}
+
+async function profileFillData(number) {
+  let userInfo = await fetch(`http://localhost:8080/api/users/${number}`, {
+    method: "GET",
+    credentials: "include",
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  let role = userInfo["data"]["role"] == 0 ? "STUDENT" : "STAFF";
+  let username = userInfo["data"]["username"];
+  let image_url = userInfo["data"]["profile_pic"];
+  if (image_url == null)
+    image_url = defaultImageURL;
+
+  const doc_username = document.getElementById("profile-username");
+  const doc_role_holder = document.getElementById("profile-role-holder");
+  const doc_role = document.getElementById("profile-role");
+  const doc_image = document.getElementById("profile-image");
+  doc_username.innerHTML = username;
+  if (role == "STUDENT") doc_role_holder.classList.toggle("win-box");
+  else doc_role_holder.classList.toggle("loss-box");
+  doc_role.innerHTML = role;
+  doc_image.src = image_url;
+
+  pullMatchHistory("profile", number);
+
+  setTimeout(() => {
+    pullAchievements("profile", number);
+  }, 1000);
+
+  let leaderboardsInfo = await fetch(
+    "http://localhost:8080/api/matches/leaderboards",
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  )
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      return err;
+    });
+
+  let globalLeaderboards = document.getElementById("leaderboards-global");
+  if (leaderboardsInfo["data"].length > 0) {
+    leaderboardsInfo["data"].forEach((item, index) => {
+      if (item["user-id"] == number) {
+        let rankHolder = document.getElementById("profile-rank");
+        rankHolder.innerHTML = `#${index + 1}`;
+      }
+    });
+  }
+}
+
+async function submitEdits(str) {
+  const alias = document.getElementById("alias");
+  const profile_pic = document.getElementById("avatar");
+
+  console.log(str);
+  
+  if (str == "alias") {
+    if (!alias.value || alias.value == "") {
+      return;
+    }
+
+    console.log(alias.value);
+
+    let info = await fetch(
+      `http://localhost:8080/api/users/update/alias`,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          alias: alias.value,
+        })
+      }
+    )
+      .then((response) => response.json())
+      .catch((err) => err);
+
+    console.log(info);
+  }
+  else if (str = "avatar") {
+    if (profile_pic.files.length == 0) {
+      return;
+    }
+
+    let formData = new FormData();
+    formData.append('profile_pic', profile_pic.files[0]);
+
+    let info = await fetch(
+      `http://localhost:8080/api/users/update/profile`,
+      {
+        method: "PUT",
+        credentials: "include",
+        body: formData
+      }
+    )
+      .then((response) => response.json())
+      .catch((err) => err);
+
+    console.log(info);
+  }
 }

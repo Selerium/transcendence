@@ -57,6 +57,13 @@ input {
   text-align: center;
 }
 
+input[type=file] {
+  border-radius: initial;
+  height: initial;
+  width: initial;
+  text-align: initial;
+}
+
 #main {
   transform-origin: center center;
 
@@ -153,9 +160,14 @@ a {
   flex-direction: column-reverse;
 }
 
+.h-15 {
+  height: 15%;
+}
+
 .grid-2 {
   display: grid;
   grid-template-columns: 49% 49%;
+  grid-template-rows: min-content;
   gap: 2%;
   overflow-y: scroll;
   overflow-x: hidden;

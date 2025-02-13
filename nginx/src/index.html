@@ -31,7 +31,7 @@
     >
       <div class="row h-100 p-3 gap-3">
         <!-- side nav bar component -->
-        <nav class="box navbar flex-column col-2 h-100 justify-content-start">
+        <nav id="nav" class="box navbar flex-column col-2 h-100 justify-content-start">
           <img
             id="nav-image"
             width="128"
@@ -39,6 +39,7 @@
             class="my-4"
             src="styles/images/profile-pic-sample.png"
             style="object-fit: cover; border-radius: 64px"
+            onerror="this.src='/styles/images/profile-pic-sample.png'"
           />
           <a id="nav-profile" class="link" href="/profile">loading...</a>
           <div class="h-rule"></div>
@@ -50,7 +51,7 @@
             >achievements</a
           >
           <a id="nav-friends" class="link" href="/friends">friends & chat</a>
-          <button class="link electrolize">logout</button>
+          <a href="/login" class="exit-button link electrolize">exit</a>
         </nav>
 
         <!-- component for everything else -->
@@ -86,15 +87,15 @@
     ></script>
 
     <!-- router script -->
-    <script src="scripts/router.js"></script>
-    <script src="scripts/app.js"></script>
+    <script src="/scripts/router.js"></script>
+    <script src="/scripts/app.js"></script>
 
-    <!-- game related -->
+    <!-- game related scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script type="module" src="scripts/game.js"></script>
-    <script type="module" src="scripts/backgroundEffects.js"></script>
-    <script type="module" src="scripts/gameCountdown.js"></script>
-    <script type="module" src="scripts/startGame.js"></script>
-    <script type="module" src="scripts/GameTrophy.js"></script>
+    <script type="module" src="/scripts/game.js"></script>
+    <script  type="module" src="/scripts/backgroundEffects.js"></script>
+    <script type="module" src="/scripts/gameCountdown.js"></script>
+    <script type="module" src="/scripts/startGame.js"></script>
+    <script type="module" src="/scripts/GameTrophy.js" ></script>
   </body>
 </html>

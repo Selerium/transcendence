@@ -41,17 +41,19 @@ def match(request):
         this_user = int(request.query_params.get('id'))
 
         for match in matches:
-            if (match.player_one.id == this_user or match.player_two.id == this_user):
+            if (match.player_one.id == this_user or (match.player_two and match.player_two.id == this_user)):
                 match_data.append({
                     'match_id': match.match_id,
                     'player_one': {
                         'id': match.player_one.id,
                         'username': match.player_one.username,
+                        'alias': match.player_one.alias,
                         'profile_pic': match.player_one.profile_pic
                     },
                     'player_two': {
                         'id': match.player_two.id if match.player_two else None,
                         'username': match.player_two.username if match.player_two else "AI",
+                        'alias': match.player_two.alias if match.player_two else "AI",
                         'profile_pic': match.player_two.profile_pic if match.player_two else None
                     },
                     'is_ai_opponent': match.is_ai_opponent,
@@ -177,6 +179,7 @@ def rankings(request):
         ranked_users.append({
             'user-id': user.pk,
             'user': user.username,
+            'alias': user.alias,
             'wins': wins
         })
 
@@ -235,6 +238,7 @@ def rankings_friends(request):
         user = User.objects.get(id=user_id)
         ranked_friends.append({
             'user': user.username,
+            'alias': user.alias,
             'wins': wins
         })
 

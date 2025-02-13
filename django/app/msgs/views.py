@@ -10,6 +10,7 @@ import jwt
 from django.conf import settings
 from rest_framework.response import Response
 from django.db.models import Q
+from friends.models import Friend
 
 ## GET = retrieve messages (retrieve messages sent or received?)
 ## this would be in use when you want to pull the messages
@@ -30,19 +31,18 @@ def messages(request):
     """
     Handles retrieving and sending messages.
     """
-
     try:
         user_jwt = request.COOKIES.get('jwt')
         decoded_jwt = jwt.decode(user_jwt, JWT_SECRET, algorithms=["HS256"])
-        url = 'https://api.intra.42.fr/v2/me'
-        headers = {'Authorization': f'Bearer {decoded_jwt['access']}'}
-        response = requests.get(url, headers=headers)
         this_user = decoded_jwt['data']['id']
-        if response.status_code != 200:
-            return ERROR403
+        # url = 'https://api.intra.42.fr/v2/me'
+        # headers = {'Authorization': f'Bearer {decoded_jwt['access']}'}
+        # response = requests.get(url, headers=headers)
+        # if response.status_code != 200:
+            # return ERROR403
     except:
             return ERROR400
-    
+
     if request.method == 'GET':
         try:
             data = request.query_params
@@ -76,6 +76,16 @@ def messages(request):
 
         sender = User.objects.get(id=this_user)
         receiver = get_object_or_404(User, id=receiverId)
+
+
+        friendship_blocked = Friend.objects.filter(
+            Q(friend1=sender, friend2=receiver, friend_status='3') | Q(friend1=receiver, friend2=sender, friend_status='3'))
+
+        if (friendship_blocked) :
+            print('friendship blocked!!!!!')
+            return ERROR403
+
+
         newMsg = Message(sender=sender, receiver=receiver, content=content)
 
         try:
