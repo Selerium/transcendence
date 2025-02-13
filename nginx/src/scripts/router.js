@@ -22,18 +22,17 @@ navbarIds = {
 };
 
 function isNumeric(str) {
-  if (typeof str != "string") return false
-  return !isNaN(str) && !isNaN(parseFloat(str))
+  if (typeof str != "string") return false;
+  return !isNaN(str) && !isNaN(parseFloat(str));
 }
 
 async function changeRoute() {
   let path = window.location.pathname;
   let personNumber = null;
-  let array = path.split('/');
+  let array = path.split("/");
 
   const app = document.getElementById("app");
 
-  console.log("checking");
   if (path == "/verify") {
     const html = await fetch(routes["/verify"]).then((response) =>
       response.text()
@@ -64,12 +63,9 @@ async function changeRoute() {
     return;
   }
 
-  console.log("passed auth");
-
-  console.log(array);
-  if (array.length == 3 && array[1] == 'profile') {
+  if (array.length == 3 && array[1] == "profile") {
     if (isNumeric(array[2])) {
-      path = '/profile';
+      path = "/profile";
       personNumber = array[2];
     }
   }
@@ -81,10 +77,15 @@ async function changeRoute() {
 
   if (path == "/login") {
     app.innerHTML = html;
-    return ;
+    return;
   }
 
-  const main = document.getElementById("main");
+  let main = document.getElementById("main");
+  if (!main) {
+    let info = await fetch("/index.html").then((response) => response.text());
+    app.innerHTML = info;
+    main = document.getElementById("main");
+  }
   main.innerHTML = "";
   main.style.transform = "translateX(25%)";
   main.style.opacity = 0;
@@ -113,8 +114,7 @@ async function changeRoute() {
 
   if (path == "/") {
     fillData("/dashboard");
-  }
-  else if (personNumber != null) {
+  } else if (personNumber != null) {
     fillData("");
     profileFillData(personNumber);
   } else fillData(path);
@@ -122,8 +122,7 @@ async function changeRoute() {
 
 window.addEventListener("click", (e) => {
   console.log(e.target.tagName);
-  if (e.target.tagName == "INPUT")
-    return ;
+  if (e.target.tagName == "INPUT") return;
   if (e.target.getAttribute("href") != "/api/oauth") {
     e.preventDefault();
     if (e.target.tagName != "A") return;
