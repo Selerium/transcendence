@@ -1,8 +1,8 @@
 import { waitForCanvasAndStartTrophy } from "../scripts/GameTrophy.js";
+
+let thisMatch_id;
+
 async function initGame(player_one, player_two,player_one_score,player_two_score,is_ai_opponent) {
-    //               player_one=player_one,
-      //             player_two=player_two,
-      //             is_ai_opponent=is_ai_opponent,
     let apiInfo = await fetch("http://localhost:8080/api/matches/", {
       method: "POST",
       credentials: "include",
@@ -19,24 +19,61 @@ async function initGame(player_one, player_two,player_one_score,player_two_score
     })
       .then((response) => {
         return response.json();
+      }).then((data) => {
+        thisMatch_id = data.data.match_id;
+      })
+      .catch((err) => {
+        return err;
+      });
+
+      return thisMatch_id
+
+  }
+
+
+  async function initGame2(matchidd, player_one_score,player_two_score) {
+    let apiInfo = await fetch("http://localhost:8080/api/matches/", {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        match_id:matchidd,
+        player_one_score:player_one_score,
+        player_two_score:player_two_score,
+      }),
+    })
+      .then((response) => {
+        return response.json();
       })
       .catch((err) => {
         return err;
       });
   }
 
-  
-export function startGame(mode, player1, player2, matchEndCallback){
-    const canvas = document.getElementById("startGame");
-    const ctx = canvas.getContext("2d");
+export async function startGame(mode, nickname1, nickname2, player1, player2, matchEndCallback){
+  const canvas = document.getElementById("startGame");
+  let matchId = await initGame(player1, player2, null, null, mode === '1v1-ai' ? true : false);
+
+let ctx;
+  if (canvas)
+      ctx = canvas.getContext("2d");
+  else 
+      return
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+
+
+    let angle = Math.random() * Math.PI * 2;
+    let initialSpeed = 5;
+    let speedIncrease = 1.2;
 
     let ball = {
       x: canvas.width / 2,
       y: canvas.height / 2,
-      dx: 5,
-      dy: 5,
+      dx: initialSpeed * Math.cos(angle),
+      dy: initialSpeed * Math.cos(angle),
       radius: Math.min(canvas.width, canvas.height) * 0.02
     };
     let paddleWidth = canvas.width * 0.02;
@@ -67,11 +104,11 @@ export function startGame(mode, player1, player2, matchEndCallback){
     let gameOver = false;
     let gameLoopId = null;
 
-    let initialSpeed = 5;
-    let speedIncrease = 1.2;
-
     const aiUpdateInterval = 1000;
     let aiControlInterval = null;
+    let gameTimer = 50;
+    let timerInterval = null;
+
 
     document.addEventListener("keydown", keyDownHandler);
     document.addEventListener("keyup", keyUpHandler);
@@ -192,6 +229,7 @@ export function startGame(mode, player1, player2, matchEndCallback){
         ? distanceToRightPaddle / Math.abs(ball.dx)
         : 0;
 
+
       predictedBallY += predictedVelocityY * timeToRightPaddle;
 
       if (predictedBallY - ball.radius < 0) {
@@ -232,10 +270,11 @@ export function startGame(mode, player1, player2, matchEndCallback){
       drawCenterLine();
       drawBall();
       drawScore();
+      drawTimer();
     }
 
     function drawPaddles() {
-      ctx.shadowBlur = 15;
+      ctx.shadowBlur = 10;
       ctx.shadowColor = 'white';
       ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
 
@@ -265,7 +304,7 @@ export function startGame(mode, player1, player2, matchEndCallback){
       ctx.shadowBlur = 15;
       ctx.shadowColor = 'white';
       ctx.fillStyle = 'white';
-      ctx.fillRect(canvas.width / 2 - 2, 20, 4, canvas.height - 20);
+      ctx.fillRect(canvas.width / 2 - 2, 80, 4, canvas.height - 80);
     }
 
     function drawBall() {
@@ -290,15 +329,34 @@ export function startGame(mode, player1, player2, matchEndCallback){
     }
 
     function drawScore() {
-      let fontSize = Math.max(50, canvas.width * 0.02); 
-      ctx.font = `${fontSize}px Arial`;
-      ctx.fillStyle = "white";
+      let fontSize = Math.max(40, canvas.width * 0.015); 
+      ctx.font = `bold ${fontSize}px electrolize`;
+      ctx.fillStyle = "#bbb5f1";
       ctx.textAlign = "center";
+      ctx.shadowColor = '#6d4b77';
+      ctx.shadowBlur = 20;
+
 
       ctx.fillText(`${player1} ${player1Score}`, canvas.width * 0.25, canvas.height * 0.08);
       ctx.fillText(`${player2} ${player2Score}`, canvas.width * 0.75, canvas.height * 0.08);
     }
 
+    function drawTimer() {
+      let timerX = canvas.width / 2; 
+      let timerY = 60; 
+      let fontSize = Math.max(40, canvas.width * 0.015); 
+      ctx.shadowColor = 'transparent';
+
+  
+      ctx.font = gameTimer <= 10 ? `bold ${fontSize + Math.sin(Date.now() / 100) * 5}px electrolize` : `bold ${fontSize}px electrolize`; // Pulse effect
+      ctx.fillStyle = gameTimer <= 10 ? "red" : "#00c851"; 
+      ctx.textAlign = "center"; // Center horizontally
+      ctx.textBaseline = "bottom"; // Ensures it stays above the line
+  
+      ctx.fillText(`${formatTime(gameTimer)}`, timerX, timerY);
+
+  }
+  
     function gameLoop() {
         if (gameOver) return; 
       update();
@@ -309,38 +367,69 @@ export function startGame(mode, player1, player2, matchEndCallback){
     function resetBall() {
       ball.x = canvas.width / 2;
       ball.y = canvas.height / 2;
-      ball.dx = initialSpeed * (Math.random() > 0.5 ? 1 : -1);
-      ball.dy = initialSpeed * (Math.random() > 0.5 ? 1 : -1);
-
+  
+      let angle = Math.random() * Math.PI * 2;
+      let speed = initialSpeed;
+  
+      ball.dx = speed * Math.cos(angle);
+      ball.dy = speed * Math.sin(angle);
+  
+      if (Math.abs(ball.dx) < 2) ball.dx = ball.dx > 0 ? 2 : -2;
+      if (Math.abs(ball.dy) < 2) ball.dy = ball.dy > 0 ? 2 : -2;
+  
       checkWinner();
-    }
+  }
+  
+
+
+      function formatTime(seconds) {
+          let minutes = Math.floor(seconds / 60);
+          let secs = seconds % 60;
+          return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+      }
+
+      function startTimer() {
+          timerInterval = setInterval(() => {
+              if (gameTimer > 0) {
+                  gameTimer--;
+              } else {
+                  gameOver = true;
+                  checkWinner();
+              }
+          }, 1000);
+      }
 
     function checkWinner() {
-      if (player1Score === 1 || player2Score === 1) {
+      if (player1Score === 1 || player2Score === 1 || gameOver == true ) {
         cancelAnimationFrame(gameLoopId);
         clearInterval(aiControlInterval);
+        clearInterval(timerInterval);
         gameOver = true;
         const winner = player1Score > player2Score ? player1 : player2;
         const loser = player1Score > player2Score ? player2 : player1;
+        const winnerNickname = player1Score > player2Score ? nickname1 : nickname2;
         let matchResults = {
             match1: {
                 player1: player1,
                 player1Score: player1Score,
                 player2: player2,
                 player2Score: player2Score,
+                player1Nickname:player1,
+                player2Nickname:player2,
             },
         };
         setTimeout(() => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             if (matchEndCallback) {
-                matchEndCallback(winner, loser, player1Score, player2Score);
+                initGame2(thisMatch_id, player1Score,player2Score,false)
+                matchEndCallback(winner, loser, player1Score, player2Score,winnerNickname);
             }
             else{
                 waitForCanvasAndStartTrophy(mode , matchResults);
                 if (mode === '1v1-ai') {
-                    initGame(player1,player2,player1Score,player2Score,true)
+                    initGame2(thisMatch_id, player1Score,player2Score,true)
                } else {
-                    initGame(player1,player2,player1Score,player2Score,false)
+                    initGame2(thisMatch_id, player1Score,player2Score,false)
                }
                
             }
@@ -349,6 +438,7 @@ export function startGame(mode, player1, player2, matchEndCallback){
       }
     }
 
+    startTimer();
     gameLoop();
 
     if (mode === "1v1-ai")
@@ -356,4 +446,15 @@ export function startGame(mode, player1, player2, matchEndCallback){
         aiControlInterval = setInterval(ai_control_paddle, aiUpdateInterval);
 
     }
+
+    function checkAndClearCanvas() {
+        if (document.getElementById("startGame")) {
+            return;
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        cancelAnimationFrame(gameLoopId);
+        clearInterval(aiControlInterval);
+        clearInterval(timerInterval);
+    }
+    setInterval(checkAndClearCanvas, 100);
 }
