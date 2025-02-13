@@ -1,0 +1,14 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "username": "SYSTEM",
+      "alias": "m a r v",
+      "profile_pic": "styles/images/profile-pic-sample.png",
+      "status": 1,
+      "deleted": false,
+      "role": 1
+    }
+  }
+]

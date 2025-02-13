@@ -3,23 +3,14 @@
 		"model": "achievements.Achievement",
 		"pk": 1,
 		"fields": {
-			"name": "STARTING OUT STRONG",
-			"description": "win your first game of pong",
+			"name": "DID YOU SUBMIT?!",
+			"description": "who knew 42 students were so nosy...",
 			"icon": "styles/images/achievement.png"
 		}
 	},
 	{
 		"model": "achievements.Achievement",
 		"pk": 2,
-		"fields": {
-			"name": "THIS AIN'T MY FIRST RODEO",
-			"description": "play multiple games with the same person",
-			"icon": "styles/images/achievement.png"
-		}
-	},
-	{
-		"model": "achievements.Achievement",
-		"pk": 3,
 		"fields": {
 			"name": "SO...WHAT ARE WE?",
 			"description": "add a friend on the site",
@@ -28,7 +19,7 @@
 	},
 	{
 		"model": "achievements.Achievement",
-		"pk": 4,
+		"pk": 3,
 		"fields": {
 			"name": "MOM, GRAB THE CAMERA",
 			"description": "win a tournament",
@@ -37,51 +28,38 @@
 	},
 	{
 		"model": "achievements.Achievement",
-		"pk": 5,
+		"pk": 4,
 		"fields": {
-			"name": "THE ROBOTS ARE TAKING OVER",
+			"name": "IM GONNA LOSE MY JOB TO AI",
 			"description": "somehow lose to the AI",
 			"icon": "styles/images/achievement.png"
 		}
 	},
 	{
-		"model": "achievements.AchievementUnlocked",
-		"pk": 1,
-		"fields": {
-			"user_id": 1,
-			"unlocked": 1
-		}
-	},
-	{
-		"model": "achievements.AchievementUnlocked",
-		"pk": 2,
-		"fields": {
-			"user_id": 1,
-			"unlocked": 2
-		}
-	},
-	{
-		"model": "achievements.AchievementUnlocked",
-		"pk": 3,
-		"fields": {
-			"user_id": 1,
-			"unlocked": 3
-		}
-	},
-	{
-		"model": "achievements.AchievementUnlocked",
-		"pk": 4,
-		"fields": {
-			"user_id": 1,
-			"unlocked": 4
-		}
-	},
-	{
-		"model": "achievements.AchievementUnlocked",
+		"model": "achievements.Achievement",
 		"pk": 5,
 		"fields": {
-			"user_id": 1,
-			"unlocked": 5
+			"name": "HAVE YOU HEARD OF SLACK?",
+			"description": "send 100 messages",
+			"icon": "styles/images/achievement.png"
+		}
+	},
+	{
+		"model": "achievements.Achievement",
+		"pk": 6,
+		"fields": {
+			"name": "YOU GET A DONUT (unless they run out)",
+			"description": "manage to score 0 in match",
+			"icon": "styles/images/achievement.png"
+		}
+	},
+	{
+		"model": "achievements.Achievement",
+		"pk": 7,
+		"fields": {
+			"name": "BEGINNER'S LUCK",
+			"description": "win your first game of pong",
+			"icon": "styles/images/achievement.png"
 		}
 	}
 ]
