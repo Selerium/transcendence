@@ -61,6 +61,16 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
+Q_CLUSTER = {
+    "name": "DjangoQ",
+    "workers": 4,
+    "timeout": 120,
+    "retry": 90,
+    "queue_limit": 500,
+    "bulk": 10,
+    "orm": "default",
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
