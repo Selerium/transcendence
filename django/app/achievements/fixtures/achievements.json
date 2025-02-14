@@ -14,7 +14,7 @@
 		"fields": {
 			"name": "SO...WHAT ARE WE?",
 			"description": "add a friend on the site",
-			"icon": "styles/images/achievement.png"
+			"icon": "styles/images/so-what-are-we.png"
 		}
 	},
 	{
@@ -23,7 +23,7 @@
 		"fields": {
 			"name": "MOM, GRAB THE CAMERA",
 			"description": "win a tournament",
-			"icon": "styles/images/achievement.png"
+			"icon": "styles/images/mom-grab-the-camera.png"
 		}
 	},
 	{
@@ -32,7 +32,7 @@
 		"fields": {
 			"name": "IM GONNA LOSE MY JOB TO AI",
 			"description": "somehow lose to the AI",
-			"icon": "styles/images/achievement.png"
+			"icon": "styles/images/im-gonna-lose-my-job-to-ai.png"
 		}
 	},
 	{
@@ -41,7 +41,7 @@
 		"fields": {
 			"name": "HAVE YOU HEARD OF SLACK?",
 			"description": "send 100 messages",
-			"icon": "styles/images/achievement.png"
+			"icon": "styles/images/have-you-heard-of-slack.png"
 		}
 	},
 	{
@@ -50,7 +50,7 @@
 		"fields": {
 			"name": "YOU GET A DONUT (unless they run out)",
 			"description": "manage to score 0 in match",
-			"icon": "styles/images/achievement.png"
+			"icon": "styles/images/donut.png"
 		}
 	},
 	{
@@ -59,7 +59,7 @@
 		"fields": {
 			"name": "BEGINNER'S LUCK",
 			"description": "win your first game of pong",
-			"icon": "styles/images/achievement.png"
+			"icon": "styles/images/beginners-lucks.png"
 		}
 	}
 ]
