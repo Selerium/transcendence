@@ -81,7 +81,7 @@ export async function startGame(
   canvas.height = window.innerHeight;
 
   let angle = Math.random() * Math.PI * 2;
-  let initialSpeed = 5;
+  let initialSpeed = 8;
   let speedIncrease = 1.2;
 
   let ball = {
