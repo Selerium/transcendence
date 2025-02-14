@@ -719,11 +719,11 @@ async function openModal(str) {
       "gap-4"
     );
     userContainer.innerHTML = `
-      <div onclick="openModal('1v1-player')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+      <div onclick="this.disabled=true; openModal('1v1-player')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
         <img src="styles/images/1v1.png" />
         <h3>1V1 PLAYER</h3>
       </div>
-      <div id="play-btn" onclick="createMatch('1v1-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
+      <div onclick="this.disabled=true; createMatch('1v1-ai')" class="box select-box h-100 flex-fill d-flex flex-column gap-3 align-items-center justify-content-center clickable">
         <img src="styles/images/1v1.png" />
         <h3>1V1 AI</h3>
       </div>
