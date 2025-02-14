@@ -7,6 +7,12 @@
   transition: all 300ms ease;
 }
 
+.text-ellipsis {
+  height: 26px;
+  width: 170px;
+  overflow: hidden;
+}
+
 :disabled {
   cursor: not-allowed;
 }
@@ -164,6 +170,10 @@ a {
   height: 15%;
 }
 
+.h-5 {
+  height: 5%;
+}
+
 .grid-2 {
   display: grid;
   grid-template-columns: 49% 49%;
@@ -260,7 +270,7 @@ ion-icon {
 }
 
 .max-w-quarter {
-  max-width: 24%;
+  max-width: 23.5%;
 }
 
 .h-fit {

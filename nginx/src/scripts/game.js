@@ -55,24 +55,28 @@ export async function createMatch(mode) {
     }
     clearErrorMessages();
 
-    if (mode == "tournament") {
-        if (player2.toLowerCase() == 'SYSTEM'.toLowerCase())
-            showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
-        else if (player3.toLowerCase() == 'SYSTEM'.toLowerCase())
-            showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
-        else if (player4.toLowerCase() == 'SYSTEM'.toLowerCase())
-            showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
-        if (player2 == 'SYSTEM' || player3 == 'SYSTEM' || player4 == 'SYSTEM')
-            return ;
-    }
+    // if (mode == "tournament") {
+    //     if (player2.toLowerCase() == 'SYSTEM'.toLowerCase())
+    //         showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
+    //     else if (player3.toLowerCase() == 'SYSTEM'.toLowerCase())
+    //         showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
+    //     else if (player4.toLowerCase() == 'SYSTEM'.toLowerCase())
+    //         showErrorMessage(player2, "Invalid name: you are not SYSTEM. Liar.")
+    //     if (player2.toLowerCase() == 'system' || player3.toLowerCase() == 'system' || player4.toLowerCase() == 'system')
+    //         return ;
+    // }
 
+    console.log('testing');
+    
     let emptyPlayers = selectedPlayers.some(selectedPlayers => !selectedPlayers);
     let emptyNicknames = selectedNicknames.some(selectedNicknames => !selectedNicknames);
     if (emptyNicknames || emptyPlayers) {
         if (thingy) document.getElementById("play-btn").style.display = "block";
         return;
     }
-
+    
+    console.log('testing 1');
+    
     let duplicatePlayers = findDuplicates(selectedPlayers);
     let duplicateNicknames = findDuplicates(selectedNicknames);
     if (duplicatePlayers.length > 0 || duplicateNicknames.length > 0) {
@@ -81,12 +85,16 @@ export async function createMatch(mode) {
         if (thingy) document.getElementById("play-btn").style.display = "block";
         return;
     }
-
+    
+    console.log('testing 2');
+    
     let users = await fetchAllUsers();
     if (!users) {
         if (thingy) document.getElementById("play-btn").style.display = "block";
         return;
     }
+    
+    console.log('testing 3');
 
     let userSet = new Set(users.map(user => user.username));
     let nonExistingPlayers = selectedPlayers.filter(player => !userSet.has(player));
@@ -146,10 +154,10 @@ function findDuplicates(players) {
     let seen = new Set();
     let duplicates = [];
     for (let player of players) {
-        if (seen.has(String(player).toLowerCase)) {
-            duplicates.push(String(player).toLowerCase);
+        if (seen.has(String(player).toLowerCase())) {
+            duplicates.push(String(player).toLowerCase());
         } else {
-            seen.add(String(player).toLowerCase);
+            seen.add(String(player).toLowerCase());
         }
     }
     return duplicates;

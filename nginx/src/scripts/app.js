@@ -443,43 +443,45 @@ async function pullAchievements(str, id) {
     achievementsHolder = document.getElementById("achievements-holder");
   else {
     achievementsHolder = document.getElementById("profile-achievements-holder");
-    achievementsHolder.classList.toggle("gap-4");
-    achievementsHolder.classList.toggle("justify-content-between");
+    achievementsHolder.style.gap = 'unset';
+    achievementsHolder.classList.add("gap-4");
+    achievementsHolder.classList.add("justify-content-start");
+    achievementsHolder.classList.add("h-5");
 
     document.getElementById("profile-achievements").innerHTML =
       achievementsInfo["data"].length;
   }
-  achievementsHolder.innerHTML = "";
+  achievementsHolder.innerHTML = `<h3 class="w-100">RECENT ACHIEVEMENTS</h3>`;
   if (achievementsInfo["data"].length > 0) {
     achievementsInfo["data"].forEach((item, index) => {
       if (str == "achievements" || (str == "profile" && index < 4)) {
         const achievementDivHolder = document.createElement("div");
         const achievementDiv = document.createElement("div");
 
+        achievementDivHolder.classList.add('h-50');
         if (str == "achievements") achievementDivHolder.classList.add("col-4");
         else achievementDivHolder.classList.add("flex-grow-1", "max-w-quarter");
 
         achievementDiv.classList.add(
           "flex-grow-1",
           "m-1",
-          "p-2",
-          "h-fit",
+          "h-100",
           "box",
           "d-flex",
-          "justify-content-start",
+          "justify-content-center",
           "align-items-center",
-          "gap-4"
+          "gap-1"
         );
 
         achievementDiv.innerHTML = `
         <img
-        width="64"
-        height="64"
+        width="42"
+        height="42"
         class="mt-2"
         src="/${item["icon"]}"
         />
         <div class="d-flex flex-column justify-content-center align-items-start">
-        <p class="bold">${item["name"]}</p>
+        <p class="bold ${str == 'profile' ? 'text-ellipsis' : ''}">${item["name"]}</p>
         <p class="description-text ${
           str == "profile" ? "disabled-element" : ""
         }">${item["description"]}</p>
