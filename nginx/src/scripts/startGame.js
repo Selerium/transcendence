@@ -129,7 +129,7 @@ export async function startGame(
 
   const aiUpdateInterval = 1000;
   let aiControlInterval = null;
-  let gameTimer = 50;
+  let gameTimer = 120;
   let timerInterval = null;
 
   document.addEventListener("keydown", keyDownHandler);
@@ -307,7 +307,8 @@ export async function startGame(
     drawCenterLine();
     drawBall();
     drawScore();
-    drawTimer();
+    if (mode !== "tournament")
+      drawTimer();
   }
 
   function drawPaddles() {
@@ -442,7 +443,7 @@ export async function startGame(
   }
 
   function checkWinner() {
-    if (player1Score === 1 || player2Score === 1 || gameOver == true) {
+    if (player1Score === 5 || player2Score === 5 || gameOver == true) {
       cancelAnimationFrame(gameLoopId);
       clearInterval(aiControlInterval);
       clearInterval(timerInterval);
@@ -484,7 +485,9 @@ export async function startGame(
     }
   }
 
-  startTimer();
+  if (mode !== "tournament")
+    startTimer();
+
   gameLoop();
 
   if (mode === "1v1-ai") {
