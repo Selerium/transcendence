@@ -109,7 +109,12 @@ else
 
 const winnerTextDiv = document.createElement("div");
 winnerTextDiv.id = "winnerText";
-winnerTextDiv.innerText = winnerName + " is the Winner!";
+
+if (tournamentResults["match3"].player1Score === tournamentResults["match3"].player2Score || tournamentResults["match1"].player1Score === tournamentResults["match1"].player2Score)
+    winnerTextDiv.innerText = "LOSERS BUT HERE IS A TROPHY!";
+    else 
+    winnerTextDiv.innerText = winnerName + " is the Winner!";
+
 
 const gameHolder = document.getElementById("game-holder");
 gameHolder.appendChild(winnerTextDiv);
@@ -121,9 +126,11 @@ function createMatchContainer(matchTitle, player1, player1Score, player2, player
     const matchContainer = document.createElement("div");
     matchContainer.classList.add("winnerContainer"); 
 
-    const isPlayer1Winner = player1Score > player2Score;
-    const player1Class = isPlayer1Winner ? "highlight-green" : "";
-    const player2Class = !isPlayer1Winner ? "highlight-green" : "";
+        const isDraw = player1Score === player2Score;
+        const isPlayer1Winner = player1Score > player2Score;
+        const player1Class = isDraw ? "" : isPlayer1Winner ? "highlight-green" : "";
+        const player2Class = isDraw ? "" : !isPlayer1Winner ? "highlight-green" : "";
+
 
     const playerScore1 = document.createElement("div");
     playerScore1.classList.add("playerScore");
