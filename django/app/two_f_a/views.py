@@ -78,7 +78,7 @@ def verify_2fa(request):
 @api_view(['GET'])
 def checkIfUserNeeds2fa(request):
     # # uncomment this below line if you want to run without 2fa (just ignore the verify screen)
-    # return Response({'success': True, 'data': True}, status=status.HTTP_200_OK)
+    return Response({'success': True, 'data': True}, status=status.HTTP_200_OK)
     try:
         user_jwt = request.COOKIES.get('jwt')
         decoded_jwt = jwt.decode(user_jwt, JWT_SECRET, algorithms=["HS256"])
