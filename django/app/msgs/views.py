@@ -92,15 +92,9 @@ def messages(request):
             print('friendship blocked!!!!!')
             return ERROR403
 
-        if Message.objects.filter(sender=sender).count() >= 1:
-            try:
-                unlocked = Achievement.objects.get(name='HAVE YOU HEARD OF SLACK?')
-                achieved, created = AchievementUnlocked.objects.get_or_create(user=sender, unlocked=unlocked)
-                if created:
-                    serializer = AchievementUnlockedSerializer(achieved)
-                    return Response(data={'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
-            except:
-                return ERROR404
+        # if Message.objects.filter(sender=sender).count() >= 1:
+        #     unlocked = Achievement.objects.get(name='HAVE YOU HEARD OF SLACK?')
+        #     achieved, created = AchievementUnlocked.objects.get_or_create(user=sender, unlocked=unlocked)
 
         newMsg = Message(sender=sender, receiver=receiver, content=content)
 
