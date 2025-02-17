@@ -469,20 +469,23 @@ async function pullAchievements(str, id) {
         const achievementDivHolder = document.createElement("div");
         const achievementDiv = document.createElement("div");
 
-        achievementDivHolder.classList.add("h-50");
+        if (str != "achievements")
+			achievementDivHolder.classList.add("h-50");
         if (str == "achievements") achievementDivHolder.classList.add("col-4");
         else achievementDivHolder.classList.add("flex-grow-1", "max-w-quarter");
 
         achievementDiv.classList.add(
           "flex-grow-1",
           "m-1",
-          "h-100",
           "box",
           "d-flex",
           "justify-content-center",
           "align-items-center",
           "gap-1"
         );
+
+		if (str != 'achievements')
+			achievementDiv.classList.add("h-100");
 
         achievementDiv.innerHTML = `
         <img

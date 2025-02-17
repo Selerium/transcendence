@@ -11,6 +11,8 @@
   height: 26px;
   width: 173px;
   overflow: hidden;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
 }
 
 :disabled {
