@@ -558,9 +558,12 @@ async function pullMatchHistory(str, id) {
         "gap-2",
         "w-100",
         "clickable",
-        "btn"
+        "btn",
+        "boogalaga"
       );
-      matchDiv.onclick = () => openMatchDetails(match.match_id);
+      matchDiv.onclick = () => {
+        openMatchDetails(match.match_id);
+    }
       let result, boxClass;
       if (
         (match.player_one.id == id &&
@@ -859,8 +862,18 @@ async function openMatchDetails(matchId) {
   let modalInfo = document.getElementById("info-modal");
   let modalHeading = document.getElementById("modal-heading");
 
-  modalHeading.innerHTML = "MATCH DASHBOARD";
-
+  modalInfo.innerHTML = `<h1 id='modal-heading'>MATCH DASHBOARD</h1>
+  <svg
+  xmlns="http://www.w3.org/2000/svg"
+  class="ionicon"
+  viewBox="0 0 512 512"
+  onclick="openModal('close')"
+>
+  <path
+	d="M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"
+  />
+</svg>
+  `;
   let matchDetail = await fetch(`https://localhost/api/matches/${matchId}`, {
     method: "GET",
     credentials: "include",
@@ -967,6 +980,18 @@ async function openMatchDetails(matchId) {
   playersContainer.appendChild(player2Container);
   userContainer.appendChild(playersContainer);
   userContainer.appendChild(timeContainer);
+  modalInfo.innerHTML = `<h1 id='modal-heading'>MATCH DASHBOARD</h1>
+  <svg
+  xmlns="http://www.w3.org/2000/svg"
+  class="ionicon"
+  viewBox="0 0 512 512"
+  onclick="openModal('close')"
+>
+  <path
+	d="M400 145.49L366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49z"
+  />
+</svg>
+  `;
   modalInfo.appendChild(userContainer);
 }
 
