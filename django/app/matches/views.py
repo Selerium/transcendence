@@ -266,11 +266,6 @@ def rankings(request):
             else:
                 win_counts[winner.id] = 1
 
-        print('hiiiiiii-------:')
-        print(match.player_one_score)
-        print(match.player_two_score)
-        print(winner.id)
-
     ranked_users = []
     for user_id, wins in win_counts.items():
         user = User.objects.get(id=user_id, deleted=False)
