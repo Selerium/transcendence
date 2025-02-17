@@ -13,5 +13,6 @@ django/app/media/*
 django/.env
 nginx/.env
 postgres/.env
+.env
 
 django/app/users/tasks.py

@@ -11,6 +11,7 @@ from .models import User
 from friends.models import Friend
 import jwt
 import requests
+import time
 
 ERROR400 = Response(data={'success': False, 'message': 'Invalid fields'}, status=status.HTTP_400_BAD_REQUEST)
 ERROR404 = Response(data={'success': False, 'message': 'Not Found'}, status=status.HTTP_404_NOT_FOUND)
@@ -98,6 +99,8 @@ def users(request, id=None):
     except:
         return ERROR400
 
+    time.sleep(0.5)
+
     get_object_or_404(User, id=decoded_jwt['data']['id'])
     print('in the users api request:----')
     if (request.method == 'GET'):
@@ -174,7 +177,9 @@ def users_new(request):
         this_user = decoded_jwt['data']['id']
     except:
         return ERROR400
-    
+
+    time.sleep(0.5)
+
     friends = Friend.objects.filter(
         (Q(friend1=this_user) | Q(friend2=this_user)) & Q(friend_status='1')
     )

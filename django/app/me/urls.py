@@ -5,6 +5,7 @@ from . import views
 	# example: "/api/users/" is appended with "" and "{id}" below
 urlpatterns = [
 	path("", views.me, name="all-users-info"),
+	path("update-status", views.update_status, name="reset-all-users-status"),
 ]
 
 # users: GET all's info, POST to create one's info

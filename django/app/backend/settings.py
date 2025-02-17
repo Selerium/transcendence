@@ -34,6 +34,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+CRON_SECRET_KEY = os.environ['CRON_SECRET_KEY']
 
 ALLOWED_HOSTS = [
 	'localhost',

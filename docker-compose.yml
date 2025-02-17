@@ -25,7 +25,10 @@ services:
 
     backend:
       container_name: trans_backend
-      build: ./django/
+      build: 
+        context: ./django/
+        args:
+          CRON_SECRET_KEY: ${CRON_SECRET_KEY}
       ports:
         - "8000"
       volumes:
@@ -37,8 +40,8 @@ services:
           condition: service_healthy
       env_file:
         - ./django/.env
-      # command: ["sh", "-c", "python3 manage.py makemigrations users friends achievements matches msgs oauth && python3 manage.py migrate && python3 manage.py loaddata achievements systemuser && python3 manage.py runserver 0.0.0.0:8000"]
-      command: ["sh", "-c", "python3 manage.py makemigrations users friends achievements matches msgs oauth && python3 manage.py migrate && python3 manage.py loaddata achievements systemuser && gunicorn --bind 0.0.0.0:8000 backend.wsgi"]
+      command: ["sh", "-c", "python3 manage.py makemigrations users friends achievements matches msgs oauth && python3 manage.py migrate && python3 manage.py loaddata achievements systemuser && service cron start && python3 manage.py runserver 0.0.0.0:8000"]
+      # command: ["sh", "-c", "python3 manage.py makemigrations users friends achievements matches msgs oauth && python3 manage.py migrate && python3 manage.py loaddata achievements systemuser && service cron start && gunicorn --bind 0.0.0.0:8000 backend.wsgi"]
       # command: ["sh", "-c", "python3 gunicorn --bind 0.0.0.0:8000 backend.wsgi"]
       # command: ["tail", "-f"]
       restart: on-failure
