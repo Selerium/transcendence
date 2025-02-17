@@ -421,7 +421,7 @@ export async function startGame(
 
     if (Math.abs(ball.dx) < 2) ball.dx = ball.dx > 0 ? 2 : -2;
     if (Math.abs(ball.dy) < 2) ball.dy = ball.dy > 0 ? 2 : -2;
-
+    ball.speed = 8;
     checkWinner();
   }
 
