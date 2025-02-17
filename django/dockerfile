@@ -1,11 +1,16 @@
 FROM python:3
 
+ARG CRON_SECRET_KEY
+ENV CRON_SECRET_KEY=${CRON_SECRET_KEY}
+
 WORKDIR /usr/src/app
 
 RUN apt-get update -y
-RUN apt-get install -y --no-install-recommends nano
+RUN apt-get install -y --no-install-recommends nano cron
 
 RUN pip install --no-cache-dir django gunicorn psycopg2-binary djangorestframework requests pyjwt
+
+RUN (crontab -l 2>/dev/null; echo "*/5 * * * * curl -X GET http://localhost:8000/api/me/update-status -H \"CRON-SECRET: $CRON_SECRET_KEY \"") | crontab -
 
 # CMD ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"]
 # CMD ["sh", "-c", "python3 manage.py makemigrations && python3 manage.py migrate && gunicorn --bind 0.0.0.0:8000 backend.wsgi"]

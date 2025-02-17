@@ -253,9 +253,9 @@ def rankings(request):
     win_counts = {}
 
     for match in matches:
-        if match.player_one_score > match.player_two_score:
+        if match.player_one_score and match.player_two_score and match.player_one_score > match.player_two_score:
             winner = match.player_one
-        elif match.player_one_score < match.player_two_score:
+        elif match.player_one_score and match.player_two_score and match.player_one_score < match.player_two_score:
             winner = match.player_two
         else:
             continue

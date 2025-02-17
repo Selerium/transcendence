@@ -12,6 +12,7 @@ from achievements.serializers import AchievementUnlockedSerializer
 
 import jwt
 import requests
+import time
 
 ERROR400 = Response(data={'success': False, 'message': 'Invalid fields'}, status=status.HTTP_400_BAD_REQUEST)
 ERROR404 = Response(data={'success': False, 'message': 'Not Found'}, status=status.HTTP_404_NOT_FOUND)
@@ -32,6 +33,9 @@ def friends(request, id=None):
 		this_user = decoded_jwt['data']['id']
 	except:
 		return ERROR400
+
+	time.sleep(0.5)
+
 	get_object_or_404(User, id=decoded_jwt['data']['id'])
 	# return all friendships
 	if (id == None and request.method == 'GET'):
@@ -143,6 +147,9 @@ def friendRequests(request):
 		this_user = decoded_jwt['data']['id']
 	except:
 		return ERROR400
+	
+	time.sleep(0.5)
+
 	# return all friendships
 	if request.method == 'GET':
 		pending_requests = Friend.objects.filter(
@@ -188,6 +195,9 @@ def deleteFriend(request, id=None):
 		this_user = decoded_jwt['data']['id']
 	except:
 		return ERROR400
+
+	time.sleep(0.5)
+
 	# delete friendship / decline request
 	if (id != None and request.method == 'DELETE'):
 		data = request.data

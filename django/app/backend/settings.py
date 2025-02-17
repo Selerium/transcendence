@@ -34,6 +34,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+CRON_SECRET_KEY = os.environ['CRON_SECRET_KEY']
 
 ALLOWED_HOSTS = [
 	'localhost',
@@ -60,6 +61,16 @@ INSTALLED_APPS = [
     'achievements',
     'rest_framework',
 ]
+
+Q_CLUSTER = {
+    "name": "DjangoQ",
+    "workers": 4,
+    "timeout": 120,
+    "retry": 90,
+    "queue_limit": 500,
+    "bulk": 10,
+    "orm": "default",
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

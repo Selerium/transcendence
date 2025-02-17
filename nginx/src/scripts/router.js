@@ -48,7 +48,6 @@ async function changeRoute() {
     return;
   }
   if (!(await checkLogin()) || !(await check2fa())) {
-    console.log("failed auth");
     const html = await fetch(routes["/login"]).then((response) =>
       response.text()
     );
@@ -121,7 +120,6 @@ async function changeRoute() {
 }
 
 window.addEventListener("click", (e) => {
-  console.log(e.target.tagName);
   if (e.target.tagName == "INPUT") return;
   if (e.target.getAttribute("href") != "/api/oauth") {
     e.preventDefault();

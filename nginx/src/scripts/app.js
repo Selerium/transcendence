@@ -4,7 +4,7 @@
 let loggedIn = false;
 let my_username = null;
 let my_id;
-const defaultImageURL = '/styles/images/profile-pic-sample.png';
+const defaultImageURL = "/styles/images/profile-pic-sample.png";
 
 async function fillData(str) {
   if (currentChatUser) currentChatUser = null;
@@ -29,8 +29,7 @@ async function fillData(str) {
     username = info["data"]["username"];
     id = info["data"]["id"];
     let image_url = info["data"]["profile_pic"];
-    if (image_url == null)
-      image_url = defaultImageURL;
+    if (image_url == null) image_url = defaultImageURL;
 
     const doc_nav_username = document.getElementById("nav-profile");
     const doc_nav_image = document.getElementById("nav-image");
@@ -66,16 +65,22 @@ async function fillData(str) {
         return err;
       });
 
+    if (meInfo["detail"] || meInfo["success"] == false) {
+      window.history.pushState({}, "", `/404`);
+      changeRoute();
+      return;
+    }
+
     let role = meInfo["data"]["role"] == 0 ? "STUDENT" : "STAFF";
     let username = meInfo["data"]["username"];
     let image_url = meInfo["data"]["profile_pic"];
-    if (image_url == null)
-      image_url = defaultImageURL;
+    if (image_url == null) image_url = defaultImageURL;
 
     const editProfileButton = document.getElementById("edit-profile");
     editProfileButton.style.display = "block";
 
     const doc_username = document.getElementById("profile-username");
+    const doc_status = document.getElementById("profile-online-status");
     const doc_alias = document.getElementById("profile-alias");
     const doc_role_holder = document.getElementById("profile-role-holder");
     const doc_role = document.getElementById("profile-role");
@@ -86,6 +91,8 @@ async function fillData(str) {
     else doc_role_holder.classList.toggle("loss-box");
     doc_role.innerHTML = role;
     doc_image.src = image_url;
+    doc_status.innerHTML =
+      meInfo["data"]["status"] == "0" ? "[--offline--]" : "[--online--]";
 
     pullMatchHistory("profile", my_id);
 
@@ -171,7 +178,6 @@ async function fillData(str) {
             chatSend.disabled = true;
           }
 
-          console.log(friend);
           window.intervalId = setInterval(() => {
             pullChats(friend);
           }, 1000);
@@ -196,7 +202,6 @@ async function fillData(str) {
 
         friendDiv.onclick = clicked;
         friendsHolder.appendChild(friendDiv);
-		console.log(friend)
         async function helper() {
           blockFriend(friend.request_id);
         }
@@ -212,7 +217,6 @@ async function fillData(str) {
         <p class="text-center h-100">...unsurprising, and disappointing.</p>
       `;
     }
-    console.log(friendsListInfo);
   } else if (str == "/dashboard") {
     let friendRequestInfo = await fetch(
       "https://localhost/api/friends/requests",
@@ -248,7 +252,9 @@ async function fillData(str) {
             <img width="32" height="32" src="${
               request.other_user.profile_pic
             }" style="object-fit: cover; border-radius: 32px" onerror="this.src='/styles/images/profile-pic-sample.png'" />
-            <h3 class="w-100 text-center">${request.other_user.alias} [${request.other_user.username}]</h3>
+            <h3 class="w-100 text-center">${request.other_user.alias} [${
+          request.other_user.username
+        }]</h3>
             <button onclick="resolveFriend(${true}, ${
           request.id
         })" class="clickable btn small-btn">accept</button>
@@ -423,6 +429,10 @@ async function unblockFriend(userid) {
 }
 
 async function pullAchievements(str, id) {
+  setTimeout(() => {
+    console.log('waiting');
+  }, 500);
+
   let achievementsInfo = await fetch(
     `https://localhost/api/achievements/${id}`,
     {
@@ -437,13 +447,12 @@ async function pullAchievements(str, id) {
       return err;
     });
 
-  console.log(achievementsInfo);
   let achievementsHolder;
   if (str == "achievements")
     achievementsHolder = document.getElementById("achievements-holder");
   else {
     achievementsHolder = document.getElementById("profile-achievements-holder");
-    achievementsHolder.style.gap = 'unset';
+    achievementsHolder.style.gap = "unset";
     achievementsHolder.classList.add("gap-4");
     achievementsHolder.classList.add("justify-content-start");
     achievementsHolder.classList.add("h-5");
@@ -458,7 +467,7 @@ async function pullAchievements(str, id) {
         const achievementDivHolder = document.createElement("div");
         const achievementDiv = document.createElement("div");
 
-        achievementDivHolder.classList.add('h-50');
+        achievementDivHolder.classList.add("h-50");
         if (str == "achievements") achievementDivHolder.classList.add("col-4");
         else achievementDivHolder.classList.add("flex-grow-1", "max-w-quarter");
 
@@ -481,7 +490,9 @@ async function pullAchievements(str, id) {
         src="/${item["icon"]}"
         />
         <div class="d-flex flex-column justify-content-center align-items-start">
-        <p class="bold ${str == 'profile' ? 'text-ellipsis' : ''}">${item["name"]}</p>
+        <p class="bold ${str == "profile" ? "text-ellipsis" : ""}">${
+          item["name"]
+        }</p>
         <p class="description-text ${
           str == "profile" ? "disabled-element" : ""
         }">${item["description"]}</p>
@@ -513,13 +524,10 @@ async function pullAchievements(str, id) {
 }
 
 async function pullMatchHistory(str, id) {
-  let matchHistoryInfo = await fetch(
-    `https://localhost/api/matches?id=${id}`,
-    {
-      method: "GET",
-      credentials: "include",
-    }
-  )
+  let matchHistoryInfo = await fetch(`https://localhost/api/matches?id=${id}`, {
+    method: "GET",
+    credentials: "include",
+  })
     .then((response) => {
       return response.json();
     })
@@ -548,12 +556,10 @@ async function pullMatchHistory(str, id) {
         "gap-2",
         "w-100",
         "clickable",
-        "btn",
-
+        "btn"
       );
       matchDiv.onclick = () => openMatchDetails(match.match_id);
       let result, boxClass;
-      console.log(match);
       if (
         (match.player_one.id == id &&
           match.player_one_score > match.player_two_score) ||
@@ -563,7 +569,11 @@ async function pullMatchHistory(str, id) {
         result = "WIN";
         boxClass = "win-box";
         wins++;
-      } else if ((String(match.player_two_score) === "0" && String(match.player_one_score) === "0") || match.player_two_score == match.player_one_score) {
+      } else if (
+        (String(match.player_two_score) === "0" &&
+          String(match.player_one_score) === "0") ||
+        match.player_two_score == match.player_one_score
+      ) {
         result = "DRAW";
         boxClass = "draw-box";
       } else {
@@ -734,7 +744,6 @@ async function openModal(str) {
     return;
   }
   if (str == "1v1-player") {
-    console.log("enter player 2");
     modalHeading.innerHTML = "ENTER PLAYER NAME";
 
     modalHolder.style.zIndex = 100;
@@ -763,7 +772,6 @@ async function openModal(str) {
 
     modalHolder.style.zIndex = 100;
     modalHolder.style.opacity = 1;
-
 
     for (let i = 2; i <= 4; i++) {
       const userContainer = document.createElement("div");
@@ -806,7 +814,6 @@ async function openModal(str) {
     return;
   }
   if (str == "edit-profile") {
-    console.log("editing profile");
     modalHeading.innerHTML = "EDIT PROFILE";
 
     modalHolder.style.zIndex = 100;
@@ -841,8 +848,7 @@ async function openModal(str) {
 }
 
 async function clickFileUpload() {
-  let input = document.getElementById('avatar');
-  console.log(input.onclick);
+  let input = document.getElementById("avatar");
   input.click();
 }
 
@@ -860,7 +866,6 @@ async function openMatchDetails(matchId) {
     .then((response) => response.json())
     .catch((err) => err);
 
-  console.log("Match Detail:", matchDetail);
   const matchData = matchDetail.data;
 
   modalHolder.style.zIndex = 100;
@@ -868,22 +873,77 @@ async function openMatchDetails(matchId) {
 
   let startTime = new Date(matchData.start_time);
   let endTime = new Date(matchData.end_time);
-  let startFormatted = startTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  let endFormatted = endTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  let startFormatted = startTime.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  let endFormatted = endTime.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 
   const userContainer = document.createElement("div");
-  userContainer.classList.add("h-75", "w-100", "d-flex", "flex-column", "gap-4" ,"align-items-center", "justify-content-evenly");
+  userContainer.classList.add(
+    "h-75",
+    "w-100",
+    "d-flex",
+    "flex-column",
+    "gap-4",
+    "align-items-center",
+    "justify-content-evenly"
+  );
 
   let playersContainer = document.createElement("div");
   playersContainer.classList.add("d-flex", "w-50", "h-50", "gap-4");
-  
+
   let player1Container = document.createElement("div");
   let timeContainer = document.createElement("div");
   let player2Container = document.createElement("div");
-  player1Container.classList.add("d-flex", "flex-column", "inner-box", "w-50", "h-100", "p-4", "align-items-center", "justify-content-center", "text-center", "custom-border", "electrolize", "bold");
-  player2Container.classList.add("d-flex", "flex-column", "inner-box", "w-50", "h-100", "p-4", "text-center", "align-items-center", "justify-content-center", "custom-border", "electrolize", "bold");
-  timeContainer.classList.add("d-flex", "flex-column", "inner-box", "w-50", "h-50", "p-4", "text-center", "custom-border", "electrolize", "bold", "align-items-center", "justify-content-center");
-  
+  player1Container.classList.add(
+    "d-flex",
+    "flex-column",
+    "inner-box",
+    "w-50",
+    "h-100",
+    "p-4",
+    "align-items-center",
+    "justify-content-center",
+    "text-center",
+    "custom-border",
+    "electrolize",
+    "bold"
+  );
+  player2Container.classList.add(
+    "d-flex",
+    "flex-column",
+    "inner-box",
+    "w-50",
+    "h-100",
+    "p-4",
+    "text-center",
+    "align-items-center",
+    "justify-content-center",
+    "custom-border",
+    "electrolize",
+    "bold"
+  );
+  timeContainer.classList.add(
+    "d-flex",
+    "flex-column",
+    "inner-box",
+    "w-50",
+    "h-50",
+    "p-4",
+    "text-center",
+    "custom-border",
+    "electrolize",
+    "bold",
+    "align-items-center",
+    "justify-content-center"
+  );
+
   player1Container.innerHTML = `
   <h3>${matchData.player_one.username}</h3>
   <h3>SCORE</h3>
@@ -901,14 +961,13 @@ async function openMatchDetails(matchId) {
     <h3>End Time<h3>
     <h3> ${endFormatted}</h3>
     `;
-    playersContainer.appendChild(player1Container);
-    playersContainer.appendChild(player2Container);
+  playersContainer.appendChild(player1Container);
+  playersContainer.appendChild(player2Container);
   userContainer.appendChild(playersContainer);
-  userContainer.appendChild(timeContainer);  
+  userContainer.appendChild(timeContainer);
   modalInfo.appendChild(userContainer);
 }
 
-      
 async function addFriend(id, t) {
   let apiInfo = await fetch("https://localhost/api/friends/", {
     method: "POST",
@@ -927,7 +986,6 @@ async function addFriend(id, t) {
       return err;
     });
 
-  console.log(apiInfo);
   openModal("close");
 }
 
@@ -949,7 +1007,6 @@ async function resolveFriend(answer, reqId) {
       return err;
     });
 
-  console.log(apiInfo);
   fillData("/dashboard");
 }
 
@@ -1031,8 +1088,7 @@ async function pullChats(friend) {
     sendChat(friend);
   }
   function makeFriendGame() {
-    if (friend.username == 'SYSTEM')
-      createMatch('1v1-ai');
+    if (friend.username == "SYSTEM") createMatch("1v1-ai");
     else {
       let queryParams = `mode=1v1-player&player1=${encodeURIComponent(
         my_username
@@ -1049,7 +1105,6 @@ async function pullChats(friend) {
 
 async function sendChat(friend) {
   const messageInput = document.getElementById("friends-message-input");
-  console.log(messageInput.value);
 
   let sendInfo = await fetch(`https://localhost/api/msgs/`, {
     method: "POST",
@@ -1084,14 +1139,20 @@ async function profileFillData(number) {
       return err;
     });
 
+  if (userInfo["detail"]) {
+    window.history.pushState({}, "", `/404`);
+    changeRoute();
+    return;
+  }
+
   let role = userInfo["data"]["role"] == 0 ? "STUDENT" : "STAFF";
   let username = userInfo["data"]["username"];
   let alias = userInfo["data"]["alias"];
   let image_url = userInfo["data"]["profile_pic"];
-  if (image_url == null)
-    image_url = defaultImageURL;
+  if (image_url == null) image_url = defaultImageURL;
 
   const doc_username = document.getElementById("profile-username");
+  const doc_status = document.getElementById("profile-online-status");
   const doc_alias = document.getElementById("profile-alias");
   const doc_role_holder = document.getElementById("profile-role-holder");
   const doc_role = document.getElementById("profile-role");
@@ -1102,6 +1163,8 @@ async function profileFillData(number) {
   else doc_role_holder.classList.toggle("loss-box");
   doc_role.innerHTML = role;
   doc_image.src = image_url;
+  doc_status.innerHTML =
+    userInfo["data"]["status"] == "0" ? "[--offline--]" : "[--online--]";
 
   pullMatchHistory("profile", number);
 
@@ -1138,52 +1201,37 @@ async function submitEdits(str) {
   const alias = document.getElementById("alias");
   const profile_pic = document.getElementById("avatar");
 
-  console.log(str);
-  
   if (str == "alias") {
     if (!alias.value || alias.value == "") {
       return;
     }
 
-    console.log(alias.value);
-
-    let info = await fetch(
-      `https://localhost/api/users/update/alias`,
-      {
-        method: "PUT",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          alias: alias.value,
-        })
-      }
-    )
+    let info = await fetch(`https://localhost/api/users/update/alias`, {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        alias: alias.value,
+      }),
+    })
       .then((response) => response.json())
       .catch((err) => err);
-
-    console.log(info);
-  }
-  else if (str = "avatar") {
+  } else if ((str = "avatar")) {
     if (profile_pic.files.length == 0) {
       return;
     }
 
     let formData = new FormData();
-    formData.append('profile_pic', profile_pic.files[0]);
+    formData.append("profile_pic", profile_pic.files[0]);
 
-    let info = await fetch(
-      `https://localhost/api/users/update/profile`,
-      {
-        method: "PUT",
-        credentials: "include",
-        body: formData
-      }
-    )
+    let info = await fetch(`https://localhost/api/users/update/profile`, {
+      method: "PUT",
+      credentials: "include",
+      body: formData,
+    })
       .then((response) => response.json())
       .catch((err) => err);
-
-    console.log(info);
   }
 }

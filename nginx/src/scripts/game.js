@@ -15,13 +15,11 @@ export async function createMatch(mode) {
     })
     .then((response) => response.json())
     .catch((err) => {
-        console.error("Error fetching current user:", err);
         return null;
     });
 
     if (!info || !info["data"] || !info["data"]["username"]) {
         if (thingy) thingy.style.display = "block";
-        console.error("Failed to fetch the current user.");
         return;
     }
 
@@ -66,16 +64,12 @@ export async function createMatch(mode) {
     //         return ;
     // }
 
-    console.log('testing');
-    
     let emptyPlayers = selectedPlayers.some(selectedPlayers => !selectedPlayers);
     let emptyNicknames = selectedNicknames.some(selectedNicknames => !selectedNicknames);
     if (emptyNicknames || emptyPlayers) {
         if (thingy) document.getElementById("play-btn").style.display = "block";
         return;
     }
-    
-    console.log('testing 1');
     
     let duplicatePlayers = findDuplicates(selectedPlayers);
     let duplicateNicknames = findDuplicates(selectedNicknames);
@@ -86,16 +80,12 @@ export async function createMatch(mode) {
         return;
     }
     
-    console.log('testing 2');
-    
     let users = await fetchAllUsers();
     if (!users) {
         if (thingy) document.getElementById("play-btn").style.display = "block";
         return;
     }
     
-    console.log('testing 3');
-
     let userSet = new Set(users.map(user => user.username));
     let nonExistingPlayers = selectedPlayers.filter(player => !userSet.has(player));
 
@@ -145,7 +135,6 @@ async function fetchAllUsers() {
         const data = await response.json();
         return data.data; // Returns an array of user objects
     } catch (error) {
-        console.error('Error fetching users:', error);
         return null;
     }
 }

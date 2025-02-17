@@ -42,12 +42,9 @@ async function initGame2(matchIds, tournamentResults) {
                 });
 
                 let apiInfo = await response.json();
-                console.log(`Updated ${matchKey}:`, apiInfo);
             } catch (err) {
-                console.error(`Error updating ${matchKey}:`, err);
             }
         } else {
-            console.warn(`Skipping ${matchKey}: Missing match ID or scores`);
         }
     }
 }
