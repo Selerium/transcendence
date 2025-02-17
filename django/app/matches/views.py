@@ -253,9 +253,9 @@ def rankings(request):
     win_counts = {}
 
     for match in matches:
-        if match.player_one_score and match.player_two_score and match.player_one_score > match.player_two_score:
+        if match.player_one_score >= 0 and match.player_two_score >= 0 and match.player_one_score > match.player_two_score:
             winner = match.player_one
-        elif match.player_one_score and match.player_two_score and match.player_one_score < match.player_two_score:
+        elif match.player_one_score >= 0 and match.player_two_score >= 0 and match.player_one_score < match.player_two_score:
             winner = match.player_two
         else:
             continue
@@ -265,6 +265,11 @@ def rankings(request):
                 win_counts[winner.id] += 1
             else:
                 win_counts[winner.id] = 1
+
+        print('hiiiiiii-------:')
+        print(match.player_one_score)
+        print(match.player_two_score)
+        print(winner.id)
 
     ranked_users = []
     for user_id, wins in win_counts.items():

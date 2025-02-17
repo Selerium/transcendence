@@ -110,7 +110,7 @@ else
 const winnerTextDiv = document.createElement("div");
 winnerTextDiv.id = "winnerText";
 
-if (tournamentResults["match3"].player1Score === tournamentResults["match3"].player2Score || tournamentResults["match1"].player1Score === tournamentResults["match1"].player2Score)
+if (mode === "tournament" && tournamentResults["match3"].player1Score === tournamentResults["match3"].player2Score || tournamentResults["match1"].player1Score === tournamentResults["match1"].player2Score)
     winnerTextDiv.innerText = "LOSERS BUT HERE IS A TROPHY!";
     else 
     winnerTextDiv.innerText = winnerName + " is the Winner!";

@@ -298,6 +298,8 @@ async function fillData(str) {
         return err;
       });
 
+    console.log(leaderboardsInfo);
+
     let globalLeaderboards = document.getElementById("leaderboards-global");
     if (leaderboardsInfo["data"].length > 0) {
       leaderboardsInfo["data"].forEach((item, index) => {
@@ -317,7 +319,7 @@ async function fillData(str) {
         recordHolder.innerHTML = `
         <p class="ps-5">${index + 1}</p>
         <p class="bold">${item["alias"]} [${item["user"]}]</p>
-        <p>${item["alias"]} wins</p>
+        <p>${item["wins"]} wins</p>
         `;
 
         globalLeaderboards.appendChild(recordHolder);
@@ -357,7 +359,7 @@ async function fillData(str) {
         recordHolder.innerHTML = `
         <p class="ps-5">${index + 1}</p>
         <p class="bold">${item["alias"]} [${item["user"]}]</p>
-        <p>${item["alias"]} wins</p>
+        <p>${item["wins"]} wins</p>
         `;
 
         friendsLeaderboard.appendChild(recordHolder);
