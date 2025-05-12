@@ -93,7 +93,9 @@ def get_user_info(access_token, refresh_token):
 
 @api_view(['GET'])
 def intra_callback(request):
+
     code = request.GET.get('code')
+    print(code)
     if not code:
         return ERROR400
     data = {
@@ -103,7 +105,9 @@ def intra_callback(request):
         'code': code,
         'redirect_uri': REDIRECT_URI,
     }
+    print(data)
     response = requests.post(TOKEN_URL, data=data)
+    print(response)
     if response.status_code == 200:
         access_token = response.json()['access_token']
         refresh_token = response.json()['refresh_token']
